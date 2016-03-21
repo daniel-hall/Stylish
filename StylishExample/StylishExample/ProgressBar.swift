@@ -40,6 +40,7 @@ extension Stylish {
     }
 }
 
+
 @IBDesignable class ProgressBar:UIView, Styleable {
     
     private let trackView = UIView()
@@ -47,7 +48,13 @@ extension Stylish {
     
     @IBInspectable var styles:String = "" {
         didSet {
-            parseAndApplyStyles(styles)
+            parseAndApplyStyles(styles, usingTheme: theme)
+        }
+    }
+    
+    @IBInspectable var theme:String! = "" {
+        didSet {
+            parseAndApplyStyles(styles, usingTheme: theme)
         }
     }
     
@@ -114,7 +121,7 @@ extension Stylish {
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles)
+        showErrorIfInvalidStyles(styles, usingTheme: theme)
     }
     
     func applyStyle(style: Style) {

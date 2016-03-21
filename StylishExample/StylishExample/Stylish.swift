@@ -45,18 +45,27 @@ protocol Styleable {
 
 extension Styleable where Self:UIView {
     
-    func parseAndApplyStyles(styles:String, usingTheme theme:Theme.Type = Stylish.DefaultTheme.self) {
+    func parseAndApplyStyles(styles:String, usingTheme themeName:String) {
+        var theme:Theme.Type? = themeName == "" ? Stylish.DefaultTheme.self : nil
+        print(theme)
+        if let moduleName = _stdlib_getDemangledTypeName(Stylish.BundleMarker()).componentsSeparatedByString(".").first where theme == nil {
+            theme = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type
+        }
         let components = styles.stringByReplacingOccurrencesOfString(" ", withString: "").componentsSeparatedByString(",")
         var composedStyle = Style()
         for string in components where string != "" {
-            if let style = theme.styleNamed(string) {
+            if let style = theme?.styleNamed(string) {
                 composedStyle = composedStyle + style
             }
         }
         self.applyStyle(composedStyle)
     }
     
-    func showErrorIfInvalidStyles(styles:String, usingTheme theme:Theme.Type = Stylish.DefaultTheme.self) {
+    func showErrorIfInvalidStyles(styles:String, usingTheme themeName:String) {
+        var theme:Theme.Type? = themeName == "" ? Stylish.DefaultTheme.self : nil
+        if let moduleName = _stdlib_getDemangledTypeName(Stylish.BundleMarker()).componentsSeparatedByString(".").first where theme == nil {
+            theme = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type
+        }
         var invalidStyle = false
         for subview in subviews {
             if subview.tag == Stylish.ErrorViewTag {
@@ -65,7 +74,7 @@ extension Styleable where Self:UIView {
         }
         let components = styles.stringByReplacingOccurrencesOfString(" ", withString: "").componentsSeparatedByString(",")
         for string in components where string != "" {
-            if theme.styleNamed(string) == nil {
+            if theme?.styleNamed(string) == nil {
                 invalidStyle = true
             }
         }
@@ -260,12 +269,18 @@ extension Stylish {
     
     @IBInspectable var styles:String! = "" {
         didSet {
-            parseAndApplyStyles(styles)
+            parseAndApplyStyles(styles, usingTheme: theme)
+        }
+    }
+    
+    @IBInspectable var theme:String! = "" {
+        didSet {
+            parseAndApplyStyles(styles, usingTheme: theme)
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles)
+        showErrorIfInvalidStyles(styles, usingTheme: theme)
     }
     
     func applyStyle(style: Style) {
@@ -361,12 +376,18 @@ extension Stylish {
     
     @IBInspectable var styles:String! = "" {
         didSet {
-            parseAndApplyStyles(styles)
+            parseAndApplyStyles(styles, usingTheme: theme)
+        }
+    }
+    
+    @IBInspectable var theme:String! = "" {
+        didSet {
+            parseAndApplyStyles(styles, usingTheme: theme)
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles)
+        showErrorIfInvalidStyles(styles, usingTheme: theme)
     }
     
     func applyStyle(style: Style) {
@@ -525,12 +546,18 @@ extension Stylish {
     
     @IBInspectable var styles:String! = "" {
         didSet {
-            parseAndApplyStyles(styles)
+            parseAndApplyStyles(styles, usingTheme: theme)
+        }
+    }
+    
+    @IBInspectable var theme:String! = "" {
+        didSet {
+            parseAndApplyStyles(styles, usingTheme: theme)
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles)
+        showErrorIfInvalidStyles(styles, usingTheme: theme)
     }
     
     func applyStyle(style: Style) {
@@ -577,12 +604,18 @@ extension Stylish {
     
     @IBInspectable var styles:String! = "" {
         didSet {
-            parseAndApplyStyles(styles)
+            parseAndApplyStyles(styles, usingTheme: theme)
+        }
+    }
+    
+    @IBInspectable var theme:String! = "" {
+        didSet {
+            parseAndApplyStyles(styles, usingTheme: theme)
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles)
+        showErrorIfInvalidStyles(styles, usingTheme: theme)
     }
     
     func applyStyle(style: Style) {
