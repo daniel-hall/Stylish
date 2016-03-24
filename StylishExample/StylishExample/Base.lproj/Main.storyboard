@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15E64a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--Theme Overview-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController title="Theme Overview" id="BYZ-38-t0r" customClass="ViewController" customModule="StylishExample" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Theme Overview" id="BYZ-38-t0r" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -17,53 +19,48 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hSR-0I-CWP" customClass="StyleableUIView" customModule="StylishExample" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hSR-0I-CWP" customClass="StyleableUIView" customModule="StylishExample" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FWE-m1-rG4" customClass="StyleableUIButton" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="63" y="595" width="115" height="30"/>
-                                        <state key="normal" title="One"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultButton"/>
-                                        </userDefinedRuntimeAttributes>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="28E-De-WJA" customClass="StyleableUIButton" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="199" y="595" width="113" height="30"/>
-                                        <state key="normal" title="Two"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultButton"/>
-                                        </userDefinedRuntimeAttributes>
-                                    </button>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UI1-hu-wbc" customClass="StyleableUIView" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="22" y="258" width="329" height="264"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UI1-hu-wbc" customClass="StyleableUIView" customModule="StylishExample" customModuleProvider="target">
+                                        <rect key="frame" x="23" y="258" width="330" height="265"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Some Header Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pPa-7X-zGr" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
-                                                <rect key="frame" x="18" y="25" width="293" height="21"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                <nil key="highlightedColor"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="string" keyPath="styles" value="HeaderText"/>
-                                                </userDefinedRuntimeAttributes>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N8o-Ng-iFK" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
-                                                <rect key="frame" x="18" y="65" width="293" height="162"/>
-                                                <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                <nil key="highlightedColor"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="string" keyPath="styles" value="BodyText"/>
-                                                </userDefinedRuntimeAttributes>
-                                            </label>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="KoZ-AB-TDL">
+                                                <rect key="frame" x="17" y="53" width="297" height="159"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some Header Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pPa-7X-zGr" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="297" height="24"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="HeaderText"/>
+                                                        </userDefinedRuntimeAttributes>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="300" translatesAutoresizingMaskIntoConstraints="NO" id="N8o-Ng-iFK" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="44" width="297" height="115"/>
+                                                        <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="BodyText"/>
+                                                        </userDefinedRuntimeAttributes>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="KoZ-AB-TDL" firstAttribute="centerY" secondItem="UI1-hu-wbc" secondAttribute="centerY" id="BKd-O3-yY4"/>
+                                            <constraint firstItem="KoZ-AB-TDL" firstAttribute="centerX" secondItem="UI1-hu-wbc" secondAttribute="centerX" id="Hql-1P-VFN"/>
+                                        </constraints>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="string" keyPath="styles" value="SecondaryBackgroundColor"/>
                                         </userDefinedRuntimeAttributes>
                                     </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Theme Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j0e-Cp-bcP" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="23" y="33" width="328" height="23"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Theme Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j0e-Cp-bcP" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
+                                        <rect key="frame" x="150" y="33" width="77" height="24"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
@@ -71,30 +68,81 @@
                                             <userDefinedRuntimeAttribute type="string" keyPath="styles" value="HeaderText, ThemeTitle"/>
                                         </userDefinedRuntimeAttributes>
                                     </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WQu-S1-qgP" customClass="StyleableUIImageView" customModule="StylishExample" customModuleProvider="target">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WQu-S1-qgP" customClass="StyleableUIImageView" customModule="StylishExample" customModuleProvider="target">
                                         <rect key="frame" x="23" y="66" width="330" height="176"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="WQu-S1-qgP" secondAttribute="height" multiplier="15:8" id="jlN-ZZ-rxD"/>
+                                        </constraints>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ThemeImage"/>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hlp-HV-VmW" customClass="ProgressBar" customModule="StylishExample" customModuleProvider="target">
+                                        <rect key="frame" x="43" y="548" width="290" height="15"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="15" id="EJX-Hi-Idh"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ProgressBar"/>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="progress">
+                                                <real key="value" value="0.65000000000000002"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="9QF-Ho-B3L">
+                                        <rect key="frame" x="88" y="588" width="200" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FWE-m1-rG4" customClass="StyleableUIButton" customModule="StylishExample" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="94" height="30"/>
+                                                <state key="normal" title="One"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultButton"/>
+                                                </userDefinedRuntimeAttributes>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="28E-De-WJA" customClass="StyleableUIButton" customModule="StylishExample" customModuleProvider="target">
+                                                <rect key="frame" x="106" y="0.0" width="94" height="30"/>
+                                                <state key="normal" title="Two"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultButton"/>
+                                                </userDefinedRuntimeAttributes>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="200" id="2Yp-Zg-UfK"/>
+                                        </constraints>
+                                    </stackView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="j0e-Cp-bcP" firstAttribute="bottom" secondItem="hSR-0I-CWP" secondAttribute="bottom" multiplier="0.085" id="5b2-4J-Jc9"/>
+                                    <constraint firstItem="UI1-hu-wbc" firstAttribute="centerX" secondItem="hSR-0I-CWP" secondAttribute="centerX" id="7GO-bg-pwp"/>
+                                    <constraint firstItem="UI1-hu-wbc" firstAttribute="width" secondItem="WQu-S1-qgP" secondAttribute="width" id="8gY-tV-zbB"/>
+                                    <constraint firstItem="WQu-S1-qgP" firstAttribute="width" secondItem="hSR-0I-CWP" secondAttribute="width" multiplier="0.88" priority="999" id="8lt-dW-bG1"/>
+                                    <constraint firstAttribute="bottom" secondItem="UI1-hu-wbc" secondAttribute="bottom" constant="144" id="9FD-Ok-LWJ"/>
+                                    <constraint firstItem="9QF-Ho-B3L" firstAttribute="top" secondItem="hlp-HV-VmW" secondAttribute="bottom" constant="25" id="9jD-pn-xTb"/>
+                                    <constraint firstItem="hlp-HV-VmW" firstAttribute="centerX" secondItem="hSR-0I-CWP" secondAttribute="centerX" id="A6w-Af-BbX"/>
+                                    <constraint firstItem="j0e-Cp-bcP" firstAttribute="centerX" secondItem="hSR-0I-CWP" secondAttribute="centerX" id="Cgi-jU-mlV"/>
+                                    <constraint firstItem="WQu-S1-qgP" firstAttribute="height" relation="lessThanOrEqual" secondItem="hSR-0I-CWP" secondAttribute="height" multiplier="0.4" id="X1q-Cc-2JG"/>
+                                    <constraint firstItem="WQu-S1-qgP" firstAttribute="top" secondItem="j0e-Cp-bcP" secondAttribute="bottom" constant="9" id="YXI-uH-cXd"/>
+                                    <constraint firstItem="9QF-Ho-B3L" firstAttribute="centerX" secondItem="hSR-0I-CWP" secondAttribute="centerX" id="gMv-Bp-yQ1"/>
+                                    <constraint firstItem="WQu-S1-qgP" firstAttribute="centerX" secondItem="j0e-Cp-bcP" secondAttribute="centerX" id="myP-by-5gG"/>
+                                    <constraint firstItem="UI1-hu-wbc" firstAttribute="top" secondItem="WQu-S1-qgP" secondAttribute="bottom" constant="16" id="oLu-pj-nWl"/>
+                                    <constraint firstItem="hlp-HV-VmW" firstAttribute="width" secondItem="UI1-hu-wbc" secondAttribute="width" multiplier="0.88" id="t6a-iE-cS8"/>
+                                    <constraint firstItem="hlp-HV-VmW" firstAttribute="top" secondItem="UI1-hu-wbc" secondAttribute="bottom" constant="25" id="zwM-m7-b8v"/>
+                                </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="styles" value="PrimaryBackgroundColor"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hlp-HV-VmW" customClass="ProgressBar" customModule="StylishExample" customModuleProvider="target">
-                                <rect key="frame" x="43" y="547" width="289" height="15"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ProgressBar"/>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="progress">
-                                        <real key="value" value="0.65000000000000002"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="hSR-0I-CWP" firstAttribute="top" secondItem="Yom-6a-nbh" secondAttribute="top" id="RJW-qS-UoW"/>
+                            <constraint firstAttribute="trailing" secondItem="hSR-0I-CWP" secondAttribute="trailing" id="S3a-hV-ber"/>
+                            <constraint firstItem="hSR-0I-CWP" firstAttribute="leading" secondItem="Yom-6a-nbh" secondAttribute="leading" id="e4w-g2-IWI"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hSR-0I-CWP" secondAttribute="bottom" id="hFH-DG-Ql8"/>
+                        </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                 </viewController>

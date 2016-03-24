@@ -9,39 +9,33 @@
 import Foundation
 import UIKit
 
-extension Stylish {
-    
-    struct ProgressBar {
-        
-        static var ProgressColor:Properties.ProgressColor.Type { get { return Properties.ProgressColor.self } }
-        static var TrackColor:Properties.TrackColor.Type { get { return Properties.TrackColor.self } }
-        static var ProgressCornerRadiusPercentage:Properties.ProgressCornerRadiusPercentage.Type { get { return Properties.ProgressCornerRadiusPercentage.self } }
-        
-        struct Properties {
-            struct ProgressColor:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct TrackColor:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct ProgressCornerRadiusPercentage:StyleProperty {
-                let value:CGFloat
-                init(value:CGFloat) {
-                    self.value = value
-                }
-            }
-        }
-    }
+
+extension Style {
+    var progressColor:UIColor? { get { return getValue(#function) } }
+    var progressTrackColor:UIColor? { get { return getValue(#function) } }
+    var progressCornerRadiusPercentage:CGFloat? { get { return getValue(#function) } }
+}
+
+extension MutableStyle {
+    var progressColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var progressTrackColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var progressCornerRadiusPercentage:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
 }
 
 
 @IBDesignable class ProgressBar:UIView, Styleable {
+    
+    class var StyleApplicators: [StyleApplicator] {
+        return StyleableUIView.StyleApplicators + [{
+            (style:Style, target:Any) in
+            if let progressBar = target as? ProgressBar {
+                progressBar.trackView.layer.cornerRadius = progressBar.layer.cornerRadius
+                progressBar.progressColor =? style.progressColor
+                progressBar.trackColor =? style.progressTrackColor
+                progressBar.progressCornerRadiusPercentage =? style.progressCornerRadiusPercentage
+            }
+            }]
+    }
     
     private let trackView = UIView()
     private let progressView = UIView()
@@ -82,15 +76,9 @@ extension Stylish {
         }
     }
     
-    override var frame:CGRect {
-        get {
-            return super.frame
-        }
-        set {
-            super.frame = newValue
-            self.trackView.frame = self.bounds
-            updateProgress()
-        }
+    override func layoutSubviews() {
+        self.trackView.frame = self.bounds
+        updateProgress()
     }
     
     override init(frame: CGRect) {
@@ -122,14 +110,6 @@ extension Stylish {
     
     override func prepareForInterfaceBuilder() {
         showErrorIfInvalidStyles(styles, usingTheme: theme)
-    }
-    
-    func applyStyle(style: Style) {
-        Stylish.UIView.ApplyStyle(style, toView: self)
-        trackView.layer.cornerRadius = layer.cornerRadius
-        progressColor = style.valueFor(Stylish.ProgressBar.ProgressColor) ?? progressColor
-        trackColor = style.valueFor(Stylish.ProgressBar.TrackColor) ?? trackColor
-        progressCornerRadiusPercentage = style.valueFor(Stylish.ProgressBar.ProgressCornerRadiusPercentage) ?? progressCornerRadiusPercentage
     }
 }
 

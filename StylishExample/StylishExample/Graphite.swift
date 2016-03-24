@@ -10,63 +10,101 @@ import Foundation
 import UIKit
 
 class Graphite : Theme {
-    static func styleNamed(name: String) -> Style? {
-        var style = Style()
-        switch name {
-        case "PrimaryBackgroundColor" :
-            
-            style.set(Stylish.UIView.BackgroundColor, to: UIColor(white: 0.9, alpha: 1.0))
-            
-        case "SecondaryBackgroundColor" :
-            
-            style.set(Stylish.UIView.BackgroundColor, to: UIColor(white: 0.75, alpha: 1.0))
-            
-        case "HeaderText" :
-            
-            style.set(Stylish.UILabel.Font, to: UIFont.systemFontOfSize(20.0))
-            style.set(Stylish.UILabel.TextColor, to: UIColor.darkGrayColor())
-            style.set(Stylish.UILabel.TextAlignment, to:.Left)
-            
-        case "BodyText" :
-            
-            style.set(Stylish.UILabel.Font, to: UIFont.systemFontOfSize(16.0))
-            style.set(Stylish.UILabel.TextColor, to: UIColor.grayColor())
-            style.set(Stylish.UILabel.TextAlignment, to:.Left)
-            
-        case "ProgressBar" :
-            
-            style.set(Stylish.ProgressBar.ProgressColor, to: UIColor.grayColor())
-            style.set(Stylish.ProgressBar.TrackColor, to: UIColor(white: 0.9, alpha: 1.0))
-            style.set(Stylish.ProgressBar.ProgressCornerRadiusPercentage, to: 0.16)
-            style.set(Stylish.UIView.CornerRadiusPercentage, to: 0.16)
-            style.set(Stylish.UIView.BorderWidth, to:1.0)
-            style.set(Stylish.UIView.BorderColor, to: UIColor.grayColor())
-            
-        case "DefaultButton" :
-            
-            style.set(Stylish.UIButton.TitleColorForNormalState, to: UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0))
-            style.set(Stylish.UIButton.TitleColorForHighlightedState, to: UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0))
-            style.set(Stylish.UIButton.TitleColorForDisabledState, to: UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0))
-            style.set(Stylish.UIView.CornerRadiusPercentage, to: 0.16)
-            style.set(Stylish.UIView.BorderWidth, to:1.0)
-            style.set(Stylish.UIView.BorderColor, to: UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0))
-            
-        case "ThemeTitle" :
-            
-            style.set(Stylish.UILabel.Text, to: "Graphite")
-            
-        case "ThemeImage" :
-            
-            let bundle = NSBundle(forClass: self)
-            let image =  UIImage(named: "stone", inBundle: bundle, compatibleWithTraitCollection: UIScreen.mainScreen().traitCollection)!
-            style.set(Stylish.UIImageView.Image, to: image)
-            
-        default :
-            
-            return nil
-            
+    
+    struct PrimaryBackgroundColor : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            backgroundColor = UIColor(white: 0.9, alpha: 1.0)
         }
-        
-        return style
+    }
+    
+    struct SecondaryBackgroundColor : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            backgroundColor = UIColor(white: 0.75, alpha: 1.0)
+        }
+    }
+    
+    struct HeaderText : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            font = UIFont.systemFontOfSize(20.0)
+            textColor = UIColor.darkGrayColor()
+            textAlignment = .Left
+        }
+    }
+    
+    struct BodyText : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            font = UIFont.systemFontOfSize(16.0)
+            textColor = UIColor.grayColor()
+            textAlignment = .Left
+        }
+    }
+    
+    struct ProgressBar : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            progressColor = UIColor.grayColor()
+            progressTrackColor = UIColor(white: 0.9, alpha: 1.0)
+            progressCornerRadiusPercentage = 0.16
+            cornerRadiusPercentage = 0.16
+            borderWidth = 1.0
+            borderColor = UIColor.grayColor()
+        }
+    }
+    
+    struct DefaultButton : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            titleColorForNormalState = UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0)
+            titleColorForHighlightedState = UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0)
+            titleColorForDisabledState = UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0)
+            cornerRadiusPercentage = 0.16
+            borderWidth = 1.0
+            borderColor = UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0)
+        }
+    }
+    
+    struct ThemeTitle : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            text = "Graphite"
+        }
+    }
+    
+    struct ThemeImage : MutableStyle {
+        var properties = [String : Any]()
+        init() {
+            let bundle = NSBundle(forClass: Aqua.self)
+            image = UIImage(named: "stone", inBundle: bundle, compatibleWithTraitCollection: UIScreen.mainScreen().traitCollection)!
+        }
+    }
+    
+    
+    required init() {}
+    
+    func styleNamed(name: String) -> Style? {
+        switch name {
+        case _ where name.isVariantOf("Primary Background Color") :
+            return PrimaryBackgroundColor()
+        case _ where name.isVariantOf("Secondary Background Color") :
+            return SecondaryBackgroundColor()
+        case _ where name.isVariantOf("Header Text") :
+            return HeaderText()
+        case _ where name.isVariantOf("Body Text") :
+            return BodyText()
+        case _ where name.isVariantOf("Progress Bar") :
+            return ProgressBar()
+        case _ where name.isVariantOf("Default Button") :
+            return DefaultButton()
+        case _ where name.isVariantOf("Theme Title") :
+            return ThemeTitle()
+        case _ where name.isVariantOf("Theme Image") :
+            return ThemeImage()
+        default :
+            return nil
+        }
     }
 }

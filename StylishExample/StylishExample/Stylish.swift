@@ -10,71 +10,119 @@ import Foundation
 import UIKit
 
 
-// MARK: - Style -
+// MARK: - =? Operator -
 
-struct Style {
-    private var properties = [String:Any]()
-    
-    mutating func set<T:StyleProperty>(property:T.Type, to:T.ValueType) {
-        properties[String(T)] = property.self.init(value:to)
-    }
-    
-    func valueFor<T:StyleProperty>(property:T.Type)->T.ValueType? {
-        if let result = properties[String(T)] as? T {
-            return result.value
-        }
-        return nil
+infix operator =? { associativity right precedence 90 } // Optional assignment operator. Assigns the optional value on the right (if not nil) to the variable on the left. If the optional on the right is nil, then no action is performed
+
+func =?<T>(inout left:T, @autoclosure right:() -> T?) {
+    if let value = right() {
+        left = value
     }
 }
 
-func +(left:Style, right:Style) -> Style {
-    var newStyle = Style()
-    newStyle.properties = left.properties
-    for (key, value) in right.properties {
-        newStyle.properties.updateValue(value, forKey: key)
+func =?<T>(inout left:T!, @autoclosure right:() -> T?) {
+    if let value = right() {
+        left = value
     }
-    return newStyle
+}
+
+func =?<T>(inout left:T?, @autoclosure right:() -> T?) {
+    if let value = right() {
+        left = value
+    }
+}
+
+// MARK: - Style -
+
+protocol Style { }
+
+protocol MutableStyle : Style {
+    var properties:[String:Any] { get set }
+}
+
+extension MutableStyle {
+    mutating func setValue<T>(value:T, forStyle:String) {
+        properties[forStyle] = value
+    }
+}
+
+extension Style {
+    func getValue<T>(forStyle:String)->T? {
+        return (self as? MutableStyle)?.properties[forStyle] as? T
+    }
 }
 
 
 // MARK: - Styleable -
 
+typealias StyleApplicator = (Style, Any)->()
+
 protocol Styleable {
-    func applyStyle(style:Style)
+    static var StyleApplicators:[StyleApplicator] { get }
 }
+
+extension Styleable {
+    func applyStyle(style:Style) {
+        for applicator in Self.StyleApplicators {
+            applicator(style, self)
+        }
+    }
+}
+
 
 extension Styleable where Self:UIView {
     
     func parseAndApplyStyles(styles:String, usingTheme themeName:String) {
-        var theme:Theme.Type? = themeName == "" ? Stylish.DefaultTheme.self : nil
-        print(theme)
-        if let moduleName = _stdlib_getDemangledTypeName(Stylish.BundleMarker()).componentsSeparatedByString(".").first where theme == nil {
-            theme = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type
-        }
-        let components = styles.stringByReplacingOccurrencesOfString(" ", withString: "").componentsSeparatedByString(",")
-        var composedStyle = Style()
-        for string in components where string != "" {
-            if let style = theme?.styleNamed(string) {
-                composedStyle = composedStyle + style
+        let components = styles.stringByReplacingOccurrencesOfString(", ", withString: ",").stringByReplacingOccurrencesOfString(" ,", withString: ",").componentsSeparatedByString(",")
+        
+        if let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
+            let theme = themeType.init()
+            for string in components where string != "" {
+                if let style = theme[string] {
+                    self.applyStyle(style)
+                }
             }
         }
-        self.applyStyle(composedStyle)
+        else {
+            if let info = NSBundle(forClass:BundleMarker.self).infoDictionary, let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, themeName = info["Theme"] as? String, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
+                let theme = themeType.init()
+                for string in components where string != "" {
+                    if let style = theme[string] {
+                        self.applyStyle(style)
+                    }
+                }
+            }
+        }
     }
     
     func showErrorIfInvalidStyles(styles:String, usingTheme themeName:String) {
-        var theme:Theme.Type? = themeName == "" ? Stylish.DefaultTheme.self : nil
-        if let moduleName = _stdlib_getDemangledTypeName(Stylish.BundleMarker()).componentsSeparatedByString(".").first where theme == nil {
-            theme = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type
-        }
+        let components = styles.stringByReplacingOccurrencesOfString(", ", withString: ",").stringByReplacingOccurrencesOfString(" ,", withString: ",").componentsSeparatedByString(",")
+        
         var invalidStyle = false
         for subview in subviews {
             if subview.tag == Stylish.ErrorViewTag {
                 subview.removeFromSuperview()
             }
         }
-        let components = styles.stringByReplacingOccurrencesOfString(" ", withString: "").componentsSeparatedByString(",")
-        for string in components where string != "" {
-            if theme?.styleNamed(string) == nil {
+        
+        if let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
+            let theme = themeType.init()
+            for string in components where string != "" {
+                if theme[string] == nil {
+                    invalidStyle = true
+                }
+            }
+        }
+        else {
+            if let info = NSBundle(forClass:BundleMarker.self).infoDictionary, let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, themeName = info["Theme"] as? String, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
+                let theme = themeType.init()
+                for string in components where string != "" {
+                    if theme[string] == nil {
+                        invalidStyle = true
+                    }
+                }
+            }
+            else {
                 invalidStyle = true
             }
         }
@@ -89,36 +137,37 @@ extension Styleable where Self:UIView {
 
 // MARK: - Theme -
 
-protocol Theme {
-    static func styleNamed(name:String)->Style?
+protocol Theme : class {
+    func styleNamed(name:String)->Style?
+    init()
 }
 
-struct Stylish {
-    
-    private class BundleMarker {}
-    
-    struct DefaultTheme : Theme {
-        static func styleNamed(name:String)->Style? {
-            if let info = NSBundle(forClass:Stylish.BundleMarker.self).infoDictionary, let moduleName = _stdlib_getDemangledTypeName(Stylish.BundleMarker()).componentsSeparatedByString(".").first, themeName = info["Theme"] as? String, let theme = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
-                return theme.styleNamed(name)
-            }
-            return nil
+extension Theme {
+    subscript(styleName:String)->Style? {
+        get {
+            return styleNamed(styleName)
         }
     }
 }
 
-// MARK: - Style Property -
-
-protocol StyleProperty {
-    typealias ValueType
-    var value:ValueType { get }
-    init(value:ValueType)
+extension String {
+    func isVariantOf(string:String) -> Bool {
+        let components = string.componentsSeparatedByString(" ")
+        return self == string  //"Example Test String"
+            || self == string.lowercaseString //"example test string"
+            || self == string.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "") //"exampleteststring"
+            || self == string.stringByReplacingOccurrencesOfString(" ", withString: "") //"ExampleTestString"
+            || self == string.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "-") //"example-test-string
+            || self == (components.count > 1 ? components.first!.lowercaseString + components[1..<components.count].flatMap{$0.capitalizedString}.joinWithSeparator("") : string) //"exampleTestString"
+    }
 }
+
+private class BundleMarker {}
 
 
 // MARK: - Stylish Error View -
 
-extension Stylish {
+struct Stylish {
     private static let ErrorViewTag = 7331
     
     class ErrorView:UIKit.UIView {
@@ -152,120 +201,59 @@ extension Stylish {
 
 // MARK: UIView
 
-extension Stylish {
-    
-    struct UIView {
-        
-        static func ApplyStyle(style:Style, toView view:UIKit.UIView) {
-            view.backgroundColor = style.valueFor(Stylish.UIView.BackgroundColor) ?? view.backgroundColor
-            view.contentMode = style.valueFor(Stylish.UIView.ContentMode) ?? view.contentMode
-            view.userInteractionEnabled = style.valueFor(Stylish.UIView.UserInteractionEnabled) ?? view.userInteractionEnabled
-            view.hidden = style.valueFor(Stylish.UIView.Hidden) ?? view.hidden
-            view.layer.borderColor = style.valueFor(Stylish.UIView.BorderColor)?.CGColor ?? view.layer.backgroundColor
-            view.layer.borderWidth = style.valueFor(Stylish.UIView.BorderWidth) ?? view.layer.borderWidth
-            if let percentage = style.valueFor(Stylish.UIView.CornerRadiusPercentage) {
-                view.layer.cornerRadius = view.bounds.height * percentage
-            }
-            view.layer.cornerRadius = style.valueFor(Stylish.UIView.CornerRadius) ?? view.layer.cornerRadius
-            view.alpha = style.valueFor(Stylish.UIView.Alpha) ?? view.alpha
-            view.tintColor = style.valueFor(Stylish.UIView.TintColor) ?? view.tintColor
-            view.layoutMargins = style.valueFor(Stylish.UIView.LayoutMargins) ?? view.layoutMargins
-            if let customStyleBlock = style.valueFor(Stylish.UIView.CustomStyleBlock) {
-                customStyleBlock(view)
-            }
-        }
-        
-        static var CustomStyleBlock:Properties.CustomStyleBlock.Type { get { return Properties.CustomStyleBlock.self } }
-        static var BackgroundColor:Properties.BackgroundColor.Type { get { return Properties.BackgroundColor.self } }
-        static var ContentMode:Properties.ContentMode.Type { get { return Properties.ContentMode.self } }
-        static var UserInteractionEnabled:Properties.UserInteractionEnabled.Type { get { return Properties.UserInteractionEnabled.self } }
-        static var Hidden:Properties.Hidden.Type { get { return Properties.Hidden.self } }
-        static var BorderColor:Properties.BorderColor.Type { get { return Properties.BorderColor.self } }
-        static var BorderWidth:Properties.BorderWidth.Type { get { return Properties.BorderWidth.self } }
-        static var CornerRadius:Properties.CornerRadius.Type { get { return Properties.CornerRadius.self } }
-        static var CornerRadiusPercentage:Properties.CornerRadiusPercentage.Type { get { return Properties.CornerRadiusPercentage.self } }
-        static var Alpha:Properties.Alpha.Type { get { return Properties.Alpha.self } }
-        static var LayoutMargins:Properties.LayoutMargins.Type { get { return Properties.LayoutMargins.self } }
-        static var TintColor:Properties.TintColor.Type { get { return Properties.TintColor.self } }
-        
-        struct Properties {
-            struct CustomStyleBlock:StyleProperty {
-                let value:UIKit.UIView->()
-                init(value:UIKit.UIView->()) {
-                    self.value = value
-                }
-            }
-            struct BackgroundColor:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct ContentMode:StyleProperty {
-                let value:UIViewContentMode
-                init(value:UIViewContentMode) {
-                    self.value = value
-                }
-            }
-            struct UserInteractionEnabled:StyleProperty {
-                let value:Bool
-                init(value:Bool) {
-                    self.value = value
-                }
-            }
-            struct Hidden:StyleProperty {
-                let value:Bool
-                init(value:Bool) {
-                    self.value = value
-                }
-            }
-            struct BorderColor:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct BorderWidth:StyleProperty {
-                let value:CGFloat
-                init(value:CGFloat) {
-                    self.value = value
-                }
-            }
-            struct CornerRadius:StyleProperty {
-                let value:CGFloat
-                init(value:CGFloat) {
-                    self.value = value
-                }
-            }
-            struct CornerRadiusPercentage:StyleProperty {
-                let value:CGFloat
-                init(value:CGFloat) {
-                    self.value = value
-                }
-            }
-            struct Alpha:StyleProperty {
-                let value:CGFloat
-                init(value:CGFloat) {
-                    self.value = value
-                }
-            }
-            struct TintColor:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct LayoutMargins:StyleProperty {
-                let value:UIEdgeInsets
-                init(value:UIEdgeInsets) {
-                    self.value = value
-                }
-            }
-        }
-    }
+
+extension Style {
+    var backgroundColor:UIColor? { get { return getValue(#function) } }
+    var contentMode:UIViewContentMode? { get { return getValue(#function) } }
+    var userInteractionEnabled:Bool? { get { return getValue(#function) } }
+    var hidden:Bool? { get { return getValue(#function) } }
+    var borderColor:UIColor? { get { return getValue(#function) } }
+    var borderWidth:CGFloat? { get { return getValue(#function) } }
+    var cornerRadius:CGFloat? { get { return getValue(#function) } }
+    var cornerRadiusPercentage:CGFloat? { get { return getValue(#function) } }
+    var alpha:CGFloat? { get { return getValue(#function) } }
+    var layoutMargins:UIEdgeInsets? { get { return getValue(#function) } }
+    var tintColor:UIColor? { get { return getValue(#function) } }
+    var customUIViewStyleBlock:(UIView->())? { get { return getValue(#function) } }
 }
 
+extension MutableStyle {
+    var backgroundColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var contentMode:UIViewContentMode? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var userInteractionEnabled:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var hidden:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var borderColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var borderWidth:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var cornerRadius:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var cornerRadiusPercentage:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var alpha:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var layoutMargins:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var tintColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var customUIViewStyleBlock:(UIView->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+}
+
+
 @IBDesignable class StyleableUIView : UIView, Styleable {
+    
+    class var StyleApplicators:[StyleApplicator] {
+        return [{
+            (style:Style, target:Any) in
+            if let view = target as? UIView {
+                view.backgroundColor =? style.backgroundColor
+                view.contentMode =? style.contentMode
+                view.userInteractionEnabled =? style.userInteractionEnabled
+                view.hidden =? style.hidden
+                view.layer.borderColor =? style.borderColor?.CGColor
+                view.layer.borderWidth =? style.borderWidth
+                if let percentage = style.cornerRadiusPercentage { view.layer.cornerRadius = percentage * view.bounds.height }
+                view.layer.cornerRadius =? style.cornerRadius
+                view.alpha =? style.alpha
+                view.tintColor =? style.tintColor
+                view.layoutMargins =? style.layoutMargins
+                if let customBlock = style.customUIViewStyleBlock { customBlock(view) }
+            }
+        }]
+    }
     
     @IBInspectable var styles:String! = "" {
         didSet {
@@ -281,98 +269,52 @@ extension Stylish {
     
     override func prepareForInterfaceBuilder() {
         showErrorIfInvalidStyles(styles, usingTheme: theme)
-    }
-    
-    func applyStyle(style: Style) {
-        Stylish.UIView.ApplyStyle(style, toView: self)
     }
 }
 
 
 // MARK: UILabel
 
-extension Stylish {
-    
-    struct UILabel {
-        
-        static func ApplyStyle(style:Style, toLabel label:UIKit.UILabel) {
-            Stylish.UIView.ApplyStyle(style, toView:label)
-            label.textColor = style.valueFor(Stylish.UILabel.TextColor) ?? label.textColor
-            label.font = style.valueFor(Stylish.UILabel.Font) ?? label.font
-            label.enabled = style.valueFor(Stylish.UILabel.Enabled) ?? label.enabled
-            label.textAlignment = style.valueFor(Stylish.UILabel.TextAlignment) ?? label.textAlignment
-            label.text = style.valueFor(Stylish.UILabel.Text) ?? label.text
-            label.highlighted = style.valueFor(Stylish.UILabel.Highlighted) ?? label.highlighted
-            label.highlightedTextColor = style.valueFor(Stylish.UILabel.HighlightedTextColor) ?? label.highlightedTextColor
-            if let customStyleBlock = style.valueFor(Stylish.UILabel.CustomStyleBlock) {
-                customStyleBlock(label)
-            }
-        }
-        
-        static var CustomStyleBlock:Properties.CustomStyleBlock.Type { get { return Properties.CustomStyleBlock.self } }
-        static var TextColor:Properties.TextColor.Type { get { return Properties.TextColor.self } }
-        static var Font:Properties.Font.Type { get { return Properties.Font.self } }
-        static var Enabled:Properties.Enabled.Type { get { return Properties.Enabled.self } }
-        static var TextAlignment:Properties.TextAlignment.Type { get { return Properties.TextAlignment.self } }
-        static var Text:Properties.Text.Type { get { return Properties.Text.self } }
-        static var Highlighted:Properties.Highlighted.Type { get { return Properties.Highlighted.self } }
-        static var HighlightedTextColor:Properties.HighlightedTextColor.Type { get { return Properties.HighlightedTextColor.self } }
-        
-        struct Properties {
-            struct CustomStyleBlock:StyleProperty {
-                let value:UIKit.UILabel->()
-                init(value:UIKit.UILabel->()) {
-                    self.value = value
-                }
-            }
-            struct TextColor:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct Font:StyleProperty {
-                let value:UIFont
-                init(value:UIFont) {
-                    self.value = value
-                }
-            }
-            struct Enabled:StyleProperty {
-                let value:Bool
-                init(value:Bool) {
-                    self.value = value
-                }
-            }
-            struct TextAlignment:StyleProperty {
-                let value:NSTextAlignment
-                init(value:NSTextAlignment) {
-                    self.value = value
-                }
-            }
-            struct Text:StyleProperty {
-                let value:String
-                init(value:String) {
-                    self.value = value
-                }
-            }
-            struct Highlighted:StyleProperty {
-                let value:Bool
-                init(value:Bool) {
-                    self.value = value
-                }
-            }
-            struct HighlightedTextColor:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-        }
-    }
+
+extension Style {
+    var textColor:UIColor? { get { return getValue(#function) } }
+    var font:UIFont? { get { return getValue(#function) } }
+    var enabled:Bool? { get { return getValue(#function) } }
+    var textAlignment:NSTextAlignment? { get { return getValue(#function) } }
+    var text:String? { get { return getValue(#function) } }
+    var highlighted:Bool? { get { return getValue(#function) } }
+    var highlightedTextColor:UIColor? { get { return getValue(#function) } }
+    var customUILabelStyleBlock:(UIView->())? { get { return getValue(#function) } }
 }
 
+extension MutableStyle {
+    var textColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var font:UIFont? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var enabled:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var textAlignment:NSTextAlignment? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var text:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var highlighted:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var highlightedTextColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var customUILabelStyleBlock:(UIView->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+}
 
 @IBDesignable class StyleableUILabel : UILabel, Styleable {
+    
+    class var StyleApplicators: [StyleApplicator] {
+        return StyleableUIView.StyleApplicators + [{
+            (style:Style, target:Any) in
+            if let label = target as? UILabel {
+                label.textColor =? style.textColor
+                label.font =? style.font
+                label.enabled =? style.enabled
+                label.textAlignment =? style.textAlignment
+                label.text =? style.text
+                label.highlighted =? style.highlighted
+                label.highlightedTextColor =? style.highlightedTextColor
+                if let customStyleBlock = style.customUILabelStyleBlock { customStyleBlock(label) }
+            }
+        }]
+    }
     
     @IBInspectable var styles:String! = "" {
         didSet {
@@ -388,161 +330,75 @@ extension Stylish {
     
     override func prepareForInterfaceBuilder() {
         showErrorIfInvalidStyles(styles, usingTheme: theme)
-    }
-    
-    func applyStyle(style: Style) {
-        Stylish.UILabel.ApplyStyle(style, toLabel: self)
     }
 }
 
 
 // MARK: UIButton
 
-extension Stylish {
-    
-    struct UIButton {
-        
-        static func ApplyStyle(style:Style, toButton button:UIKit.UIButton) {
-            Stylish.UIView.ApplyStyle(style, toView:button)
-            button.contentEdgeInsets = style.valueFor(Stylish.UIButton.ContentEdgeInsets) ?? button.contentEdgeInsets
-            button.titleEdgeInsets = style.valueFor(Stylish.UIButton.TitleEdgeInsets) ?? button.titleEdgeInsets
-            button.imageEdgeInsets = style.valueFor(Stylish.UIButton.ImageEdgeInsets) ?? button.imageEdgeInsets
-            button.setTitle(style.valueFor(Stylish.UIButton.TitleForNormalState) ?? button.titleForState(.Normal), forState: .Normal)
-            button.setTitle(style.valueFor(Stylish.UIButton.TitleForHighlightedState) ?? button.titleForState(.Highlighted), forState: .Highlighted)
-            button.setTitle(style.valueFor(Stylish.UIButton.TitleForDisabledState) ?? button.titleForState(.Disabled), forState: .Disabled)
-            button.setTitleColor(style.valueFor(Stylish.UIButton.TitleColorForNormalState) ?? button.titleColorForState(.Normal), forState: .Normal)
-            button.setTitleColor(style.valueFor(Stylish.UIButton.TitleColorForHighlightedState) ?? button.titleColorForState(.Highlighted), forState: .Highlighted)
-            button.setTitleColor(style.valueFor(Stylish.UIButton.TitleColorForDisabledState) ?? button.titleColorForState(.Disabled), forState: .Disabled)
-            button.setImage(style.valueFor(Stylish.UIButton.ImageForNormalState) ?? button.imageForState(.Normal), forState: .Normal)
-            button.setImage(style.valueFor(Stylish.UIButton.ImageForHighlightedState) ?? button.imageForState(.Highlighted), forState: .Highlighted)
-            button.setImage(style.valueFor(Stylish.UIButton.ImageForDisabledState) ?? button.imageForState(.Disabled), forState: .Disabled)
-            button.setBackgroundImage(style.valueFor(Stylish.UIButton.BackgroundImageForNormalState) ?? button.backgroundImageForState(.Normal), forState: .Normal)
-            button.setBackgroundImage(style.valueFor(Stylish.UIButton.BackgroundImageForHighlightedState) ?? button.backgroundImageForState(.Highlighted), forState: .Highlighted)
-            button.setBackgroundImage(style.valueFor(Stylish.UIButton.BackgroundImageForDisabledState) ?? button.backgroundImageForState(.Disabled), forState: .Disabled)
-            if let customStyleBlock = style.valueFor(Stylish.UIButton.CustomStyleBlock) {
-                customStyleBlock(button)
-            }
-        }
-        
-        static var CustomStyleBlock:Properties.CustomStyleBlock.Type { get { return Properties.CustomStyleBlock.self } }
-        static var ContentEdgeInsets:Properties.ContentEdgeInsets.Type { get { return Properties.ContentEdgeInsets.self } }
-        static var TitleEdgeInsets:Properties.TitleEdgeInsets.Type { get { return Properties.TitleEdgeInsets.self } }
-        static var ImageEdgeInsets:Properties.ImageEdgeInsets.Type { get { return Properties.ImageEdgeInsets.self } }
-        static var TitleForNormalState:Properties.TitleForNormalState.Type { get { return Properties.TitleForNormalState.self } }
-        static var TitleForHighlightedState:Properties.TitleForHighlightedState.Type { get { return Properties.TitleForHighlightedState.self } }
-        static var TitleForDisabledState:Properties.TitleForDisabledState.Type { get { return Properties.TitleForDisabledState.self } }
-        static var TitleColorForNormalState:Properties.TitleColorForNormalState.Type { get { return Properties.TitleColorForNormalState.self } }
-        static var TitleColorForHighlightedState:Properties.TitleColorForHighlightedState.Type { get { return Properties.TitleColorForHighlightedState.self } }
-        static var TitleColorForDisabledState:Properties.TitleColorForDisabledState.Type { get { return Properties.TitleColorForDisabledState.self } }
-        static var ImageForNormalState:Properties.ImageForNormalState.Type { get { return Properties.ImageForNormalState.self } }
-        static var ImageForHighlightedState:Properties.ImageForHighlightedState.Type { get { return Properties.ImageForHighlightedState.self } }
-        static var ImageForDisabledState:Properties.ImageForDisabledState.Type { get { return Properties.ImageForDisabledState.self } }
-        static var BackgroundImageForNormalState:Properties.BackgroundImageForNormalState.Type { get { return Properties.BackgroundImageForNormalState.self } }
-        static var BackgroundImageForHighlightedState:Properties.BackgroundImageForHighlightedState.Type { get { return Properties.BackgroundImageForHighlightedState.self } }
-        static var BackgroundImageForDisabledState:Properties.BackgroundImageForDisabledState.Type { get { return Properties.BackgroundImageForDisabledState.self } }
-        
-        struct Properties {
-            struct CustomStyleBlock:StyleProperty {
-                let value:UIKit.UIButton->()
-                init(value:UIKit.UIButton->()) {
-                    self.value = value
-                }
-            }
-            struct ContentEdgeInsets:StyleProperty {
-                let value:UIEdgeInsets
-                init(value:UIEdgeInsets) {
-                    self.value = value
-                }
-            }
-            struct TitleEdgeInsets:StyleProperty {
-                let value:UIEdgeInsets
-                init(value:UIEdgeInsets) {
-                    self.value = value
-                }
-            }
-            struct ImageEdgeInsets:StyleProperty {
-                let value:UIEdgeInsets
-                init(value:UIEdgeInsets) {
-                    self.value = value
-                }
-            }
-            struct TitleForNormalState:StyleProperty {
-                let value:String
-                init(value:String) {
-                    self.value = value
-                }
-            }
-            struct TitleForHighlightedState:StyleProperty {
-                let value:String
-                init(value:String) {
-                    self.value = value
-                }
-            }
-            struct TitleForDisabledState:StyleProperty {
-                let value:String
-                init(value:String) {
-                    self.value = value
-                }
-            }
-            struct TitleColorForNormalState:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct TitleColorForHighlightedState:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct TitleColorForDisabledState:StyleProperty {
-                let value:UIColor
-                init(value:UIColor) {
-                    self.value = value
-                }
-            }
-            struct ImageForNormalState:StyleProperty {
-                let value:UIImage
-                init(value:UIImage) {
-                    self.value = value
-                }
-            }
-            struct ImageForHighlightedState:StyleProperty {
-                let value:UIImage
-                init(value:UIImage) {
-                    self.value = value
-                }
-            }
-            struct ImageForDisabledState:StyleProperty {
-                let value:UIImage
-                init(value:UIImage) {
-                    self.value = value
-                }
-            }
-            struct BackgroundImageForNormalState:StyleProperty {
-                let value:UIImage
-                init(value:UIImage) {
-                    self.value = value
-                }
-            }
-            struct BackgroundImageForHighlightedState:StyleProperty {
-                let value:UIImage
-                init(value:UIImage) {
-                    self.value = value
-                }
-            }
-            struct BackgroundImageForDisabledState:StyleProperty {
-                let value:UIImage
-                init(value:UIImage) {
-                    self.value = value
-                }
-            }
-        }
-    }
+extension Style {
+    var contentEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } }
+    var titleEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } }
+    var imageEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } }
+    var titleForNormalState:String? { get { return getValue(#function) } }
+    var titleForHighlightedState:String? { get { return getValue(#function) } }
+    var titleForDisabledState:String? { get { return getValue(#function) } }
+    var titleColorForNormalState:UIColor? { get { return getValue(#function) } }
+    var titleColorForHighlightedState:UIColor? { get { return getValue(#function) } }
+    var titleColorForDisabledState:UIColor? { get { return getValue(#function) } }
+    var imageForNormalState:UIImage? { get { return getValue(#function) } }
+    var imageForHighlightedState:UIImage? { get { return getValue(#function) } }
+    var imageForDisabledState:UIImage? { get { return getValue(#function) } }
+    var backgroundImageForNormalState:UIImage? { get { return getValue(#function) } }
+    var backgroundImageForHighlightedState:UIImage? { get { return getValue(#function) } }
+    var backgroundImageForDisabledState:UIImage? { get { return getValue(#function) } }
+    var customUIButtonStyleBlock:(UIButton->())? { get { return getValue(#function) } }
+}
+
+extension MutableStyle {
+    var contentEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var titleEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var imageEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var titleForNormalState:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var titleForHighlightedState:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var titleForDisabledState:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var titleColorForNormalState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var titleColorForHighlightedState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var titleColorForDisabledState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var imageForNormalState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var imageForHighlightedState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var imageForDisabledState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var backgroundImageForNormalState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var backgroundImageForHighlightedState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var backgroundImageForDisabledState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var customUIButtonStyleBlock:(UIButton->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
 }
 
 @IBDesignable class StyleableUIButton : UIButton, Styleable {
+    
+    class var StyleApplicators: [StyleApplicator] {
+        return StyleableUIView.StyleApplicators + [{
+            (style:Style, target:Any) in
+            if let button = target as? UIButton {
+                button.contentEdgeInsets =? style.contentEdgeInsets
+                button.titleEdgeInsets =? style.titleEdgeInsets
+                button.imageEdgeInsets =? style.imageEdgeInsets
+                if let title = style.titleForNormalState { button.setTitle(title, forState:.Normal) }
+                if let title = style.titleForHighlightedState { button.setTitle(title, forState:.Highlighted) }
+                if let title = style.titleForDisabledState { button.setTitle(title, forState:.Disabled) }
+                if let titleColor = style.titleColorForNormalState { button.setTitleColor(titleColor, forState:.Normal) }
+                if let titleColor = style.titleColorForHighlightedState { button.setTitleColor(titleColor, forState:.Highlighted) }
+                if let titleColor = style.titleColorForDisabledState { button.setTitleColor(titleColor, forState:.Disabled) }
+                if let image = style.imageForNormalState { button.setImage(image, forState:.Normal) }
+                if let image = style.imageForHighlightedState { button.setImage(image, forState:.Highlighted) }
+                if let image = style.imageForDisabledState { button.setImage(image, forState:.Disabled) }
+                if let backgroundImage = style.backgroundImageForNormalState { button.setBackgroundImage(backgroundImage, forState:.Normal) }
+                if let backgroundImage = style.backgroundImageForHighlightedState { button.setBackgroundImage(backgroundImage, forState:.Highlighted) }
+                if let backgroundImage = style.backgroundImageForDisabledState { button.setBackgroundImage(backgroundImage, forState:.Disabled) }
+                if let customStyleBlock = style.customUIButtonStyleBlock { customStyleBlock(button) }
+            }
+        }]
+    }
     
     @IBInspectable var styles:String! = "" {
         didSet {
@@ -558,49 +414,33 @@ extension Stylish {
     
     override func prepareForInterfaceBuilder() {
         showErrorIfInvalidStyles(styles, usingTheme: theme)
-    }
-    
-    func applyStyle(style: Style) {
-        Stylish.UIButton.ApplyStyle(style, toButton: self)
     }
 }
 
 // MARK: UIImageView
 
-extension Stylish {
-    
-    struct UIImageView {
-        
-        static func ApplyStyle(style:Style, toImageView imageView:UIKit.UIImageView) {
-            Stylish.UIView.ApplyStyle(style, toView:imageView)
-            imageView.image = style.valueFor(Stylish.UIImageView.Image) ?? imageView.image
-            if let customStyleBlock = style.valueFor(Stylish.UIImageView.CustomStyleBlock) {
-                customStyleBlock(imageView)
-            }
-        }
-        
-        static var CustomStyleBlock:Properties.CustomStyleBlock.Type { get { return Properties.CustomStyleBlock.self } }
-        static var Image:Properties.Image.Type { get { return Properties.Image.self } }
-        
-        struct Properties {
-            struct CustomStyleBlock:StyleProperty {
-                let value:UIKit.UIImageView->()
-                init(value:UIKit.UIImageView->()) {
-                    self.value = value
-                }
-            }
-            struct Image:StyleProperty {
-                let value:UIImage
-                init(value:UIImage) {
-                    self.value = value
-                }
-            }
-        }
-    }
+
+extension Style {
+    var image:UIImage? { get { return getValue(#function) } }
+    var customUIImageViewStyleBlock:(UIImageView->())? { get { return getValue(#function) } }
 }
 
+extension MutableStyle {
+    var image:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+    var customUIImageViewStyleBlock:(UIImageView->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+}
 
 @IBDesignable class StyleableUIImageView : UIImageView, Styleable {
+    
+    class var StyleApplicators: [StyleApplicator] {
+        return StyleableUIView.StyleApplicators + [{
+            (style:Style, target:Any) in
+            if let imageView = target as? UIImageView {
+                imageView.image =? style.image
+                if let customStyleBlock = style.customUIImageViewStyleBlock { customStyleBlock(imageView) }
+            }
+        }]
+    }
     
     @IBInspectable var styles:String! = "" {
         didSet {
@@ -616,10 +456,6 @@ extension Stylish {
     
     override func prepareForInterfaceBuilder() {
         showErrorIfInvalidStyles(styles, usingTheme: theme)
-    }
-    
-    func applyStyle(style: Style) {
-        Stylish.UIImageView.ApplyStyle(style, toImageView: self)
     }
 }
 

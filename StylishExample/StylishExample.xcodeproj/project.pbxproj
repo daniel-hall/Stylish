@@ -496,6 +496,7 @@
 				CEFD1B201C9FC465008D762D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CEFD1B211C9FC465008D762D /* Build configuration list for PBXNativeTarget "StylishExampleTests" */ = {
 			isa = XCConfigurationList;
@@ -504,6 +505,7 @@
 				CEFD1B231C9FC465008D762D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CEFD1B241C9FC465008D762D /* Build configuration list for PBXNativeTarget "StylishExampleUITests" */ = {
 			isa = XCConfigurationList;
@@ -512,6 +514,7 @@
 				CEFD1B261C9FC465008D762D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
