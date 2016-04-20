@@ -9,23 +9,23 @@
 import Foundation
 import UIKit
 
-class Graphite : Theme {
+class Graphite : Stylesheet {
     
-    struct PrimaryBackgroundColor : MutableStyle {
+    struct PrimaryBackgroundColor : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             backgroundColor = UIColor(white: 0.9, alpha: 1.0)
         }
     }
     
-    struct SecondaryBackgroundColor : MutableStyle {
+    struct SecondaryBackgroundColor : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             backgroundColor = UIColor(white: 0.75, alpha: 1.0)
         }
     }
     
-    struct HeaderText : MutableStyle {
+    struct HeaderText : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             font = UIFont.systemFontOfSize(20.0)
@@ -34,7 +34,7 @@ class Graphite : Theme {
         }
     }
     
-    struct BodyText : MutableStyle {
+    struct BodyText : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             font = UIFont.systemFontOfSize(16.0)
@@ -43,7 +43,7 @@ class Graphite : Theme {
         }
     }
     
-    struct ProgressBar : MutableStyle {
+    struct ProgressBar : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             progressColor = UIColor.grayColor()
@@ -55,7 +55,7 @@ class Graphite : Theme {
         }
     }
     
-    struct DefaultButton : MutableStyle {
+    struct DefaultButton : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             titleColorForNormalState = UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0)
@@ -67,14 +67,14 @@ class Graphite : Theme {
         }
     }
     
-    struct ThemeTitle : MutableStyle {
+    struct StylesheetTitle : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             text = "Graphite"
         }
     }
     
-    struct ThemeImage : MutableStyle {
+    struct ThemeImage : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             let bundle = NSBundle(forClass: Aqua.self)
@@ -83,28 +83,10 @@ class Graphite : Theme {
     }
     
     
-    required init() {}
+    let styleClasses:[(identifier:String, styleClass:StyleClass)]
     
-    func styleNamed(name: String) -> Style? {
-        switch name {
-        case _ where name.isVariantOf("Primary Background Color") :
-            return PrimaryBackgroundColor()
-        case _ where name.isVariantOf("Secondary Background Color") :
-            return SecondaryBackgroundColor()
-        case _ where name.isVariantOf("Header Text") :
-            return HeaderText()
-        case _ where name.isVariantOf("Body Text") :
-            return BodyText()
-        case _ where name.isVariantOf("Progress Bar") :
-            return ProgressBar()
-        case _ where name.isVariantOf("Default Button") :
-            return DefaultButton()
-        case _ where name.isVariantOf("Theme Title") :
-            return ThemeTitle()
-        case _ where name.isVariantOf("Theme Image") :
-            return ThemeImage()
-        default :
-            return nil
-        }
+    required init() {
+        styleClasses = [("Primary Background Color", PrimaryBackgroundColor()), ("Secondary Background Color", SecondaryBackgroundColor()), ("Header Text", HeaderText()), ("Body Text", BodyText()), ("Progress Bar", ProgressBar()), ("Default Button", DefaultButton()), ("Stylesheet Title", StylesheetTitle()), ("Theme Image", ThemeImage())]
     }
+    
 }

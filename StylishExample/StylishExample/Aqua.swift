@@ -9,23 +9,23 @@
 import Foundation
 import UIKit
 
-class Aqua : Theme {
+class Aqua : Stylesheet {
     
-    struct PrimaryBackgroundColor : MutableStyle {
+    struct PrimaryBackgroundColor : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             backgroundColor = UIColor(red:0.18, green:0.51, blue:0.72, alpha:1.0)
         }
     }
     
-    struct SecondaryBackgroundColor : MutableStyle {
+    struct SecondaryBackgroundColor : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             backgroundColor = UIColor(red:0.23, green:0.60, blue:0.85, alpha:1.0)
         }
     }
     
-    struct HeaderText : MutableStyle {
+    struct HeaderText : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             font = UIFont(name: "Futura-Medium", size: 20.0)!
@@ -34,7 +34,7 @@ class Aqua : Theme {
         }
     }
     
-    struct BodyText : MutableStyle {
+    struct BodyText : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             font = UIFont(name: "Futura-Medium", size: 16.0)!
@@ -43,7 +43,7 @@ class Aqua : Theme {
         }
     }
     
-    struct ProgressBar : MutableStyle {
+    struct ProgressBar : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             let context = CIContext()
@@ -60,7 +60,7 @@ class Aqua : Theme {
         }
     }
     
-    struct DefaultButton : MutableStyle {
+    struct DefaultButton : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             backgroundColor = UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0)
@@ -70,14 +70,14 @@ class Aqua : Theme {
         }
     }
     
-    struct ThemeTitle : MutableStyle {
+    struct StylesheetTitle : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             text = "Aqua"
         }
     }
     
-    struct ThemeImage : MutableStyle {
+    struct ThemeImage : MutableStyleClass {
         var properties = [String : Any]()
         init() {
             let bundle = NSBundle(forClass: Aqua.self)
@@ -86,28 +86,10 @@ class Aqua : Theme {
     }
     
 
-    required init() {}
-
-    func styleNamed(name: String) -> Style? {
-        switch name {
-        case _ where name.isVariantOf("Primary Background Color") :
-            return PrimaryBackgroundColor()
-        case _ where name.isVariantOf("Secondary Background Color") :
-            return SecondaryBackgroundColor()
-        case _ where name.isVariantOf("Header Text") :
-            return HeaderText()
-        case _ where name.isVariantOf("Body Text") :
-            return BodyText()
-        case _ where name.isVariantOf("Progress Bar") :
-            return ProgressBar()
-        case _ where name.isVariantOf("Default Button") :
-            return DefaultButton()
-        case _ where name.isVariantOf("Theme Title") :
-            return ThemeTitle()
-        case _ where name.isVariantOf("Theme Image") :
-            return ThemeImage()
-        default :
-            return nil
-        }
+    let styleClasses:[(identifier:String, styleClass:StyleClass)]
+    
+    required init() {
+        styleClasses = [("Primary Background Color", PrimaryBackgroundColor()), ("Secondary Background Color", SecondaryBackgroundColor()), ("Header Text", HeaderText()), ("Body Text", BodyText()), ("Progress Bar", ProgressBar()), ("Default Button", DefaultButton()), ("Stylesheet Title", StylesheetTitle()), ("Theme Image", ThemeImage())]
     }
+
 }

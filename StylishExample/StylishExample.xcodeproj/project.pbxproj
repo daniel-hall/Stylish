@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CED109E51CC74B5100D53716 /* JSONStylesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED109E41CC74B5100D53716 /* JSONStylesheet.swift */; };
+		CED109E71CC7571E00D53716 /* stylesheet.json in Resources */ = {isa = PBXBuildFile; fileRef = CED109E61CC7571E00D53716 /* stylesheet.json */; };
 		CEFD1AFA1C9FC465008D762D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFD1AF91C9FC465008D762D /* AppDelegate.swift */; };
 		CEFD1AFF1C9FC465008D762D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEFD1AFD1C9FC465008D762D /* Main.storyboard */; };
 		CEFD1B011C9FC465008D762D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEFD1B001C9FC465008D762D /* Assets.xcassets */; };
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CED109E41CC74B5100D53716 /* JSONStylesheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONStylesheet.swift; sourceTree = "<group>"; };
+		CED109E61CC7571E00D53716 /* stylesheet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = stylesheet.json; sourceTree = "<group>"; };
 		CEFD1AF61C9FC465008D762D /* StylishExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StylishExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEFD1AF91C9FC465008D762D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CEFD1AFE1C9FC465008D762D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -112,6 +116,8 @@
 				CEFD1B281C9FC492008D762D /* Aqua.swift */,
 				CEFD1B291C9FC492008D762D /* Graphite.swift */,
 				CEFD1B271C9FC492008D762D /* Stylish.swift */,
+				CED109E61CC7571E00D53716 /* stylesheet.json */,
+				CED109E41CC74B5100D53716 /* JSONStylesheet.swift */,
 			);
 			path = StylishExample;
 			sourceTree = "<group>";
@@ -239,6 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEFD1B041C9FC465008D762D /* LaunchScreen.storyboard in Resources */,
+				CED109E71CC7571E00D53716 /* stylesheet.json in Resources */,
 				CEFD1B011C9FC465008D762D /* Assets.xcassets in Resources */,
 				CEFD1AFF1C9FC465008D762D /* Main.storyboard in Resources */,
 			);
@@ -270,6 +277,7 @@
 				CEFD1B2C1C9FC492008D762D /* Aqua.swift in Sources */,
 				CEFD1B2E1C9FC492008D762D /* ProgressBar.swift in Sources */,
 				CEFD1AFA1C9FC465008D762D /* AppDelegate.swift in Sources */,
+				CED109E51CC74B5100D53716 /* JSONStylesheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

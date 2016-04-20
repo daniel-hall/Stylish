@@ -10,16 +10,16 @@ import Foundation
 import UIKit
 
 
-extension Style {
+extension StyleClass {
     var progressColor:UIColor? { get { return getValue(#function) } }
     var progressTrackColor:UIColor? { get { return getValue(#function) } }
     var progressCornerRadiusPercentage:CGFloat? { get { return getValue(#function) } }
 }
 
-extension MutableStyle {
-    var progressColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var progressTrackColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var progressCornerRadiusPercentage:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+extension MutableStyleClass {
+    var progressColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var progressTrackColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var progressCornerRadiusPercentage:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
 }
 
 
@@ -27,7 +27,7 @@ extension MutableStyle {
     
     class var StyleApplicators: [StyleApplicator] {
         return StyleableUIView.StyleApplicators + [{
-            (style:Style, target:Any) in
+            (style:StyleClass, target:Any) in
             if let progressBar = target as? ProgressBar {
                 progressBar.trackView.layer.cornerRadius = progressBar.layer.cornerRadius
                 progressBar.progressColor =? style.progressColor
@@ -42,13 +42,13 @@ extension MutableStyle {
     
     @IBInspectable var styles:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
-    @IBInspectable var theme:String! = "" {
+    @IBInspectable var stylesheet:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
@@ -109,7 +109,7 @@ extension MutableStyle {
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles, usingTheme: theme)
+        showErrorIfInvalidStyles()
     }
 }
 

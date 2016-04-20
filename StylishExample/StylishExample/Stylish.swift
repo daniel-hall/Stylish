@@ -32,37 +32,39 @@ func =?<T>(inout left:T?, @autoclosure right:() -> T?) {
     }
 }
 
-// MARK: - Style -
+// MARK: - StyleClass -
 
-protocol Style { }
+protocol StyleClass { }
 
-protocol MutableStyle : Style {
+protocol MutableStyleClass : StyleClass {
     var properties:[String:Any] { get set }
 }
 
-extension MutableStyle {
-    mutating func setValue<T>(value:T, forStyle:String) {
-        properties[forStyle] = value
+extension MutableStyleClass {
+    mutating func setValue<T>(value:T, forProperty:String) {
+        properties[forProperty] = value
     }
 }
 
-extension Style {
-    func getValue<T>(forStyle:String)->T? {
-        return (self as? MutableStyle)?.properties[forStyle] as? T
+extension StyleClass {
+    func getValue<T>(forProperty:String)->T? {
+        return (self as? MutableStyleClass)?.properties[forProperty] as? T
     }
 }
 
 
 // MARK: - Styleable -
 
-typealias StyleApplicator = (Style, Any)->()
+typealias StyleApplicator = (StyleClass, Any)->()
 
 protocol Styleable {
     static var StyleApplicators:[StyleApplicator] { get }
+    var styles:String { get set }
+    var stylesheet:String { get set }
 }
 
 extension Styleable {
-    func applyStyle(style:Style) {
+    func applyStyle(style:StyleClass) {
         for applicator in Self.StyleApplicators {
             applicator(style, self)
         }
@@ -72,22 +74,26 @@ extension Styleable {
 
 extension Styleable where Self:UIView {
     
-    func parseAndApplyStyles(styles:String, usingTheme themeName:String) {
+    func parseAndApplyStyles() {
+        parseAndApplyStyles(styles, usingStylesheet: stylesheet)
+    }
+    
+    func parseAndApplyStyles(styles:String, usingStylesheet stylesheetName:String) {
         let components = styles.stringByReplacingOccurrencesOfString(", ", withString: ",").stringByReplacingOccurrencesOfString(" ,", withString: ",").componentsSeparatedByString(",")
         
-        if let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
-            let theme = themeType.init()
+        if let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+            let stylesheet = stylesheetType.init()
             for string in components where string != "" {
-                if let style = theme[string] {
+                if let style = stylesheet[string] {
                     self.applyStyle(style)
                 }
             }
         }
         else {
-            if let info = NSBundle(forClass:BundleMarker.self).infoDictionary, let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, themeName = info["Theme"] as? String, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
-                let theme = themeType.init()
+            if let info = NSBundle(forClass:BundleMarker.self).infoDictionary, let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+                let stylesheet = stylesheetType.init()
                 for string in components where string != "" {
-                    if let style = theme[string] {
+                    if let style = stylesheet[string] {
                         self.applyStyle(style)
                     }
                 }
@@ -95,7 +101,11 @@ extension Styleable where Self:UIView {
         }
     }
     
-    func showErrorIfInvalidStyles(styles:String, usingTheme themeName:String) {
+    func showErrorIfInvalidStyles() {
+        showErrorIfInvalidStyles(styles, usingStylesheet: stylesheet)
+    }
+    
+    func showErrorIfInvalidStyles(styles:String, usingStylesheet stylesheetName:String) {
         let components = styles.stringByReplacingOccurrencesOfString(", ", withString: ",").stringByReplacingOccurrencesOfString(" ,", withString: ",").componentsSeparatedByString(",")
         
         var invalidStyle = false
@@ -105,19 +115,19 @@ extension Styleable where Self:UIView {
             }
         }
         
-        if let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
-            let theme = themeType.init()
+        if let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+            let stylesheet = stylesheetType.init()
             for string in components where string != "" {
-                if theme[string] == nil {
+                if stylesheet[string] == nil {
                     invalidStyle = true
                 }
             }
         }
         else {
-            if let info = NSBundle(forClass:BundleMarker.self).infoDictionary, let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, themeName = info["Theme"] as? String, let themeType = NSClassFromString("\(moduleName).\(themeName)") as? Theme.Type {
-                let theme = themeType.init()
+            if let info = NSBundle(forClass:BundleMarker.self).infoDictionary, let moduleName = String(BundleMarker()).componentsSeparatedByString(".").first, stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+                let stylesheet = stylesheetType.init()
                 for string in components where string != "" {
-                    if theme[string] == nil {
+                    if stylesheet[string] == nil {
                         invalidStyle = true
                     }
                 }
@@ -135,20 +145,32 @@ extension Styleable where Self:UIView {
 }
 
 
-// MARK: - Theme -
+// MARK: - Stylesheet -
 
-protocol Theme : class {
-    func styleNamed(name:String)->Style?
+protocol Stylesheet : class {
+    var styleClasses:[(identifier:String, styleClass:StyleClass)] { get }
+    func styleNamed(name:String)->StyleClass?
     init()
 }
 
-extension Theme {
-    subscript(styleName:String)->Style? {
+extension Stylesheet {
+    
+    func styleNamed(name: String) -> StyleClass? {
+        for (identifier, styleClass) in styleClasses {
+            if name.isVariantOf(identifier) {
+                return styleClass
+            }
+        }
+        return nil
+    }
+    
+    subscript(styleName:String)->StyleClass? {
         get {
             return styleNamed(styleName)
         }
     }
 }
+
 
 extension String {
     func isVariantOf(string:String) -> Bool {
@@ -202,7 +224,7 @@ struct Stylish {
 // MARK: UIView
 
 
-extension Style {
+extension StyleClass {
     var backgroundColor:UIColor? { get { return getValue(#function) } }
     var contentMode:UIViewContentMode? { get { return getValue(#function) } }
     var userInteractionEnabled:Bool? { get { return getValue(#function) } }
@@ -217,19 +239,19 @@ extension Style {
     var customUIViewStyleBlock:(UIView->())? { get { return getValue(#function) } }
 }
 
-extension MutableStyle {
-    var backgroundColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var contentMode:UIViewContentMode? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var userInteractionEnabled:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var hidden:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var borderColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var borderWidth:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var cornerRadius:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var cornerRadiusPercentage:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var alpha:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var layoutMargins:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var tintColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var customUIViewStyleBlock:(UIView->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+extension MutableStyleClass {
+    var backgroundColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var contentMode:UIViewContentMode? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var userInteractionEnabled:Bool? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var hidden:Bool? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var borderColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var borderWidth:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var cornerRadius:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var cornerRadiusPercentage:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var alpha:CGFloat? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var layoutMargins:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var tintColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var customUIViewStyleBlock:(UIView->())? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
 }
 
 
@@ -237,7 +259,7 @@ extension MutableStyle {
     
     class var StyleApplicators:[StyleApplicator] {
         return [{
-            (style:Style, target:Any) in
+            (style:StyleClass, target:Any) in
             if let view = target as? UIView {
                 view.backgroundColor =? style.backgroundColor
                 view.contentMode =? style.contentMode
@@ -255,20 +277,20 @@ extension MutableStyle {
         }]
     }
     
-    @IBInspectable var styles:String! = "" {
+    @IBInspectable var styles:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
-    @IBInspectable var theme:String! = "" {
+    @IBInspectable var stylesheet:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles, usingTheme: theme)
+        showErrorIfInvalidStyles()
     }
 }
 
@@ -276,7 +298,7 @@ extension MutableStyle {
 // MARK: UILabel
 
 
-extension Style {
+extension StyleClass {
     var textColor:UIColor? { get { return getValue(#function) } }
     var font:UIFont? { get { return getValue(#function) } }
     var enabled:Bool? { get { return getValue(#function) } }
@@ -287,22 +309,22 @@ extension Style {
     var customUILabelStyleBlock:(UIView->())? { get { return getValue(#function) } }
 }
 
-extension MutableStyle {
-    var textColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var font:UIFont? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var enabled:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var textAlignment:NSTextAlignment? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var text:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var highlighted:Bool? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var highlightedTextColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var customUILabelStyleBlock:(UIView->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+extension MutableStyleClass {
+    var textColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var font:UIFont? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var enabled:Bool? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var textAlignment:NSTextAlignment? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var text:String? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var highlighted:Bool? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var highlightedTextColor:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var customUILabelStyleBlock:(UIView->())? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
 }
 
 @IBDesignable class StyleableUILabel : UILabel, Styleable {
     
     class var StyleApplicators: [StyleApplicator] {
         return StyleableUIView.StyleApplicators + [{
-            (style:Style, target:Any) in
+            (style:StyleClass, target:Any) in
             if let label = target as? UILabel {
                 label.textColor =? style.textColor
                 label.font =? style.font
@@ -316,27 +338,27 @@ extension MutableStyle {
         }]
     }
     
-    @IBInspectable var styles:String! = "" {
+    @IBInspectable var styles:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
-    @IBInspectable var theme:String! = "" {
+    @IBInspectable var stylesheet:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles, usingTheme: theme)
+        showErrorIfInvalidStyles()
     }
 }
 
 
 // MARK: UIButton
 
-extension Style {
+extension StyleClass {
     var contentEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } }
     var titleEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } }
     var imageEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } }
@@ -355,30 +377,30 @@ extension Style {
     var customUIButtonStyleBlock:(UIButton->())? { get { return getValue(#function) } }
 }
 
-extension MutableStyle {
-    var contentEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var titleEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var imageEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var titleForNormalState:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var titleForHighlightedState:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var titleForDisabledState:String? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var titleColorForNormalState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var titleColorForHighlightedState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var titleColorForDisabledState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var imageForNormalState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var imageForHighlightedState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var imageForDisabledState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var backgroundImageForNormalState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var backgroundImageForHighlightedState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var backgroundImageForDisabledState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var customUIButtonStyleBlock:(UIButton->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+extension MutableStyleClass {
+    var contentEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var titleEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var imageEdgeInsets:UIEdgeInsets? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var titleForNormalState:String? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var titleForHighlightedState:String? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var titleForDisabledState:String? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var titleColorForNormalState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var titleColorForHighlightedState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var titleColorForDisabledState:UIColor? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var imageForNormalState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var imageForHighlightedState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var imageForDisabledState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var backgroundImageForNormalState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var backgroundImageForHighlightedState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var backgroundImageForDisabledState:UIImage? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var customUIButtonStyleBlock:(UIButton->())? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
 }
 
 @IBDesignable class StyleableUIButton : UIButton, Styleable {
     
     class var StyleApplicators: [StyleApplicator] {
         return StyleableUIView.StyleApplicators + [{
-            (style:Style, target:Any) in
+            (style:StyleClass, target:Any) in
             if let button = target as? UIButton {
                 button.contentEdgeInsets =? style.contentEdgeInsets
                 button.titleEdgeInsets =? style.titleEdgeInsets
@@ -400,41 +422,41 @@ extension MutableStyle {
         }]
     }
     
-    @IBInspectable var styles:String! = "" {
+    @IBInspectable var styles:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
-    @IBInspectable var theme:String! = "" {
+    @IBInspectable var stylesheet:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles, usingTheme: theme)
+        showErrorIfInvalidStyles()
     }
 }
 
 // MARK: UIImageView
 
 
-extension Style {
+extension StyleClass {
     var image:UIImage? { get { return getValue(#function) } }
     var customUIImageViewStyleBlock:(UIImageView->())? { get { return getValue(#function) } }
 }
 
-extension MutableStyle {
-    var image:UIImage? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
-    var customUIImageViewStyleBlock:(UIImageView->())? { get { return getValue(#function) } set { setValue(newValue, forStyle: #function) } }
+extension MutableStyleClass {
+    var image:UIImage? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
+    var customUIImageViewStyleBlock:(UIImageView->())? { get { return getValue(#function) } set { setValue(newValue, forProperty: #function) } }
 }
 
 @IBDesignable class StyleableUIImageView : UIImageView, Styleable {
     
     class var StyleApplicators: [StyleApplicator] {
         return StyleableUIView.StyleApplicators + [{
-            (style:Style, target:Any) in
+            (style:StyleClass, target:Any) in
             if let imageView = target as? UIImageView {
                 imageView.image =? style.image
                 if let customStyleBlock = style.customUIImageViewStyleBlock { customStyleBlock(imageView) }
@@ -442,20 +464,20 @@ extension MutableStyle {
         }]
     }
     
-    @IBInspectable var styles:String! = "" {
+    @IBInspectable var styles:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
-    @IBInspectable var theme:String! = "" {
+    @IBInspectable var stylesheet:String = "" {
         didSet {
-            parseAndApplyStyles(styles, usingTheme: theme)
+            parseAndApplyStyles()
         }
     }
     
     override func prepareForInterfaceBuilder() {
-        showErrorIfInvalidStyles(styles, usingTheme: theme)
+        showErrorIfInvalidStyles()
     }
 }
 
