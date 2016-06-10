@@ -89,6 +89,7 @@ Alternative, the same Stylesheet and Style can be created in JSON like this:
 ]
 ```
 
+To now apply this style to a view in a Storyboard, make sure the view is set to a custom class that implements the Styelable protocol (e.g. StyleableUIView), select it on the canvas, go to the Attributes Inspector in the right-hand panel of Xcode and add the string `Rounded` to the field at the top of the panel labeled "styles" and the string `MyStylesheet` to the field labeled "Stylesheet".  When you press Return / Enter, the view will update immediately on the canvas.  
 
 ## Terminology
 
