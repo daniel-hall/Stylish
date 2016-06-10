@@ -1,5 +1,5 @@
 //
-//  AppDelegate.swift
+//  MainViewController.swift
 //  StylishExample
 //
 // Copyright (c) 2016 Daniel Hall
@@ -29,25 +29,32 @@
 
 import UIKit
 
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow?
-
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
-        //Remove the following code if you want to dynamically download and cache a stylesheet from the web.
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let documentsDirectory = paths[0]
-        let filename = documentsDirectory.stringByAppendingString("stylesheet.json")
-        let fileManager = NSFileManager.defaultManager()
-        
-        do {
-            try fileManager.removeItemAtPath(filename)
+class MainViewController : UIViewController {
+    
+    // Set new global stylesheet
+    @IBAction func changeStylesheet(sender: UIButton) {
+        switch sender.currentTitle! {
+        case "Graphite" :
+            Stylish.GlobalStylesheet = Graphite.self
+        case "Aqua" :
+            Stylish.GlobalStylesheet = Aqua.self
+        case "JSON" :
+            Stylish.GlobalStylesheet = StylishExampleJSONStylesheet.self
+        default :
+            return
         }
-        catch { }
         
-        return true
+        refreshStyles(view)
+    }
+    
+    // Re-apply styles to all styleable views in hierarchy
+    func refreshStyles(forView:UIView) {
+        for subview in forView.subviews {
+            refreshStyles(subview)
+        }
+        if let styleable = forView as? Styleable {
+            var styleableView = styleable
+            styleableView.stylesheet = styleable.stylesheet
+        }
     }
 }
