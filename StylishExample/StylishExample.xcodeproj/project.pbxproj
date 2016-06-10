@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CED109E51CC74B5100D53716 /* JSONStylesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED109E41CC74B5100D53716 /* JSONStylesheet.swift */; };
+		CE177FCB1D092CE800170067 /* SharedStyleClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE177FCA1D092CE800170067 /* SharedStyleClasses.swift */; };
+		CE177FCD1D09C66200170067 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE177FCC1D09C66200170067 /* MainViewController.swift */; };
+		CED109E51CC74B5100D53716 /* StylishExampleJSONStylesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED109E41CC74B5100D53716 /* StylishExampleJSONStylesheet.swift */; };
 		CED109E71CC7571E00D53716 /* stylesheet.json in Resources */ = {isa = PBXBuildFile; fileRef = CED109E61CC7571E00D53716 /* stylesheet.json */; };
 		CEFD1AFA1C9FC465008D762D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFD1AF91C9FC465008D762D /* AppDelegate.swift */; };
 		CEFD1AFF1C9FC465008D762D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEFD1AFD1C9FC465008D762D /* Main.storyboard */; };
@@ -39,7 +41,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		CED109E41CC74B5100D53716 /* JSONStylesheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONStylesheet.swift; sourceTree = "<group>"; };
+		CE177FCA1D092CE800170067 /* SharedStyleClasses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedStyleClasses.swift; sourceTree = "<group>"; };
+		CE177FCC1D09C66200170067 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		CED109E41CC74B5100D53716 /* StylishExampleJSONStylesheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StylishExampleJSONStylesheet.swift; sourceTree = "<group>"; };
 		CED109E61CC7571E00D53716 /* stylesheet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = stylesheet.json; sourceTree = "<group>"; };
 		CEFD1AF61C9FC465008D762D /* StylishExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StylishExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEFD1AF91C9FC465008D762D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -84,13 +88,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CE177FCE1D09CE0B00170067 /* Stylesheets */ = {
+			isa = PBXGroup;
+			children = (
+				CEFD1B291C9FC492008D762D /* Graphite.swift */,
+				CEFD1B281C9FC492008D762D /* Aqua.swift */,
+				CED109E41CC74B5100D53716 /* StylishExampleJSONStylesheet.swift */,
+				CE177FCA1D092CE800170067 /* SharedStyleClasses.swift */,
+				CED109E61CC7571E00D53716 /* stylesheet.json */,
+			);
+			name = Stylesheets;
+			sourceTree = "<group>";
+		};
+		CE177FCF1D09CE3600170067 /* ProgressBar */ = {
+			isa = PBXGroup;
+			children = (
+				CEFD1B2A1C9FC492008D762D /* ProgressBar.swift */,
+			);
+			name = ProgressBar;
+			sourceTree = "<group>";
+		};
+		CE177FD11D09CE5D00170067 /* Stylish */ = {
+			isa = PBXGroup;
+			children = (
+				CEFD1B271C9FC492008D762D /* Stylish.swift */,
+			);
+			name = Stylish;
+			sourceTree = "<group>";
+		};
 		CEFD1AED1C9FC465008D762D = {
 			isa = PBXGroup;
 			children = (
 				CEFD1AF81C9FC465008D762D /* StylishExample */,
+				CEFD1AF71C9FC465008D762D /* Products */,
 				CEFD1B0D1C9FC465008D762D /* StylishExampleTests */,
 				CEFD1B181C9FC465008D762D /* StylishExampleUITests */,
-				CEFD1AF71C9FC465008D762D /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -107,17 +139,15 @@
 		CEFD1AF81C9FC465008D762D /* StylishExample */ = {
 			isa = PBXGroup;
 			children = (
-				CEFD1AF91C9FC465008D762D /* AppDelegate.swift */,
-				CEFD1AFD1C9FC465008D762D /* Main.storyboard */,
 				CEFD1B001C9FC465008D762D /* Assets.xcassets */,
 				CEFD1B021C9FC465008D762D /* LaunchScreen.storyboard */,
+				CEFD1AFD1C9FC465008D762D /* Main.storyboard */,
+				CEFD1AF91C9FC465008D762D /* AppDelegate.swift */,
+				CE177FCC1D09C66200170067 /* MainViewController.swift */,
+				CE177FCF1D09CE3600170067 /* ProgressBar */,
+				CE177FCE1D09CE0B00170067 /* Stylesheets */,
+				CE177FD11D09CE5D00170067 /* Stylish */,
 				CEFD1B051C9FC465008D762D /* Info.plist */,
-				CEFD1B2A1C9FC492008D762D /* ProgressBar.swift */,
-				CEFD1B281C9FC492008D762D /* Aqua.swift */,
-				CEFD1B291C9FC492008D762D /* Graphite.swift */,
-				CEFD1B271C9FC492008D762D /* Stylish.swift */,
-				CED109E61CC7571E00D53716 /* stylesheet.json */,
-				CED109E41CC74B5100D53716 /* JSONStylesheet.swift */,
 			);
 			path = StylishExample;
 			sourceTree = "<group>";
@@ -129,7 +159,7 @@
 				CEFD1B101C9FC465008D762D /* Info.plist */,
 			);
 			path = StylishExampleTests;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		CEFD1B181C9FC465008D762D /* StylishExampleUITests */ = {
 			isa = PBXGroup;
@@ -208,6 +238,7 @@
 				TargetAttributes = {
 					CEFD1AF51C9FC465008D762D = {
 						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = XN5NUHVH4V;
 					};
 					CEFD1B091C9FC465008D762D = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -276,8 +307,10 @@
 				CEFD1B2D1C9FC492008D762D /* Graphite.swift in Sources */,
 				CEFD1B2C1C9FC492008D762D /* Aqua.swift in Sources */,
 				CEFD1B2E1C9FC492008D762D /* ProgressBar.swift in Sources */,
+				CE177FCB1D092CE800170067 /* SharedStyleClasses.swift in Sources */,
 				CEFD1AFA1C9FC465008D762D /* AppDelegate.swift in Sources */,
-				CED109E51CC74B5100D53716 /* JSONStylesheet.swift in Sources */,
+				CED109E51CC74B5100D53716 /* StylishExampleJSONStylesheet.swift in Sources */,
+				CE177FCD1D09C66200170067 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,10 +452,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = StylishExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -430,10 +467,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = StylishExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

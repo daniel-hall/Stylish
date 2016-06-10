@@ -1,5 +1,5 @@
 //
-//  AppDelegate.swift
+//  SharedStyleClasses.swift
 //  StylishExample
 //
 // Copyright (c) 2016 Daniel Hall
@@ -27,27 +27,30 @@
 
 
 
+
 import UIKit
 
+// 1. To create a StyleClass, define a struct that conforms to the StyleClass protocol
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+struct RoundedStyle : StyleClass {
+    
+// 2. The protocol requires you to create storage for StylePropertySets that this StyleClass will access
 
-    var window: UIWindow?
+    var stylePropertySets = StylePropertySetCollection()
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
-        //Remove the following code if you want to dynamically download and cache a stylesheet from the web.
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let documentsDirectory = paths[0]
-        let filename = documentsDirectory.stringByAppendingString("stylesheet.json")
-        let fileManager = NSFileManager.defaultManager()
-        
-        do {
-            try fileManager.removeItemAtPath(filename)
-        }
-        catch { }
-        
-        return true
+    
+// 3. Inside the init(), set whatever properties and values you want to be applied when this StyleClass is used. The format below specifies first the StylePropertySet (UIView), and then the specific property in that set. Properties are strongly typed, so you won't be able to use the wrong kind of value by accident. This 'RoundedStyle' StyleClass will set the cornerRadius to 30.0 on any UIView it is applied to. 
+    
+    init() {
+        UIView.cornerRadius = 30.0
+        UIView.masksToBounds = true
+    }
+}
+
+
+struct HighlightedTextStyle : StyleClass {
+    var stylePropertySets = StylePropertySetCollection()
+    init() {
+        UIView.backgroundColor = UIColor(red: 0.25, green: 0.75, blue: 0.75, alpha: 0.25)
     }
 }
