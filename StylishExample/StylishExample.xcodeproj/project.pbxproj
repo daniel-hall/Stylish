@@ -239,13 +239,16 @@
 					CEFD1AF51C9FC465008D762D = {
 						CreatedOnToolsVersion = 7.2.1;
 						DevelopmentTeam = XN5NUHVH4V;
+						LastSwiftMigration = 0800;
 					};
 					CEFD1B091C9FC465008D762D = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = CEFD1AF51C9FC465008D762D;
 					};
 					CEFD1B141C9FC465008D762D = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = CEFD1AF51C9FC465008D762D;
 					};
 				};
@@ -459,6 +462,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -474,6 +478,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -486,6 +491,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StylishExample.app/StylishExample";
 			};
 			name = Debug;
@@ -498,6 +504,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StylishExample.app/StylishExample";
 			};
 			name = Release;
@@ -509,6 +516,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = StylishExample;
 				USES_XCTRUNNER = YES;
 			};
@@ -521,6 +529,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = StylishExample;
 				USES_XCTRUNNER = YES;
 			};

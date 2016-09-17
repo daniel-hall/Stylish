@@ -63,18 +63,18 @@ class Graphite : Stylesheet {
     struct HeaderText : StyleClass {
         var stylePropertySets = StylePropertySetCollection()
         init() {
-            UILabel.font = UIFont.systemFontOfSize(20.0)
-            UILabel.textColor = UIColor.darkGrayColor()
-            UILabel.textAlignment = .Left
+            UILabel.font = UIFont.systemFont(ofSize: 20.0)
+            UILabel.textColor = UIColor.darkGray
+            UILabel.textAlignment = .left
         }
     }
     
     struct BodyText : StyleClass {
         var stylePropertySets = StylePropertySetCollection()
         init() {
-            UILabel.font = UIFont.systemFontOfSize(16.0)
-            UILabel.textColor = UIColor.grayColor()
-            UILabel.textAlignment = .Left
+            UILabel.font = UIFont.systemFont(ofSize: 16.0)
+            UILabel.textColor = UIColor.gray
+            UILabel.textAlignment = .left
         }
     }
     
@@ -88,12 +88,12 @@ class Graphite : Stylesheet {
     struct ProgressBar : StyleClass {
         var stylePropertySets = StylePropertySetCollection()
         init() {
-            ProgressBar.progressColor = UIColor.grayColor()
+            ProgressBar.progressColor = UIColor.gray
             ProgressBar.trackColor = UIColor(white: 0.9, alpha: 1.0)
             ProgressBar.cornerRadiusPercentage = 0.16
             UIView.cornerRadiusPercentage = 0.16
             UIView.borderWidth = 1.0
-            UIView.borderColor = UIColor.grayColor().CGColor
+            UIView.borderColor = UIColor.gray.cgColor
         }
     }
     
@@ -105,7 +105,7 @@ class Graphite : Stylesheet {
             UIButton.titleColorForDisabledState = UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0)
             UIView.cornerRadiusPercentage = 0.16
             UIView.borderWidth = 1.0
-            UIView.borderColor = UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0).CGColor
+            UIView.borderColor = UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0).cgColor
             UIView.backgroundColor = UIColor(white: 0.82, alpha: 1.0)
         }
     }
@@ -120,8 +120,8 @@ class Graphite : Stylesheet {
     struct ThemeImage : StyleClass {
         var stylePropertySets = StylePropertySetCollection()
         init() {
-            let bundle = NSBundle(forClass: Aqua.self)
-            UIImageView.image = UIImage(named: "stone", inBundle: bundle, compatibleWithTraitCollection: UIScreen.mainScreen().traitCollection)!
+            let bundle = Bundle(for: Aqua.self)
+            UIImageView.image = UIImage(named: "stone", in: bundle, compatibleWith: UIScreen.main.traitCollection)!
         }
     }
 }

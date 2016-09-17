@@ -63,8 +63,8 @@ class Aqua : Stylesheet {
         var stylePropertySets = StylePropertySetCollection()
         init() {
             UILabel.font = UIFont(name: "Futura-Medium", size: 20.0)!
-            UILabel.textColor = UIColor.whiteColor()
-            UILabel.textAlignment = .Center
+            UILabel.textColor = UIColor.white
+            UILabel.textAlignment = .center
         }
     }
     
@@ -72,8 +72,8 @@ class Aqua : Stylesheet {
         var stylePropertySets = StylePropertySetCollection()
         init() {
             UILabel.font = UIFont(name: "Futura-Medium", size: 16.0)!
-            UILabel.textColor = UIColor.whiteColor()
-            UILabel.textAlignment = .Justified
+            UILabel.textColor = UIColor.white
+            UILabel.textAlignment = .justified
         }
     }
     
@@ -89,15 +89,15 @@ class Aqua : Stylesheet {
         init() {
             let context = CIContext()
             let stripesFilter = CIFilter(name: "CIStripesGenerator", withInputParameters: ["inputColor0" : CIColor(color: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0)), "inputColor1" : CIColor(color: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)), "inputWidth" : 4])!
-            let stripes = context.createCGImage(stripesFilter.outputImage!, fromRect: CGRect(origin: CGPointZero, size: CGSize(width: 32.0, height: 32.0)))
-            let rotateFilter = CIFilter(name: "CIStraightenFilter", withInputParameters: ["inputImage" : CIImage(CGImage: stripes), "inputAngle" : 2.35])!
-            let rotated = context.createCGImage(rotateFilter.outputImage!, fromRect: rotateFilter.outputImage!.extent)
-            ProgressBar.progressColor = UIColor(patternImage: UIImage(CGImage: rotated))
-            ProgressBar.trackColor = UIColor.whiteColor()
+            let stripes = context.createCGImage(stripesFilter.outputImage!, from: CGRect(origin: CGPoint.zero, size: CGSize(width: 32.0, height: 32.0)))
+            let rotateFilter = CIFilter(name: "CIStraightenFilter", withInputParameters: ["inputImage" : CIImage(cgImage: stripes!), "inputAngle" : 2.35])!
+            let rotated = context.createCGImage(rotateFilter.outputImage!, from: rotateFilter.outputImage!.extent)
+            ProgressBar.progressColor = UIColor(patternImage: UIImage(cgImage: rotated!))
+            ProgressBar.trackColor = UIColor.white
             ProgressBar.cornerRadiusPercentage = 0.55
             UIView.cornerRadiusPercentage = 0.55
             UIView.borderWidth = 2.0
-            UIView.borderColor = UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0).CGColor
+            UIView.borderColor = UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0).cgColor
         }
     }
     
@@ -105,9 +105,9 @@ class Aqua : Stylesheet {
         var stylePropertySets = StylePropertySetCollection()
         init() {
             UIView.backgroundColor = UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0)
-            UIView.borderColor = UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0).CGColor
+            UIView.borderColor = UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0).cgColor
             UIView.cornerRadiusPercentage = 0.5
-            UIButton.titleColorForNormalState = UIColor.whiteColor()
+            UIButton.titleColorForNormalState = UIColor.white
             UIButton.titleColorForHighlightedState = UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)
         }
     }
@@ -122,8 +122,8 @@ class Aqua : Stylesheet {
     struct ThemeImage : StyleClass {
         var stylePropertySets = StylePropertySetCollection()
         init() {
-            let bundle = NSBundle(forClass: Aqua.self)
-            UIImageView.image = UIImage(named: "water", inBundle: bundle, compatibleWithTraitCollection: UIScreen.mainScreen().traitCollection)
+            let bundle = Bundle(for: Aqua.self)
+            UIImageView.image = UIImage(named: "water", in: bundle, compatibleWith: UIScreen.main.traitCollection)
         }
     }
 }
