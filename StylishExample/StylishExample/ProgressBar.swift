@@ -48,11 +48,11 @@ struct ProgressBarPropertySet : DynamicStylePropertySet {
     // DynamicStylePropertySet conformanace, allows properties to be set using their string names as keys
     mutating func setStyleProperty<T>(named name: String, toValue value: T) {
         switch name {
-        case _ where name.isVariantOf("Progress Color"):
+        case _ where name.isVariant(of: "Progress Color"):
             progressColor = value as? UIColor
-        case _ where name.isVariantOf("Track Color"):
+        case _ where name.isVariant(of: "Track Color"):
             trackColor = value as? UIColor
-        case _ where name.isVariantOf("Corner Radius Percentage"):
+        case _ where name.isVariant(of: "Corner Radius Percentage"):
             cornerRadiusPercentage = value as? CGFloat
         default :
             return
@@ -63,7 +63,7 @@ struct ProgressBarPropertySet : DynamicStylePropertySet {
 // 2. Extend StyleClass to include your custom view's property set as a gettable / settable property. The 'retrieve' and 'register' methods fetch and add the property set to a collection on the style class
 
 extension StyleClass {
-    var ProgressBar:ProgressBarPropertySet { get { return self.retrieve(ProgressBarPropertySet) } set { self.register(newValue) } }
+    var ProgressBar:ProgressBarPropertySet { get { return self.retrieve(propertySet: ProgressBarPropertySet.self) } set { self.register(propertySet: newValue) } }
 }
 
 
@@ -87,8 +87,8 @@ extension StyleClass {
             }]
     }
     
-    private let trackView = UIView()
-    private let progressView = UIView()
+    fileprivate let trackView = UIView()
+    fileprivate let progressView = UIView()
 
     
 // 5. Add @IBInspectable properties for 'styles' and 'stylesheet' to make these available for setting in storyboards. They should call the extension method 'parseAndApplyStyles' whenever either value is changed, as shown below.
@@ -111,13 +111,13 @@ extension StyleClass {
         showErrorIfInvalidStyles()
     }
     
-    var progressColor:UIColor = UIColor.grayColor() {
+    var progressColor:UIColor = UIColor.gray {
         didSet {
             progressView.backgroundColor = progressColor
         }
     }
     
-    var trackColor:UIColor = UIColor.whiteColor() {
+    var trackColor:UIColor = UIColor.white {
         didSet {
             trackView.backgroundColor = trackColor
         }
@@ -150,7 +150,7 @@ extension StyleClass {
         setup()
     }
     
-    private func setup() {
+    fileprivate func setup() {
         trackView.backgroundColor = trackColor
         progressView.backgroundColor = progressColor
         trackView.frame = bounds
@@ -164,9 +164,9 @@ extension StyleClass {
         clipsToBounds = true
     }
     
-    private func updateProgress() {
+    fileprivate func updateProgress() {
         self.trackView.frame = self.bounds
-        progressView.frame = CGRect(origin: CGPointZero, size: CGSize(width: trackView.bounds.width * progress, height: trackView.bounds.height))
+        progressView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: trackView.bounds.width * progress, height: trackView.bounds.height))
     }
 }
 

@@ -32,7 +32,7 @@ import UIKit
 class MainViewController : UIViewController {
     
     // Set new global stylesheet
-    @IBAction func changeStylesheet(sender: UIButton) {
+    @IBAction func changeStylesheet(_ sender: UIButton) {
         switch sender.currentTitle! {
         case "Graphite" :
             Stylish.GlobalStylesheet = Graphite.self
@@ -43,18 +43,6 @@ class MainViewController : UIViewController {
         default :
             return
         }
-        
-        refreshStyles(view)
     }
     
-    // Re-apply styles to all styleable views in hierarchy
-    func refreshStyles(forView:UIView) {
-        for subview in forView.subviews {
-            refreshStyles(subview)
-        }
-        if let styleable = forView as? Styleable {
-            var styleableView = styleable
-            styleableView.stylesheet = styleable.stylesheet
-        }
-    }
 }

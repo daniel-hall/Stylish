@@ -35,16 +35,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         //Remove the following code if you want to dynamically download and cache a stylesheet from the web.
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let documentsDirectory = paths[0]
-        let filename = documentsDirectory.stringByAppendingString("stylesheet.json")
-        let fileManager = NSFileManager.defaultManager()
+        let filename = documentsDirectory + "stylesheet.json"
+        let fileManager = FileManager.default
         
         do {
-            try fileManager.removeItemAtPath(filename)
+            try fileManager.removeItem(atPath: filename)
         }
         catch { }
         

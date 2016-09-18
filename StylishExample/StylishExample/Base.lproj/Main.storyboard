@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A313a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Theme Overview-->
@@ -20,16 +21,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hSR-0I-CWP" customClass="StyleableUIView" customModule="StylishExample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UI1-hu-wbc" customClass="StyleableUIView" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="23" y="258" width="330" height="265"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="KoZ-AB-TDL">
-                                                <rect key="frame" x="15" y="44" width="300" height="178"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some Header Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pPa-7X-zGr" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="300" height="24"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                         <nil key="highlightedColor"/>
@@ -38,7 +35,6 @@
                                                         </userDefinedRuntimeAttributes>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="300" translatesAutoresizingMaskIntoConstraints="NO" id="N8o-Ng-iFK" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="44" width="300" height="134"/>
                                                         <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -50,7 +46,7 @@
                                                 </subviews>
                                             </stackView>
                                         </subviews>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstItem="KoZ-AB-TDL" firstAttribute="centerY" secondItem="UI1-hu-wbc" secondAttribute="centerY" id="BKd-O3-yY4"/>
                                             <constraint firstItem="KoZ-AB-TDL" firstAttribute="centerX" secondItem="UI1-hu-wbc" secondAttribute="centerX" id="Hql-1P-VFN"/>
@@ -60,7 +56,6 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Theme Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j0e-Cp-bcP" customClass="StyleableUILabel" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="149" y="33" width="77" height="24"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
@@ -69,7 +64,6 @@
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WQu-S1-qgP" customClass="StyleableUIImageView" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="22" y="66" width="330" height="176"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="WQu-S1-qgP" secondAttribute="height" multiplier="15:8" id="jlN-ZZ-rxD"/>
                                         </constraints>
@@ -78,8 +72,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hlp-HV-VmW" customClass="ProgressBar" customModule="StylishExample" customModuleProvider="target">
-                                        <rect key="frame" x="43" y="548" width="290" height="15"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="15" id="EJX-Hi-Idh"/>
                                         </constraints>
@@ -91,10 +84,8 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="9QF-Ho-B3L">
-                                        <rect key="frame" x="48" y="588" width="280" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FWE-m1-rG4" customClass="StyleableUIButton" customModule="StylishExample" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="85" height="30"/>
                                                 <state key="normal" title="Graphite"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultButton"/>
@@ -104,7 +95,6 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="28E-De-WJA" customClass="StyleableUIButton" customModule="StylishExample" customModuleProvider="target">
-                                                <rect key="frame" x="97" y="0.0" width="86" height="30"/>
                                                 <state key="normal" title="Aqua"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultButton"/>
@@ -114,7 +104,6 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XWK-g8-4db" customClass="StyleableUIButton" customModule="StylishExample" customModuleProvider="target">
-                                                <rect key="frame" x="195" y="0.0" width="85" height="30"/>
                                                 <state key="normal" title="JSON"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultButton"/>
@@ -129,7 +118,7 @@
                                         </constraints>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="j0e-Cp-bcP" firstAttribute="bottom" secondItem="hSR-0I-CWP" secondAttribute="bottom" multiplier="0.085" id="5b2-4J-Jc9"/>
                                     <constraint firstItem="UI1-hu-wbc" firstAttribute="centerX" secondItem="hSR-0I-CWP" secondAttribute="centerX" id="7GO-bg-pwp"/>
@@ -152,7 +141,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="hSR-0I-CWP" firstAttribute="top" secondItem="Yom-6a-nbh" secondAttribute="top" id="RJW-qS-UoW"/>
                             <constraint firstAttribute="trailing" secondItem="hSR-0I-CWP" secondAttribute="trailing" id="S3a-hV-ber"/>
@@ -160,7 +149,6 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hSR-0I-CWP" secondAttribute="bottom" id="hFH-DG-Ql8"/>
                         </constraints>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
