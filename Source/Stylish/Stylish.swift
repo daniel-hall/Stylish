@@ -196,6 +196,7 @@ extension Styleable {
 extension Styleable where Self:UIView {
     
     func parseAndApplyStyles() {
+        self.layoutIfNeeded()
         parseAndApply(styles: styles, usingStylesheet: stylesheet)
     }
     
@@ -572,6 +573,7 @@ struct UIButtonPropertySet : DynamicStylePropertySet {
     var contentEdgeInsets:UIEdgeInsets?
     var titleEdgeInsets:UIEdgeInsets?
     var imageEdgeInsets:UIEdgeInsets?
+    var titleFont:UIFont?
     var titleForNormalState:String?
     var titleForHighlightedState:String?
     var titleForDisabledState:String?
@@ -593,6 +595,8 @@ struct UIButtonPropertySet : DynamicStylePropertySet {
             titleEdgeInsets = value as? UIEdgeInsets
         case _ where name.isVariant(of: "Image Edge Insets"):
             imageEdgeInsets = value as? UIEdgeInsets
+        case _ where name.isVariant(of: "Title Font"):
+            titleFont = value as? UIFont
         case _ where name.isVariant(of: "Title For Normal State"):
             titleForNormalState = value as? String
         case _ where name.isVariant(of: "Title For Highlighted State"):
@@ -636,6 +640,7 @@ extension StyleClass {
                 button.contentEdgeInsets =? style.UIButton.contentEdgeInsets
                 button.titleEdgeInsets =? style.UIButton.titleEdgeInsets
                 button.imageEdgeInsets =? style.UIButton.imageEdgeInsets
+                button.titleLabel?.font =? style.UIButton.titleFont
                 if let title = style.UIButton.titleForNormalState { button.setTitle(title, for:.normal) }
                 if let title = style.UIButton.titleForHighlightedState { button.setTitle(title, for:.highlighted) }
                 if let title = style.UIButton.titleForDisabledState { button.setTitle(title, for:.disabled) }
