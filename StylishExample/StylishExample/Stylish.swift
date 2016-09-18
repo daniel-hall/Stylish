@@ -35,7 +35,7 @@ import UIKit
 
 // MARK: - StyleClass -
 
-// A StyleClass is a collection of values that should be assigned to the properties of any view that the StyleClass is applied to
+// A StyleClass is a collection of values that should be assigned to the specified properties of any view that the StyleClass is applied to. Analagous in concept to a CSS style or style class
 
 protocol StyleClass {
     var stylePropertySets:StylePropertySetCollection { get set }
@@ -43,14 +43,19 @@ protocol StyleClass {
 
 // Retrieve a specific StylePropertySet by name or by type
 extension StyleClass {
-    mutating func register(_ propertySet:StylePropertySet) {
-        stylePropertySets.register(propertySet)
+    mutating func register(propertySet:StylePropertySet) {
+        if isKnownUniquelyReferenced(&stylePropertySets) {
+            stylePropertySets.register(propertySet: propertySet)
+        } else {
+            stylePropertySets = StylePropertySetCollection(asCopyOf: stylePropertySets)
+            stylePropertySets.register(propertySet: propertySet)
+        }
     }
-    func retrieve<T:StylePropertySet>(_ propertySet:T.Type)->T {
-        return stylePropertySets.retrieve(propertySet)
+    func retrieve<T:StylePropertySet>(propertySet:T.Type)->T {
+        return stylePropertySets.retrieve(propertySetType: propertySet)
     }
-    func retrieve(_ dynamicPropertySetName:String)->DynamicStylePropertySet? {
-        return stylePropertySets.retrieve(dynamicPropertySetName)
+    func retrieve(dynamicPropertySetName:String)->DynamicStylePropertySet? {
+        return stylePropertySets.retrieve(dynamicPropertySetName: dynamicPropertySetName)
     }
 }
 
@@ -58,19 +63,19 @@ extension StyleClass {
 
 // MARK: - Stylesheet -
 
-// A Stylesheet is a collection of StyleClasses. Changing Stylesheets is the equivalent of re-theming the app, since the StyleClasses with the same identifier in a new Stylesheet will most likely have different values for their properties.
+// A Stylesheet is a collection of StyleClasses. Changing Stylesheets is the equivalent of re-theming the app, since the StyleClasses with the same identifier in a new Stylesheet will most likely have different values for their properties. Analagous in concept to a CSS stylesheet
 
 protocol Stylesheet : class {
     var styleClasses:[(identifier:String, styleClass:StyleClass)] { get }
-    func styleNamed(_ name:String)->StyleClass?
+    func style(named:String)->StyleClass?
     init()
 }
 
 extension Stylesheet {
     
-    func styleNamed(_ name: String) -> StyleClass? {
+    func style(named name: String) -> StyleClass? {
         for (identifier, styleClass) in styleClasses {
-            if name.isVariantOf(identifier) {
+            if name.isVariant(of: identifier) {
                 return styleClass
             }
         }
@@ -79,7 +84,7 @@ extension Stylesheet {
     
     subscript(styleName:String)->StyleClass? {
         get {
-            return styleNamed(styleName)
+            return style(named: styleName)
         }
     }
 }
@@ -89,26 +94,26 @@ extension Stylesheet {
 // String extensions for being forgiving of different styles of string representation and capitalization
 
 extension String {
-    func isVariantOf(_ string:String) -> Bool {
+    func isVariant(of string:String) -> Bool {
         let components = string.components(separatedBy: " ")
         return self == string  //"Example Test String"
             || self == string.lowercased() //"example test string"
-            || self == string.lowercased().replacingOccurrences(of: " ", with: "") //"exampleteststring"
-            || self == string.replacingOccurrences(of: " ", with: "") //"ExampleTestString"
-            || self == string.lowercased().replacingOccurrences(of: " ", with: "-") //"example-test-string
-            || self == string.lowercased().replacingOccurrences(of: " ", with: "_") //"example_test_string
+            || self == string.lowercased().replacingOccurrences(of:" ", with: "") //"exampleteststring"
+            || self == string.replacingOccurrences(of:" ", with: "") //"ExampleTestString"
+            || self == string.lowercased().replacingOccurrences(of:" ", with: "-") //"example-test-string
+            || self == string.lowercased().replacingOccurrences(of:" ", with: "_") //"example_test_string
             || self == (components.count > 1 ? components.first!.lowercased() + components[1..<components.count].flatMap{$0.capitalized}.joined(separator: "") : string) //"exampleTestString"
-            || self.lowercased().replacingOccurrences(of: " ", with: "") == string.lowercased().replacingOccurrences(of: " ", with: "") //"EXample String" != "Example String" -> "examplestring" == "examplestring"
+            || self.lowercased().replacingOccurrences(of:" ", with: "") == string.lowercased().replacingOccurrences(of:" ", with: "") //"EXample String" != "Example String" -> "examplestring" == "examplestring"
     }
 }
 
+// Just used to retrieve the Bundle that Stylish is located in
 private class BundleMarker {}
 
 
+// MARK: - StylePropertySet -
 
-// MARK - StylePropertySet -
-
-// A style property set is a way of organizing sets of properties that can be style by the type of iew they apple to.  For example, you may want a "tint" property on a custom class, which should not be confused with "tintColor" on a UIView.  The style property sets separate out the properties into logicial groupings, e.g. 'style.CustomView.tint' vs. 'style.UIView.tintColor'
+// A style property set is a way of organizing sets of style-enabled properties by the type of view they applu to.  For example, you may want a "tint" property on a custom class, which should not be confused with "tintColor" on a UIView.  The style property sets separate out the properties into logicial groupings, e.g. 'style.CustomView.tint' vs. 'style.UIView.tintColor'
 
 protocol StylePropertySet {
     init()
@@ -121,11 +126,15 @@ protocol DynamicStylePropertySet : StylePropertySet {
 }
 
 
+// MARK: - StylePropertySetCollection -
+
+// A storage type used by StyleClasses to save values that will later be applied to a view
+
 class StylePropertySetCollection {
     
-    fileprivate var dictionary = [String : StylePropertySet]()
+    private var dictionary = [String : StylePropertySet]()
     
-    fileprivate func retrieve<T:StylePropertySet>(_ propertySetType:T.Type) -> T {
+    fileprivate func retrieve<T:StylePropertySet>(propertySetType:T.Type) -> T {
         if let existing = dictionary[String(describing: propertySetType)] as? T {
             return existing
         }
@@ -133,11 +142,11 @@ class StylePropertySetCollection {
         return dictionary[String(describing: propertySetType)] as! T
     }
     
-    fileprivate func retrieve(_ dynamicPropertySetName:String)->DynamicStylePropertySet? {
+    fileprivate func retrieve(dynamicPropertySetName:String)->DynamicStylePropertySet? {
         return dictionary[dynamicPropertySetName] as? DynamicStylePropertySet
     }
     
-    fileprivate func register(_ propertySet:StylePropertySet) {
+    fileprivate func register(propertySet:StylePropertySet) {
         dictionary[String(describing: type(of: propertySet))] = propertySet
     }
     
@@ -151,13 +160,23 @@ class StylePropertySetCollection {
             dictionary[String(describing: type)] = type.init()
         }
     }
+    
+    convenience init(asCopyOf:StylePropertySetCollection) {
+        self.init()
+        self.dictionary = asCopyOf.dictionary
+    }
 }
 
 
 
 // MARK: - Styleable -
 
+// A closure that takes a Style, reads the values from it and sets the on a instance of the supplied view.  Every Styleable UIView subclass defines one or more StyleApplicators which know how to set values from a style onto an instance of that particular view.
+
 typealias StyleApplicator = (StyleClass, Any)->()
+
+
+// The protocol conformed to by any UIView subclass that wants to participate in styling
 
 protocol Styleable {
     static var StyleApplicators:[StyleApplicator] { get }
@@ -166,7 +185,7 @@ protocol Styleable {
 }
 
 extension Styleable {
-    func applyStyle(_ style:StyleClass) {
+    func apply(style:StyleClass) {
         for applicator in Self.StyleApplicators {
             applicator(style, self)
         }
@@ -177,53 +196,54 @@ extension Styleable {
 extension Styleable where Self:UIView {
     
     func parseAndApplyStyles() {
-        parseAndApplyStyles(styles, usingStylesheet: stylesheet)
+        parseAndApply(styles: styles, usingStylesheet: stylesheet)
     }
     
-    func parseAndApplyStyles(_ styles:String, usingStylesheet stylesheetName:String) {
-        let components = styles.replacingOccurrences(of: ", ", with: ",").replacingOccurrences(of: " ,", with: ",").components(separatedBy: ",")
+    func parseAndApply(styles:String, usingStylesheet stylesheetName:String) {
+        let components = styles.replacingOccurrences(of: ", ", with: ",").replacingOccurrences(of: " ,", with: ",").components(separatedBy:",")
         
-        if let moduleName = String(describing: BundleMarker()).components(separatedBy: ".").first, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
-            let stylesheet = useCachedJSON(stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
+        if let moduleName = String(describing:BundleMarker()).components(separatedBy:".").first, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+            let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
             for string in components where string != "" {
                 if let style = stylesheet[string] {
-                    self.applyStyle(style)
+                    self.apply(style: style)
                 }
             }
         }
         else if let stylesheetType = Stylish.GlobalStylesheet {
-            let stylesheet = useCachedJSON(stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
+            let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
             for string in components where string != "" {
                 if let style = stylesheet[string] {
-                    self.applyStyle(style)
+                    self.apply(style: style)
                 }
             }
         }
         else {
-            if let info = Bundle(for:BundleMarker.self).infoDictionary, let moduleName = String(describing: BundleMarker()).components(separatedBy: ".").first, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
-                let stylesheet = useCachedJSON(stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
+            if let info = Bundle(for:BundleMarker.self).infoDictionary, let moduleName = String(describing:BundleMarker()).components(separatedBy:".").first, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+                let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
                 for string in components where string != "" {
                     if let style = stylesheet[string] {
-                        self.applyStyle(style)
+                        self.apply(style: style)
                     }
                 }
             }
         }
     }
     
-    fileprivate func useCachedJSON(_ forStylesheetType:Stylesheet.Type) -> Bool {
+    private func useCachedJSON(forStylesheetType:Stylesheet.Type) -> Bool {
+        let jsonCacheDuration = 3.0
         let isJSON = forStylesheetType is JSONStylesheet.Type
         let cacheExists = JSONStylesheet.cachedStylesheet != nil
-        let isCacheExpired = Date.timeIntervalSinceReferenceDate - JSONStylesheet.cacheTimestamp > 2
+        let isCacheExpired = NSDate.timeIntervalSinceReferenceDate - JSONStylesheet.cacheTimestamp > jsonCacheDuration
         return isJSON && cacheExists && !isCacheExpired
     }
     
     func showErrorIfInvalidStyles() {
-        showErrorIfInvalidStyles(styles, usingStylesheet: stylesheet)
+        showErrorIfInvalid(styles: styles, usingStylesheet: stylesheet)
     }
     
-    func showErrorIfInvalidStyles(_ styles:String, usingStylesheet stylesheetName:String) {
-        let components = styles.replacingOccurrences(of: ", ", with: ",").replacingOccurrences(of: " ,", with: ",").components(separatedBy: ",")
+    func showErrorIfInvalid(styles:String, usingStylesheet stylesheetName:String) {
+        let components = styles.replacingOccurrences(of:", ", with: ",").replacingOccurrences(of:" ,", with: ",").components(separatedBy:",")
         
         var invalidStyle = false
         for subview in subviews {
@@ -232,7 +252,7 @@ extension Styleable where Self:UIView {
             }
         }
         
-        if let moduleName = String(describing: BundleMarker()).components(separatedBy: ".").first, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+        if let moduleName = String(describing:BundleMarker()).components(separatedBy:".").first, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
             let stylesheet = stylesheetType.init()
             for string in components where string != "" {
                 if stylesheet[string] == nil {
@@ -249,7 +269,7 @@ extension Styleable where Self:UIView {
             }
         }
         else {
-            if let info = Bundle(for:BundleMarker.self).infoDictionary, let moduleName = String(describing: BundleMarker()).components(separatedBy: ".").first, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+            if let info = Bundle(for:BundleMarker.self).infoDictionary, let moduleName = String(describing:BundleMarker()).components(separatedBy:".").first, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
                 let stylesheet = stylesheetType.init()
                 for string in components where string != "" {
                     if stylesheet[string] == nil {
@@ -275,7 +295,27 @@ extension Styleable where Self:UIView {
 // MARK: - Global Stylesheet -
 
 struct Stylish {
-    static var GlobalStylesheet:Stylesheet.Type? = nil
+    static var GlobalStylesheet:Stylesheet.Type? = nil {
+        didSet {
+            refreshAllStyles()
+        }
+    }
+    
+    static func refreshAllStyles() {
+        for window in UIApplication.shared.windows {
+            refreshStyles(for: window)
+        }
+    }
+    
+    static func refreshStyles(for view:UIView) {
+        for subview in view.subviews {
+            refreshStyles(for: subview)
+        }
+        if let styleable = view as? Styleable {
+            var styleableView = styleable
+            styleableView.stylesheet = styleable.stylesheet
+        }
+    }
 }
 
 // MARK: - Stylish Error View -
@@ -295,7 +335,7 @@ extension Stylish {
             setup()
         }
         
-        fileprivate func setup() {
+        private func setup() {
             let context = CIContext()
             let stripesFilter = CIFilter(name: "CIStripesGenerator", withInputParameters: ["inputColor0" : CIColor(color: UIColor(red: 1.0, green: 0, blue: 0, alpha: 0.4)), "inputColor1" : CIColor(color: UIColor(red: 1.0, green: 0, blue: 0, alpha: 0.6)), "inputWidth" : 2])!
             let stripes = context.createCGImage(stripesFilter.outputImage!, from: CGRect(origin: CGPoint.zero, size: CGSize(width: 32.0, height: 32.0)))
@@ -315,21 +355,21 @@ extension Stylish {
 
 // Optional assignment operator. Assigns the optional value on the right (if not nil) to the variable on the left. If the optional on the right is nil, then no action is performed
 
-infix operator =? { associativity right precedence 90 }
+infix operator =? : AssignmentPrecedence
 
-func =?<T>(left:inout T, right:@autoclosure () -> T?) {
+func =?<T>( left:inout T, right:@autoclosure () -> T?) {
     if let value = right() {
         left = value
     }
 }
 
-func =?<T>(left:inout T!, right:@autoclosure () -> T?) {
+func =?<T>( left:inout T!, right:@autoclosure () -> T?) {
     if let value = right() {
         left = value
     }
 }
 
-func =?<T>(left:inout T?, right:@autoclosure () -> T?) {
+func =?<T>( left:inout T?, right:@autoclosure () -> T?) {
     if let value = right() {
         left = value
     }
@@ -358,31 +398,31 @@ struct UIViewPropertySet : DynamicStylePropertySet {
     var customUIViewStyleBlock:((UIView)->())?
     mutating func setStyleProperty<T>(named name: String, toValue value: T) {
         switch name {
-        case _ where name.isVariantOf("Background Color"):
+        case _ where name.isVariant(of: "Background Color"):
             backgroundColor = value as? UIColor
-        case _ where name.isVariantOf("Content Mode"):
+        case _ where name.isVariant(of: "Content Mode"):
             contentMode = value as? UIViewContentMode
-        case _ where name.isVariantOf("User Interaction Enabled"):
+        case _ where name.isVariant(of: "User Interaction Enabled"):
             userInteractionEnabled = value as? Bool
-        case _ where name.isVariantOf("Hidden"):
+        case _ where name.isVariant(of: "Hidden"):
             hidden = value as? Bool
-        case _ where name.isVariantOf("Border Color"):
+        case _ where name.isVariant(of: "Border Color"):
             borderColor = (value as! CGColor)
-        case _ where name.isVariantOf("Border Width"):
+        case _ where name.isVariant(of: "Border Width"):
             borderWidth = value as? CGFloat
-        case _ where name.isVariantOf("Corner Radius"):
+        case _ where name.isVariant(of: "Corner Radius"):
             cornerRadius = value as? CGFloat
-        case _ where name.isVariantOf("Corner Radius Percentage"):
+        case _ where name.isVariant(of: "Corner Radius Percentage"):
             cornerRadiusPercentage = value as? CGFloat
-        case _ where name.isVariantOf("Alpha"):
+        case _ where name.isVariant(of: "Alpha"):
             alpha = value as? CGFloat
-        case _ where name.isVariantOf("Layout Margins"):
+        case _ where name.isVariant(of: "Layout Margins"):
             layoutMargins = value as? UIEdgeInsets
-        case _ where name.isVariantOf("Tint Color"):
+        case _ where name.isVariant(of: "Tint Color"):
             tintColor = value as? UIColor
-        case _ where name.isVariantOf("Masks To Bounds"):
+        case _ where name.isVariant(of: "Masks To Bounds"):
             masksToBounds = value as? Bool
-        case _ where name.isVariantOf("Clips To Bounds"):
+        case _ where name.isVariant(of: "Clips To Bounds"):
             clipsToBounds = value as? Bool
         default :
             return
@@ -391,7 +431,7 @@ struct UIViewPropertySet : DynamicStylePropertySet {
 }
 
 extension StyleClass {
-    var UIView:UIViewPropertySet { get { return self.retrieve(UIViewPropertySet) } set { self.register(newValue) } }
+    var UIView:UIViewPropertySet { get { return self.retrieve(propertySet: UIViewPropertySet.self) } set { self.register(propertySet: newValue) } }
 }
 
 
@@ -451,19 +491,19 @@ struct UILabelPropertySet : DynamicStylePropertySet {
     var customUILabelStyleBlock:((UILabel)->())?
     mutating func setStyleProperty<T>(named name: String, toValue value: T) {
         switch name {
-        case _ where name.isVariantOf("Text Color"):
+        case _ where name.isVariant(of: "Text Color"):
             textColor = value as? UIColor
-        case _ where name.isVariantOf("Font"):
+        case _ where name.isVariant(of: "Font"):
             font = value as? UIFont
-        case _ where name.isVariantOf("Enabled"):
+        case _ where name.isVariant(of: "Enabled"):
             enabled = value as? Bool
-        case _ where name.isVariantOf("Text Alignment"):
+        case _ where name.isVariant(of: "Text Alignment"):
             textAlignment = value as? NSTextAlignment
-        case _ where name.isVariantOf("Text"):
+        case _ where name.isVariant(of: "Text"):
             text = value as? String
-        case _ where name.isVariantOf("Highlighted"):
+        case _ where name.isVariant(of: "Highlighted"):
             highlighted = value as? Bool
-        case _ where name.isVariantOf("Highlighted Text Color"):
+        case _ where name.isVariant(of: "Highlighted Text Color"):
             highlightedTextColor = value as? UIColor
         default :
             return
@@ -474,7 +514,7 @@ struct UILabelPropertySet : DynamicStylePropertySet {
 
 
 extension StyleClass {
-    var UILabel:UILabelPropertySet { get { return self.retrieve(UILabelPropertySet) } set { self.register(newValue) } }
+    var UILabel:UILabelPropertySet { get { return self.retrieve(propertySet: UILabelPropertySet.self) } set { self.register(propertySet: newValue) } }
 }
 
 @IBDesignable class StyleableUILabel : UILabel, Styleable {
@@ -547,35 +587,35 @@ struct UIButtonPropertySet : DynamicStylePropertySet {
     var customUIButtonStyleBlock:((UIButton)->())?
     mutating func setStyleProperty<T>(named name: String, toValue value: T) {
         switch name {
-        case _ where name.isVariantOf("Content Edge Insets"):
+        case _ where name.isVariant(of: "Content Edge Insets"):
             contentEdgeInsets = value as? UIEdgeInsets
-        case _ where name.isVariantOf("Title Edge Insets"):
+        case _ where name.isVariant(of: "Title Edge Insets"):
             titleEdgeInsets = value as? UIEdgeInsets
-        case _ where name.isVariantOf("Image Edge Insets"):
+        case _ where name.isVariant(of: "Image Edge Insets"):
             imageEdgeInsets = value as? UIEdgeInsets
-        case _ where name.isVariantOf("Title For Normal State"):
+        case _ where name.isVariant(of: "Title For Normal State"):
             titleForNormalState = value as? String
-        case _ where name.isVariantOf("Title For Highlighted State"):
+        case _ where name.isVariant(of: "Title For Highlighted State"):
             titleForHighlightedState = value as? String
-        case _ where name.isVariantOf("Title For Disabled State"):
+        case _ where name.isVariant(of: "Title For Disabled State"):
             titleForDisabledState = value as? String
-        case _ where name.isVariantOf("Title Color For Normal State"):
+        case _ where name.isVariant(of: "Title Color For Normal State"):
             titleColorForNormalState = value as? UIColor
-        case _ where name.isVariantOf("Title Color For Highlighted State"):
+        case _ where name.isVariant(of: "Title Color For Highlighted State"):
             titleColorForHighlightedState = value as? UIColor
-        case _ where name.isVariantOf("Title Color For Disabled State"):
+        case _ where name.isVariant(of: "Title Color For Disabled State"):
             titleColorForDisabledState = value as? UIColor
-        case _ where name.isVariantOf("Image For Normal State"):
+        case _ where name.isVariant(of: "Image For Normal State"):
             imageForNormalState = value as? UIImage
-        case _ where name.isVariantOf("Image For Highlighted State"):
+        case _ where name.isVariant(of: "Image For Highlighted State"):
             imageForHighlightedState = value as? UIImage
-        case _ where name.isVariantOf("Image For Disabled State"):
+        case _ where name.isVariant(of: "Image For Disabled State"):
             imageForDisabledState = value as? UIImage
-        case _ where name.isVariantOf("Background Image For Normal State"):
+        case _ where name.isVariant(of: "Background Image For Normal State"):
             backgroundImageForNormalState = value as? UIImage
-        case _ where name.isVariantOf("Background Image For Highlighted State"):
+        case _ where name.isVariant(of: "Background Image For Highlighted State"):
             backgroundImageForHighlightedState = value as? UIImage
-        case _ where name.isVariantOf("Background Image For Disabled State"):
+        case _ where name.isVariant(of: "Background Image For Disabled State"):
             backgroundImageForDisabledState = value as? UIImage
         default :
             return
@@ -584,7 +624,7 @@ struct UIButtonPropertySet : DynamicStylePropertySet {
 }
 
 extension StyleClass {
-    var UIButton:UIButtonPropertySet { get { return self.retrieve(UIButtonPropertySet) } set { self.register(newValue) } }
+    var UIButton:UIButtonPropertySet { get { return self.retrieve(propertySet: UIButtonPropertySet.self) } set { self.register(propertySet: newValue) } }
 }
 
 @IBDesignable class StyleableUIButton : UIButton, Styleable {
@@ -596,16 +636,16 @@ extension StyleClass {
                 button.contentEdgeInsets =? style.UIButton.contentEdgeInsets
                 button.titleEdgeInsets =? style.UIButton.titleEdgeInsets
                 button.imageEdgeInsets =? style.UIButton.imageEdgeInsets
-                if let title = style.UIButton.titleForNormalState { button.setTitle(title, for:UIControlState()) }
+                if let title = style.UIButton.titleForNormalState { button.setTitle(title, for:.normal) }
                 if let title = style.UIButton.titleForHighlightedState { button.setTitle(title, for:.highlighted) }
                 if let title = style.UIButton.titleForDisabledState { button.setTitle(title, for:.disabled) }
-                if let titleColor = style.UIButton.titleColorForNormalState { button.setTitleColor(titleColor, for:UIControlState()) }
+                if let titleColor = style.UIButton.titleColorForNormalState { button.setTitleColor(titleColor, for:.normal) }
                 if let titleColor = style.UIButton.titleColorForHighlightedState { button.setTitleColor(titleColor, for:.highlighted) }
                 if let titleColor = style.UIButton.titleColorForDisabledState { button.setTitleColor(titleColor, for:.disabled) }
-                if let image = style.UIButton.imageForNormalState { button.setImage(image, for:UIControlState()) }
+                if let image = style.UIButton.imageForNormalState { button.setImage(image, for:.normal) }
                 if let image = style.UIButton.imageForHighlightedState { button.setImage(image, for:.highlighted) }
                 if let image = style.UIButton.imageForDisabledState { button.setImage(image, for:.disabled) }
-                if let backgroundImage = style.UIButton.backgroundImageForNormalState { button.setBackgroundImage(backgroundImage, for:UIControlState()) }
+                if let backgroundImage = style.UIButton.backgroundImageForNormalState { button.setBackgroundImage(backgroundImage, for:.normal) }
                 if let backgroundImage = style.UIButton.backgroundImageForHighlightedState { button.setBackgroundImage(backgroundImage, for:.highlighted) }
                 if let backgroundImage = style.UIButton.backgroundImageForDisabledState { button.setBackgroundImage(backgroundImage, for:.disabled) }
                 if let customStyleBlock = style.UIButton.customUIButtonStyleBlock { customStyleBlock(button) }
@@ -638,7 +678,7 @@ struct UIImageViewPropertySet : DynamicStylePropertySet {
     var customUIImageViewStyleBlock:((UIImageView)->())?
     mutating func setStyleProperty<T>(named name: String, toValue value: T) {
         switch name {
-        case _ where name.isVariantOf("Image"):
+        case _ where name.isVariant(of: "Image"):
             image = value as? UIImage
         default :
             return
@@ -647,7 +687,7 @@ struct UIImageViewPropertySet : DynamicStylePropertySet {
 }
 
 extension StyleClass {
-    var UIImageView:UIImageViewPropertySet { get { return self.retrieve(UIImageViewPropertySet) } set { self.register(newValue) } }
+    var UIImageView:UIImageViewPropertySet { get { return self.retrieve(propertySet: UIImageViewPropertySet.self) } set { self.register(propertySet: newValue) } }
 }
 
 @IBDesignable class StyleableUIImageView : UIImageView, Styleable {
@@ -693,7 +733,7 @@ private extension UIColor {
         let r, g, b, a: CGFloat
         
         if hexString.hasPrefix("#") {
-            let start = hexString.characters.index(hexString.startIndex, offsetBy: 1)
+            let start = hexString.index(hexString.startIndex, offsetBy:1)
             let hexColor = hexString.substring(from: start)
             
             if hexColor.characters.count == 8 || hexColor.characters.count == 6 {
@@ -711,7 +751,7 @@ private extension UIColor {
                 }
             }
         }
-        
+        self.init()
         return nil
     }
 }
@@ -722,254 +762,272 @@ private extension UIColor {
 // This enum type converts JSON dictionary values into the appropriate iOS types
 
 enum JSONStyleProperty {
-    case cgFloatProperty(value:CGFloat)
-    case floatProperty(value:Float)
-    case doubleProperty(value:Double)
-    case intProperty(value:Int)
-    case boolProperty(value:Bool)
-    case uiEdgeInsetsProperty(value:UIEdgeInsets)
-    case nsTextAlignmentProperty(value:NSTextAlignment)
-    case stringProperty(value:String)
-    case uiColorProperty(value:UIColor)
-    case cgColorProperty(value:CGColor)
-    case uiImageProperty(value:UIImage)
-    case uiViewContentModeProperty(value:UIViewContentMode)
-    case uiFontProperty(value:UIFont)
+    case CGFloatProperty(value:CGFloat)
+    case FloatProperty(value:Float)
+    case DoubleProperty(value:Double)
+    case IntProperty(value:Int)
+    case BoolProperty(value:Bool)
+    case UIEdgeInsetsProperty(value:UIEdgeInsets)
+    case NSTextAlignmentProperty(value:NSTextAlignment)
+    case StringProperty(value:String)
+    case UIColorProperty(value:UIColor)
+    case CGColorProperty(value:CGColor)
+    case UIImageProperty(value:UIImage)
+    case UIViewContentModeProperty(value:UIViewContentMode)
+    case UIFontProperty(value:UIFont)
+    case InvalidProperty(errorMessage:String)
     
-    init?(dictionary:[String : AnyObject]) {
+    init(dictionary:[String : AnyObject]) {
         guard let type = dictionary["propertyType"] as? String else {
-            return nil
+            self = .InvalidProperty(errorMessage: "Missing value for 'propertyType' in JSON")
+            return
         }
         switch type {
-        case _ where type.isVariantOf("CG Float") :
+        case _ where type.isVariant(of: "CG Float") :
             guard let value = dictionary["propertyValue"] as? CGFloat else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' for the was missing or could not be converted to CGFloat")
+                return
             }
-            self = .cgFloatProperty(value: value)
-        case _ where type.isVariantOf("Float") :
+            self = .CGFloatProperty(value: value)
+        case _ where type.isVariant(of: "Float") :
             guard let value = dictionary["propertyValue"] as? Float else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or could not be converted to Float")
+                return
             }
-            self = .floatProperty(value: value)
-        case _ where type.isVariantOf("Double") :
+            self = .FloatProperty(value: value)
+        case _ where type.isVariant(of: "Double") :
             guard let value = dictionary["propertyValue"] as? Double else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or could not be converted to Double")
+                return
             }
-            self = .doubleProperty(value: value)
-        case _ where type.isVariantOf("Int") :
+            self = .DoubleProperty(value: value)
+        case _ where type.isVariant(of: "Int") :
             guard let value = dictionary["propertyValue"] as? Int else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or could not be converted to Int")
+                return
             }
-            self = .intProperty(value: value)
-        case _ where type.isVariantOf("Bool") :
+            self = .IntProperty(value: value)
+        case _ where type.isVariant(of: "Bool") :
             guard let value = dictionary["propertyValue"] as? Bool else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or could not be converted to Bool")
+                return
+                
             }
-            self = .boolProperty(value: value)
-        case _ where type.isVariantOf("UI Edge Insets") || type.isVariantOf("Edge Insets"):
+            self = .BoolProperty(value: value)
+        case _ where type.isVariant(of: "UI Edge Insets") || type.isVariant(of: "Edge Insets"):
             guard let top = (dictionary["propertyValue"]?["top"] as? NSNumber)?.floatValue, let left = (dictionary["propertyValue"]?["left"] as? NSNumber)?.floatValue, let bottom = (dictionary["propertyValue"]?["bottom"] as? NSNumber)?.floatValue, let right = (dictionary["propertyValue"]?["right"] as? NSNumber)?.floatValue else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or or did not contain values for 'top', 'left', 'bottom', and 'right' that could be converted to Floats")
+                return
             }
-            self = .uiEdgeInsetsProperty(value: UIEdgeInsets(top: CGFloat(top), left: CGFloat(left), bottom: CGFloat(bottom), right: CGFloat(right)))
-        case _ where type.isVariantOf("NS Text Alignment") || type.isVariantOf("Text Alignment"):
+            self = .UIEdgeInsetsProperty(value: UIEdgeInsets(top: CGFloat(top), left: CGFloat(left), bottom: CGFloat(bottom), right: CGFloat(right)))
+        case _ where type.isVariant(of: "NS Text Alignment") || type.isVariant(of: "Text Alignment"):
             guard let value = dictionary["propertyValue"] as? String else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or could not be converted to String")
+                return
             }
             switch value {
-            case _ where value.isVariantOf("Left") :
-                self = .nsTextAlignmentProperty(value: .left)
-            case _ where value.isVariantOf("Center") :
-                self = .nsTextAlignmentProperty(value: .center)
-            case _ where value.isVariantOf("Right") :
-                self = .nsTextAlignmentProperty(value: .right)
-            case _ where value.isVariantOf("Justified") :
-                self = .nsTextAlignmentProperty(value: .justified)
-            case _ where value.isVariantOf("Natural") :
-                self = .nsTextAlignmentProperty(value: .natural)
+            case _ where value.isVariant(of: "Left") :
+                self = .NSTextAlignmentProperty(value: .left)
+            case _ where value.isVariant(of: "Center") :
+                self = .NSTextAlignmentProperty(value: .center)
+            case _ where value.isVariant(of: "Right") :
+                self = .NSTextAlignmentProperty(value: .right)
+            case _ where value.isVariant(of: "Justified") :
+                self = .NSTextAlignmentProperty(value: .justified)
+            case _ where value.isVariant(of: "Natural") :
+                self = .NSTextAlignmentProperty(value: .natural)
             default :
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was not a String that matched valid values for an NSTextAlignment property, i.e. 'Left', 'Center', 'Right', 'Justified', 'Natural'")
             }
-        case _ where type.isVariantOf("String") :
+        case _ where type.isVariant(of: "String") :
             guard let value = dictionary["propertyValue"] as? String else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or could not be converted to String")
+                return
             }
-            self = .stringProperty(value: value)
-        case _ where type.isVariantOf("UI Color") || type.isVariantOf("Color") :
+            self = .StringProperty(value: value)
+        case _ where type.isVariant(of: "UI Color") || type.isVariant(of: "Color") :
             guard let hex = dictionary["propertyValue"] as? String, let value = UIColor(hexString:hex) else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or was not a valid hex color string")
+                return
             }
-            self = .uiColorProperty(value: value)
-        case _ where type.isVariantOf("CG Color") :
+            self = .UIColorProperty(value: value)
+        case _ where type.isVariant(of: "CG Color") :
             guard let hex = dictionary["propertyValue"] as? String, let value = UIColor(hexString:hex)?.cgColor else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or was not a valid hex color string")
+                return
             }
-            self = .cgColorProperty(value: value)
-        case _ where type.isVariantOf("UI Image") || type.isVariantOf("Image"):
+            self = .CGColorProperty(value: value)
+        case _ where type.isVariant(of: "UI Image") || type.isVariant(of:"Image"):
             let bundle = Bundle(for: JSONStylesheet.self)
             guard let name = dictionary["propertyValue"] as? String, let value = UIImage(named: name, in: bundle, compatibleWith: UIScreen.main.traitCollection) else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or was not a String value that matched the name of an image in your app bundle")
+                return
             }
-            self = .uiImageProperty(value:value)
-        case _ where type.isVariantOf("UI View Content Mode") || type.isVariantOf("View Content Mode") || type.isVariantOf("Content Mode") :
+            self = .UIImageProperty(value:value)
+        case _ where type.isVariant(of: "UI View Content Mode") || type.isVariant(of: "View Content Mode") || type.isVariant(of: "Content Mode") :
             guard let value = dictionary["propertyValue"] as? String else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or could not be converted to String")
+                return
             }
             switch value {
-            case _ where value.isVariantOf("Scale To Fill") :
-                self = .uiViewContentModeProperty(value: .scaleToFill)
-            case _ where value.isVariantOf("Scale Aspect Fit") :
-                self = .uiViewContentModeProperty(value: .scaleAspectFit)
-            case _ where value.isVariantOf("Scale Aspect Fill") :
-                self = .uiViewContentModeProperty(value: .scaleAspectFill)
-            case _ where value.isVariantOf("Redraw") :
-                self = .uiViewContentModeProperty(value: .redraw)
-            case _ where value.isVariantOf("Center") :
-                self = .uiViewContentModeProperty(value: .center)
-            case _ where value.isVariantOf("Top") :
-                self = .uiViewContentModeProperty(value: .top)
-            case _ where value.isVariantOf("Bottom") :
-                self = .uiViewContentModeProperty(value: .bottom)
-            case _ where value.isVariantOf("Left") :
-                self = .uiViewContentModeProperty(value: .left)
-            case _ where value.isVariantOf("Right") :
-                self = .uiViewContentModeProperty(value: .right)
-            case _ where value.isVariantOf("Top Left") :
-                self = .uiViewContentModeProperty(value: .topLeft)
-            case _ where value.isVariantOf("Top Right") :
-                self = .uiViewContentModeProperty(value: .topRight)
-            case _ where value.isVariantOf("Bottom Left") :
-                self = .uiViewContentModeProperty(value: .bottomLeft)
-            case _ where value.isVariantOf("Bottom Right") :
-                self = .uiViewContentModeProperty(value: .bottomRight)
+            case _ where value.isVariant(of: "Scale To Fill") :
+                self = .UIViewContentModeProperty(value: .scaleToFill)
+            case _ where value.isVariant(of: "Scale Aspect Fit") :
+                self = .UIViewContentModeProperty(value: .scaleAspectFit)
+            case _ where value.isVariant(of: "Scale Aspect Fill") :
+                self = .UIViewContentModeProperty(value: .scaleAspectFill)
+            case _ where value.isVariant(of: "Redraw") :
+                self = .UIViewContentModeProperty(value: .redraw)
+            case _ where value.isVariant(of: "Center") :
+                self = .UIViewContentModeProperty(value: .center)
+            case _ where value.isVariant(of: "Top") :
+                self = .UIViewContentModeProperty(value: .top)
+            case _ where value.isVariant(of: "Bottom") :
+                self = .UIViewContentModeProperty(value: .bottom)
+            case _ where value.isVariant(of: "Left") :
+                self = .UIViewContentModeProperty(value: .left)
+            case _ where value.isVariant(of: "Right") :
+                self = .UIViewContentModeProperty(value: .right)
+            case _ where value.isVariant(of: "Top Left") :
+                self = .UIViewContentModeProperty(value: .topLeft)
+            case _ where value.isVariant(of: "Top Right") :
+                self = .UIViewContentModeProperty(value: .topRight)
+            case _ where value.isVariant(of: "Bottom Left") :
+                self = .UIViewContentModeProperty(value: .bottomLeft)
+            case _ where value.isVariant(of: "Bottom Right") :
+                self = .UIViewContentModeProperty(value: .bottomRight)
             default :
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was not a String that matched valid values for a UIViewContentMode property, e.g. 'scaleToFill', 'scaleAspectFit', 'Center', 'topRight', etc.")
             }
-        case _ where type.isVariantOf("UI Font") || type.isVariantOf("Font"):
+        case _ where type.isVariant(of: "UI Font") || type.isVariant(of:"Font"):
             guard let fontName = dictionary["propertyValue"]?["name"] as? String, let fontSize = (dictionary["propertyValue"]?["size"] as? NSNumber)?.floatValue, let font = UIFont(name: fontName, size: CGFloat(fontSize)) else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or or did not contain values for 'name', and 'size' that could be converted to a valid iOS font name and font size")
+                return
             }
-            self = .uiFontProperty(value: font)
-        case _ where type.isVariantOf("System Font") :
+            self = .UIFontProperty(value: font)
+        case _ where type.isVariant(of: "System Font") :
             if let fontSize = (dictionary["propertyValue"]?["size"] as? NSNumber)?.floatValue, let fontWeight = dictionary["propertyValue"]?["weight"] as? String {
                 var font:UIFont?
                 switch(fontWeight) {
-                case _ where fontWeight.isVariantOf("Ultra Light") || fontWeight.isVariantOf("UI Font Weight Ultra Light") :
+                case _ where fontWeight.isVariant(of: "Ultra Light") || fontWeight.isVariant(of: "UI Font Weight Ultra Light") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightUltraLight)
-                case _ where fontWeight.isVariantOf("Thin") || fontWeight.isVariantOf("UI Font Weight Thin") :
+                case _ where fontWeight.isVariant(of: "Thin") || fontWeight.isVariant(of: "UI Font Weight Thin") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightThin)
-                case _ where fontWeight.isVariantOf("Light") || fontWeight.isVariantOf("UI Font Weight Light") :
+                case _ where fontWeight.isVariant(of: "Light") || fontWeight.isVariant(of: "UI Font Weight Light") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightLight)
-                case _ where fontWeight.isVariantOf("Regular") || fontWeight.isVariantOf("UI Font Weight Regular") :
+                case _ where fontWeight.isVariant(of: "Regular") || fontWeight.isVariant(of: "UI Font Weight Regular") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightRegular)
-                case _ where fontWeight.isVariantOf("Medium") || fontWeight.isVariantOf("UI Font Weight Medium") :
+                case _ where fontWeight.isVariant(of: "Medium") || fontWeight.isVariant(of: "UI Font Weight Medium") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightMedium)
-                case _ where fontWeight.isVariantOf("Semibold") || fontWeight.isVariantOf("UI Font Weight Semibold") :
+                case _ where fontWeight.isVariant(of: "Semibold") || fontWeight.isVariant(of: "UI Font Weight Semibold") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightSemibold)
-                case _ where fontWeight.isVariantOf("Bold") || fontWeight.isVariantOf("UI Font Weight Bold") :
+                case _ where fontWeight.isVariant(of: "Bold") || fontWeight.isVariant(of: "UI Font Weight Bold") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightBold)
-                case _ where fontWeight.isVariantOf("Heavy") || fontWeight.isVariantOf("UI Font Weight Heavy") :
+                case _ where fontWeight.isVariant(of: "Heavy") || fontWeight.isVariant(of: "UI Font Weight Heavy") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightHeavy)
-                case _ where fontWeight.isVariantOf("Black") || fontWeight.isVariantOf("UI Font Weight Black") :
+                case _ where fontWeight.isVariant(of: "Black") || fontWeight.isVariant(of: "UI Font Weight Black") :
                     font = UIFont.systemFont(ofSize: CGFloat(fontSize), weight: UIFontWeightBlack)
                 default :
-                    return nil
+                    font = nil
                 }
                 if let resolvedFont = font {
-                    self = .uiFontProperty(value: resolvedFont)
+                    self = .UIFontProperty(value: resolvedFont)
                 }
                 else {
-                    return nil
+                    self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or or did not contain values for 'size' and 'weight' that could be converted to a Float and a String that matches valid UIFontWeight constants such as 'UIFontWithRegular', 'UIFontWeightLight', 'UIFontWeightBold', etc.")
                 }
             }
             else if let fontSize = (dictionary["propertyValue"]?["size"] as? NSNumber)?.floatValue {
-                self = .uiFontProperty(value: UIFont.systemFont(ofSize: CGFloat(fontSize)))
+                self = .UIFontProperty(value: UIFont.systemFont(ofSize: CGFloat(fontSize)))
             }
             else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or or did not contain a value for 'size' that could be converted to a Float")
             }
-        case _ where type.isVariantOf("Bold System Font") :
+        case _ where type.isVariant(of: "Bold System Font") :
             if let fontSize = (dictionary["propertyValue"]?["size"] as? NSNumber)?.floatValue {
-                self = .uiFontProperty(value: UIFont.boldSystemFont(ofSize: CGFloat(fontSize)))
+                self = .UIFontProperty(value: UIFont.boldSystemFont(ofSize: CGFloat(fontSize)))
             }
             else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or or did not contain a value for 'size' that could be converted to a Float")
             }
-        case _ where type.isVariantOf("Italic System Font") :
+        case _ where type.isVariant(of: "Italic System Font") :
             if let fontSize = (dictionary["propertyValue"]?["size"] as? NSNumber)?.floatValue {
-                self = .uiFontProperty(value: UIFont.italicSystemFont(ofSize: CGFloat(fontSize)))
+                self = .UIFontProperty(value: UIFont.italicSystemFont(ofSize: CGFloat(fontSize)))
             }
             else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or or did not contain a value for 'size' that could be converted to a Float")
             }
-        case _ where type.isVariantOf("Preferred Font") :
+        case _ where type.isVariant(of: "Preferred Font") :
             if let textStyle = dictionary["propertyValue"]?["textStyle"] as? String {
                 var font:UIFont?
                 switch(textStyle) {
-                case _ where textStyle.isVariantOf("Title 1") || textStyle.isVariantOf("UI Font Text Style Title 1") :
+                case _ where textStyle.isVariant(of: "Title 1") || textStyle.isVariant(of: "UI Font Text Style Title 1") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title1)
-                case _ where textStyle.isVariantOf("Title 2") || textStyle.isVariantOf("UI Font Text Style Title 2") :
+                case _ where textStyle.isVariant(of: "Title 2") || textStyle.isVariant(of: "UI Font Text Style Title 2") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title2)
-                case _ where textStyle.isVariantOf("Title 3") || textStyle.isVariantOf("UI Font Text Style Title 3") :
+                case _ where textStyle.isVariant(of: "Title 3") || textStyle.isVariant(of: "UI Font Text Style Title 3") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title3)
-                case _ where textStyle.isVariantOf("Headline") || textStyle.isVariantOf("UIFontTextStyleHeadline") :
+                case _ where textStyle.isVariant(of: "Headline") || textStyle.isVariant(of: "UIFontTextStyleHeadline") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
-                case _ where textStyle.isVariantOf("Subheadline") || textStyle.isVariantOf("UI Font Text Style Subheadline") :
+                case _ where textStyle.isVariant(of: "Subheadline") || textStyle.isVariant(of: "UI Font Text Style Subheadline") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.subheadline)
-                case _ where textStyle.isVariantOf("Body") || textStyle.isVariantOf("UI Font Text Style Body") :
+                case _ where textStyle.isVariant(of: "Body") || textStyle.isVariant(of: "UI Font Text Style Body") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
-                case _ where textStyle.isVariantOf("Callout") || textStyle.isVariantOf("UI Font Text Style Callout") :
+                case _ where textStyle.isVariant(of: "Callout") || textStyle.isVariant(of: "UI Font Text Style Callout") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.callout)
-                case _ where textStyle.isVariantOf("Footnote") || textStyle.isVariantOf("UI Font Text Style Footnote") :
+                case _ where textStyle.isVariant(of: "Footnote") || textStyle.isVariant(of: "UI Font Text Style Footnote") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.footnote)
-                case _ where textStyle.isVariantOf("Caption 1") || textStyle.isVariantOf("UI Font Text Style Caption 1") :
+                case _ where textStyle.isVariant(of: "Caption 1") || textStyle.isVariant(of: "UI Font Text Style Caption 1") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.caption1)
-                case _ where textStyle.isVariantOf("Caption 2") || textStyle.isVariantOf("UI Font Text Style Caption 2") :
+                case _ where textStyle.isVariant(of: "Caption 2") || textStyle.isVariant(of: "UI Font Text Style Caption 2") :
                     font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.caption2)
                 default :
-                    return nil
+                    font = nil
                 }
                 if let resolvedFont = font {
-                    self = .uiFontProperty(value: resolvedFont)
+                    self = .UIFontProperty(value: resolvedFont)
                 }
                 else {
-                    return nil
+                    self = .InvalidProperty(errorMessage: "'propertyValue' dictionary in JSON did not contain a value for 'textStyle' that could be converted to a String that matches a valid text style constant such as 'UIFontTextStyleBody', or 'UIFontTextStyleCaption2'")
                 }
             }
             else {
-                return nil
+                self = .InvalidProperty(errorMessage: "'propertyValue' in JSON was missing or or did not contain a value for 'textStyle' that could be converted to a String")
             }
         default :
-            return nil
+            self = .InvalidProperty(errorMessage: "'propertyType' value in JSON did match match an expected property type such as 'color', 'font', 'double', etc.")
         }
     }
     
     var value:Any {
         switch self {
-        case .cgFloatProperty(let value) :
+        case .CGFloatProperty(let value) :
             return value
-        case .floatProperty(let value) :
+        case .FloatProperty(let value) :
             return value
-        case .doubleProperty(let value) :
+        case .DoubleProperty(let value) :
             return value
-        case .intProperty(let value) :
+        case .IntProperty(let value) :
             return value
-        case .boolProperty(let value) :
+        case .BoolProperty(let value) :
             return value
-        case .uiEdgeInsetsProperty(let value) :
+        case .UIEdgeInsetsProperty(let value) :
             return value
-        case .nsTextAlignmentProperty(let value) :
+        case .NSTextAlignmentProperty(let value) :
             return value
-        case .stringProperty(let value) :
+        case .StringProperty(let value) :
             return value
-        case .uiColorProperty(let value) :
+        case .UIColorProperty(let value) :
             return value
-        case .cgColorProperty(let value) :
+        case .CGColorProperty(let value) :
             return value
-        case .uiImageProperty(let value) :
+        case .UIImageProperty(let value) :
             return value
-        case .uiViewContentModeProperty(let value) :
+        case .UIViewContentModeProperty(let value) :
             return value
-        case .uiFontProperty(let value) :
+        case .UIFontProperty(let value) :
+            return value
+        case .InvalidProperty(let value) :
             return value
         }
     }
@@ -986,14 +1044,21 @@ class JSONStylesheet : Stylesheet {
     
     struct DynamicStyleClass : StyleClass {
         var stylePropertySets:StylePropertySetCollection
-        init(jsonArray:[[String : AnyObject]], dynamicPropertySets:[StylePropertySet.Type]? = nil) {
+        init(jsonArray:[[String : AnyObject]], styleClass:String, dynamicPropertySets:[StylePropertySet.Type]? = nil) {
             stylePropertySets = StylePropertySetCollection(sets: dynamicPropertySets)
             for dictionary in jsonArray {
-                if let propertySetName = dictionary["propertySetName"] as? String, let property = dictionary["propertyName"] as? String, let style = JSONStyleProperty(dictionary:dictionary) {
-                    var propertySet = retrieve(propertySetName)
-                    propertySet?.setStyleProperty(named:property, toValue:style.value)
-                    if let modified = propertySet {
-                        register(modified)
+                if let propertySetName = dictionary["propertySetName"] as? String, let property = dictionary["propertyName"] as? String {
+                    let style = JSONStyleProperty(dictionary:dictionary)
+                    switch style {
+                    case .InvalidProperty :
+                        assert(false, "The '\(property)' property in '\(propertySetName)' for the style class '\(styleClass)' has the following error: \(style.value)")
+                        break
+                    default :
+                        var propertySet = retrieve(dynamicPropertySetName: propertySetName)
+                        propertySet?.setStyleProperty(named:property, toValue:style.value)
+                        if let modified = propertySet {
+                            register(propertySet: modified)
+                        }
                     }
                 }
             }
@@ -1004,41 +1069,53 @@ class JSONStylesheet : Stylesheet {
     var dynamicPropertySets:[StylePropertySet.Type] { get { return [UIViewPropertySet.self, UILabelPropertySet.self, UIButtonPropertySet.self, UIImageViewPropertySet.self] } }
     
     required init() {
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        let documentsDirectory = paths[0]
-        let filename = documentsDirectory + "stylesheet.json"
+        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
+        let savedDirectory = paths[0]
+        let filename = savedDirectory.appending("/stylesheet.json")
         let bundle = Bundle(for: JSONStylesheet.self)
+        let fileManager = FileManager.default
         
-        // First try loading stylesheet.json from documents directory.  If that fails, try to load stylesheet.json from bundle, and move a copy of that to documents directory. In order to dynamically update styling via the web at runtime, create code somewhere in your app that downloads the current stylesheet and writes it to the documents directory as "stylesheet.json"  If running in Interface Builder, only the bundle version is loaded, never the cached version.
+        // Compare the file modification date of the downloaded / copied version of stylesheet.json in the Documents directory, and the original version of stylesheet.json included in the app bundle. If the Documents version is more recent, load and parse that version.  Otherwise, use the bundle version and then copy it to the Documents directory.
         
-        #if TARGET_INTERFACE_BUILDER
-            if let path = bundle.pathForResource("stylesheet", ofType: "json"), let data = NSData(contentsOfFile:path), let json = (try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0))) as? [[String : AnyObject]] {
-                parse(json)
+        if let savedAttributes = try? fileManager.attributesOfItem(atPath: filename), let savedDate = savedAttributes[FileAttributeKey.modificationDate] as? NSDate, let path = bundle.path(forResource: "stylesheet", ofType: "json"), let bundledAttributes = try? fileManager.attributesOfItem(atPath: path), let bundledDate = bundledAttributes[FileAttributeKey.modificationDate] as? NSDate  {
+            
+            if let data = NSData(contentsOfFile:filename), let json = (try? JSONSerialization.jsonObject(with: data as Data, options:[])) as? [[String : AnyObject]], savedDate.timeIntervalSinceReferenceDate >= bundledDate.timeIntervalSinceReferenceDate {
+                parse(json: json)
+            } else if let path = bundle.path(forResource: "stylesheet", ofType: "json"), let data = NSData(contentsOfFile:path), let json = (try? JSONSerialization.jsonObject(with: data as Data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [[String : AnyObject]] {
+                if let stringJSON = String(data:data as Data, encoding: String.Encoding.utf8) {
+                    do {
+                        try stringJSON.write(toFile: filename, atomically: true, encoding: String.Encoding.utf8)
+                    }
+                    catch {}
+                }
+                
+                parse(json: json)
             }
-            return
-        #endif
-        
-        if let data = try? Data(contentsOf: URL(fileURLWithPath: filename)), let json = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [[String : AnyObject]] {
-            parse(json)
-        } else if let path = bundle.path(forResource: "stylesheet", ofType: "json"), let data = try? Data(contentsOf: URL(fileURLWithPath: path)), let json = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [[String : AnyObject]] {
-            if let stringJSON = String(data:data, encoding: String.Encoding.utf8) {
+        }
+        else if let path = bundle.path(forResource: "stylesheet", ofType: "json"), let data = NSData(contentsOfFile:path), let json = (try? JSONSerialization.jsonObject(with: data as Data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [[String : AnyObject]] {
+            if let stringJSON = String(data:data as Data, encoding: String.Encoding.utf8) {
                 do {
                     try stringJSON.write(toFile: filename, atomically: true, encoding: String.Encoding.utf8)
                 }
                 catch {}
             }
-            parse(json)
+            parse(json: json)
         }
+        
+        return
     }
     
-    fileprivate func parse(_ json:[[String : AnyObject]]) {
+    private func parse(json:[[String : AnyObject]]) {
         for dictionary in json {
             if let styleClass = dictionary["styleClass"] as? String, let array = dictionary["properties"] as? [[String : AnyObject]] {
-                styleClasses.append((identifier: styleClass, styleClass: DynamicStyleClass(jsonArray: array, dynamicPropertySets: dynamicPropertySets)))
+                styleClasses.append((identifier: styleClass, styleClass: DynamicStyleClass(jsonArray: array, styleClass:styleClass, dynamicPropertySets: dynamicPropertySets)))
+            } else {
+                assert(false, "Error in JSON stylesheet, possibly missing a 'styleClass' String value, or a 'properties' array for one of the included style classes")
             }
         }
-        JSONStylesheet.cacheTimestamp = Date.timeIntervalSinceReferenceDate
+        JSONStylesheet.cacheTimestamp = NSDate.timeIntervalSinceReferenceDate
         JSONStylesheet.cachedStylesheet = self
     }
 }
+
 

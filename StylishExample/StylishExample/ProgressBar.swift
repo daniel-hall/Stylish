@@ -48,11 +48,11 @@ struct ProgressBarPropertySet : DynamicStylePropertySet {
     // DynamicStylePropertySet conformanace, allows properties to be set using their string names as keys
     mutating func setStyleProperty<T>(named name: String, toValue value: T) {
         switch name {
-        case _ where name.isVariantOf("Progress Color"):
+        case _ where name.isVariant(of: "Progress Color"):
             progressColor = value as? UIColor
-        case _ where name.isVariantOf("Track Color"):
+        case _ where name.isVariant(of: "Track Color"):
             trackColor = value as? UIColor
-        case _ where name.isVariantOf("Corner Radius Percentage"):
+        case _ where name.isVariant(of: "Corner Radius Percentage"):
             cornerRadiusPercentage = value as? CGFloat
         default :
             return
@@ -63,7 +63,7 @@ struct ProgressBarPropertySet : DynamicStylePropertySet {
 // 2. Extend StyleClass to include your custom view's property set as a gettable / settable property. The 'retrieve' and 'register' methods fetch and add the property set to a collection on the style class
 
 extension StyleClass {
-    var ProgressBar:ProgressBarPropertySet { get { return self.retrieve(ProgressBarPropertySet) } set { self.register(newValue) } }
+    var ProgressBar:ProgressBarPropertySet { get { return self.retrieve(propertySet: ProgressBarPropertySet.self) } set { self.register(propertySet: newValue) } }
 }
 
 

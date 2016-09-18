@@ -43,18 +43,6 @@ class MainViewController : UIViewController {
         default :
             return
         }
-        
-        refreshStyles(view)
     }
     
-    // Re-apply styles to all styleable views in hierarchy
-    func refreshStyles(_ forView:UIView) {
-        for subview in forView.subviews {
-            refreshStyles(subview)
-        }
-        if let styleable = forView as? Styleable {
-            var styleableView = styleable
-            styleableView.stylesheet = styleable.stylesheet
-        }
-    }
 }
