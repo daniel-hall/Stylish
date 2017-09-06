@@ -22,7 +22,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        // Set our custom property sets that should be part of JSON parsing
         Stylish.customDynamicPropertySets = [ProgressBarPropertySet.self]
+        
+        
         //Remove the following code if you want to dynamically download and cache a stylesheet from the web.
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let documentsDirectory = paths[0]
