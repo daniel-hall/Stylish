@@ -14,14 +14,22 @@ import Foundation
 
 public extension Stylish {
     
+    /// An override point that allows an app using Stylish to specify its own JSONStyleProperty definitions to use when parsing JSON.  A JSONStyleProperty simply defines a way to identify an parse different native Swift values from JSON values, for example, parsing UIEdgeInsets from a JSON dictionary.
     public static var customJSONStyleProperties: [JSONStyleProperty] = []
+    
+    
+    /// All defined JSONStyleProperty instances being used by Stylish, which included all the built-in properties plus any specified in customJSONStyleProperties.
     public static var jsonStyleProperties: [JSONStyleProperty] { return customJSONStyleProperties + builtInJSONStyleProperties }
     
+    /// An override point that allows an app using Stylish to specify dynamic style property sets (groups of properties for styling custom components) that can be defined in and parsed from JSON.
     public static var customDynamicPropertySets: [StylePropertySet.Type] = []
+    
+    /// All defined dynamic style property sets being used by Stylish, which included all the built-in property sets plus any specified in customDynamicPropertySets.
     public static var dynamicPropertySets:[StylePropertySet.Type] {
         return [UIViewPropertySet.self, UILabelPropertySet.self, UIButtonPropertySet.self, UIImageViewPropertySet.self] + customDynamicPropertySets
     }
     
+    /// The name of the stylesheet json file which sould be retrieved and used by Stylish
     public static var jsonStylesheetName: String = "stylesheet"
     
     private static var builtInJSONStyleProperties: [JSONStyleProperty] {

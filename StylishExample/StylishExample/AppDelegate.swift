@@ -11,7 +11,6 @@ import Stylish
 
 extension UIView {
     open override func prepareForInterfaceBuilder() {
-        //Stylish.appBundle = Bundle(for: AppDelegate.self)
         Stylish.customDynamicPropertySets = [ProgressBarPropertySet.self]
     }
 }
@@ -23,9 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-       // Stylish.appBundle = Bundle(for: AppDelegate.self)
-       // Stylish.customDynamicPropertySets = [ProgressBarPropertySet.self]
+        Stylish.customDynamicPropertySets = [ProgressBarPropertySet.self]
         //Remove the following code if you want to dynamically download and cache a stylesheet from the web.
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let documentsDirectory = paths[0]

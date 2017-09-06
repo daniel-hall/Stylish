@@ -12,6 +12,8 @@
 		D7C473301F3E579800B5880A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C4732E1F3E579800B5880A /* Main.storyboard */; };
 		D7C473321F3E579800B5880A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7C473311F3E579800B5880A /* Assets.xcassets */; };
 		D7C473351F3E579800B5880A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C473331F3E579800B5880A /* LaunchScreen.storyboard */; };
+		D7C473441F3E586D00B5880A /* Stylish.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7C473411F3E582C00B5880A /* Stylish.framework */; };
+		D7C473451F3E586D00B5880A /* Stylish.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D7C473411F3E582C00B5880A /* Stylish.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D7C4734C1F3E591300B5880A /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4734B1F3E591300B5880A /* ProgressBar.swift */; };
 		D7C473521F3E592000B5880A /* Graphite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4734D1F3E592000B5880A /* Graphite.swift */; };
 		D7C473531F3E592000B5880A /* Aqua.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4734E1F3E592000B5880A /* Aqua.swift */; };
@@ -20,6 +22,30 @@
 		D7C473561F3E592000B5880A /* stylesheet.json in Resources */ = {isa = PBXBuildFile; fileRef = D7C473511F3E592000B5880A /* stylesheet.json */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D7C473401F3E582C00B5880A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D7C4733C1F3E582C00B5880A /* Stylish.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D7C472FD1F3E4F8A00B5880A;
+			remoteInfo = Stylish;
+		};
+		D7C473421F3E584F00B5880A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D7C4733C1F3E582C00B5880A /* Stylish.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D7C472FC1F3E4F8A00B5880A;
+			remoteInfo = Stylish;
+		};
+		D7C473461F3E586D00B5880A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D7C4733C1F3E582C00B5880A /* Stylish.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D7C472FC1F3E4F8A00B5880A;
+			remoteInfo = Stylish;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		D7C473481F3E586D00B5880A /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -27,6 +53,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D7C473451F3E586D00B5880A /* Stylish.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -41,6 +68,7 @@
 		D7C473311F3E579800B5880A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D7C473341F3E579800B5880A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7C473361F3E579800B5880A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7C4733C1F3E582C00B5880A /* Stylish.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Stylish.xcodeproj; path = Stylish/Stylish.xcodeproj; sourceTree = "<group>"; };
 		D7C4734B1F3E591300B5880A /* ProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		D7C4734D1F3E592000B5880A /* Graphite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Graphite.swift; sourceTree = "<group>"; };
 		D7C4734E1F3E592000B5880A /* Aqua.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Aqua.swift; sourceTree = "<group>"; };
@@ -54,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7C473441F3E586D00B5880A /* Stylish.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +92,7 @@
 		D7C4731E1F3E579800B5880A = {
 			isa = PBXGroup;
 			children = (
+				D7C4733C1F3E582C00B5880A /* Stylish.xcodeproj */,
 				D7C473291F3E579800B5880A /* StylishExample */,
 				D7C473281F3E579800B5880A /* Products */,
 			);
@@ -89,6 +119,14 @@
 				D7C473361F3E579800B5880A /* Info.plist */,
 			);
 			path = StylishExample;
+			sourceTree = "<group>";
+		};
+		D7C4733D1F3E582C00B5880A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D7C473411F3E582C00B5880A /* Stylish.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		D7C473491F3E58F000B5880A /* ProgressBar */ = {
@@ -126,6 +164,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				D7C473431F3E584F00B5880A /* PBXTargetDependency */,
+				D7C473471F3E586D00B5880A /* PBXTargetDependency */,
 			);
 			name = StylishExample;
 			productName = StylishExample;
@@ -144,6 +184,7 @@
 				TargetAttributes = {
 					D7C473261F3E579800B5880A = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = XN5NUHVH4V;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -159,12 +200,28 @@
 			mainGroup = D7C4731E1F3E579800B5880A;
 			productRefGroup = D7C473281F3E579800B5880A /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = D7C4733D1F3E582C00B5880A /* Products */;
+					ProjectRef = D7C4733C1F3E582C00B5880A /* Stylish.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				D7C473261F3E579800B5880A /* StylishExample */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D7C473411F3E582C00B5880A /* Stylish.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Stylish.framework;
+			remoteRef = D7C473401F3E582C00B5880A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D7C473251F3E579800B5880A /* Resources */ = {
@@ -196,6 +253,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D7C473431F3E584F00B5880A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Stylish;
+			targetProxy = D7C473421F3E584F00B5880A /* PBXContainerItemProxy */;
+		};
+		D7C473471F3E586D00B5880A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Stylish;
+			targetProxy = D7C473461F3E586D00B5880A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D7C4732E1F3E579800B5880A /* Main.storyboard */ = {
@@ -315,14 +385,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XN5NUHVH4V;
 				INFOPLIST_FILE = StylishExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -331,14 +399,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XN5NUHVH4V;
 				INFOPLIST_FILE = StylishExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.StylishExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};

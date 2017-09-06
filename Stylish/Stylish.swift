@@ -13,20 +13,29 @@ import UIKit
 
 public struct Stylish {
     
-    public static var appBundle: Bundle = Bundle.main
+    /// The app bundle that Stylish uses to prefix style classes when dynamically instantiating them, to load stylesheet json from, etc. By default, Stylish will look for the first bundle it finds that has a png resource that with the string "AppIcon" in its name (a good guess for what the main bundle will ultimately be for the app).  If this guess is wrong, you can set this global static var directly from your app delegate for runtime resolution, and from an extension on UIView that overrides prepareForInterfaceBuilder for design-time resolution (and to see live storyboard previews work).
+    public static var appBundle: Bundle = Bundle.allBundles.first(where: {
+        guard let resourceURL = $0.resourceURL else { return false }
+        let urls = try? FileManager.default.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys:[], options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles)
+        return urls?.contains{ $0.absoluteString.hasSuffix(".png") == true && $0.absoluteString.range(of:"AppIcon") != nil } == true
+    }) ?? Bundle.main
     
+    
+    /// The default global stylehseet that will be used when no specific stylsheet is specificed on a Styleable UIView.  If this is nil, Stylish will try to load the stylesheet specified in the Info.plist if one has been specified
     public static var globalStylesheet:Stylesheet.Type? = nil {
         didSet {
             refreshAllStyles()
         }
     }
     
+    /// Refreshes the styles of all views in the app, in the event of a stylesheet =change or update, etc.
     public static func refreshAllStyles() {
         for window in UIApplication.shared.windows {
             refreshStyles(for: window)
         }
     }
     
+    /// Refreshes / reapplies the styling for a single view
     public static func refreshStyles(for view:UIView) {
         for subview in view.subviews {
             refreshStyles(for: subview)
