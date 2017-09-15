@@ -32,7 +32,7 @@
 */
 
 
-import Foundation
+import Stylish
 import UIKit
 
 
@@ -108,6 +108,8 @@ extension StyleClass {
 // 6. In order to get the special tinting of views when an invalid style is specified, override 'prepareForInterfaceBuilder()' and call 'showErrorIfInvalidStyles()'  That's it!  Your custom view is now a full participant in Stylish themeing. Next step to create some StyleClasses that set properties on your custom view inside a Stylesheet.
     
     override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        parseAndApplyStyles()
         showErrorIfInvalidStyles()
     }
     

@@ -28,7 +28,7 @@
 
 
 
-import Foundation
+import Stylish
 import UIKit
 
 // 1. To define a Stylesheet, create a new class that conforms to the Stylesheet protocol

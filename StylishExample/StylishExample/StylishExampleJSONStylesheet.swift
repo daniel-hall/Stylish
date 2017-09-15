@@ -28,7 +28,7 @@
 
 
 
-import Foundation
+import Stylish
 
 
 // Stylish provides a base implementation for reading and parsing style classes from a json stylesheet.  However, that base implementation isn't aware of any custom property sets you may have created for your own custom styleable views.  Therefore, in order to use the JSON stylesheet functionality with your own custom views, you must subclass 'JSONStylesheet' and override the 'dynamicPropertySets' getter to include both those defined in the base immplementation, and your own.   You can also override the styleClasses getter to include shared StyleClasses that you want added to those which will be parsed out of the JSON.
@@ -38,10 +38,7 @@ class StylishExampleJSONStylesheet:JSONStylesheet {
     //Add some shared StyleClasses that will be reused along with any Style Classes defined in the JSON stylesheet.
     
     override var styleClasses:[(identifier: String, styleClass: StyleClass)] { get { return super.styleClasses + [("Rounded", RoundedStyle()), ("HighlightedText", HighlightedTextStyle())] } set { super.styleClasses = newValue } }
-    
-    // Add our custom 'ProgressBarPropertySet' to the sets that the JSON Stylesheet knows about.
-    
-    override var dynamicPropertySets: [StylePropertySet.Type] { get { return super.dynamicPropertySets + [ProgressBarPropertySet.self]} }
+
 }
 
 
