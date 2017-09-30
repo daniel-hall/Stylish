@@ -28,7 +28,7 @@
 
 
 
-import UIKit
+import Stylish
 
 // 1. To create a StyleClass, define a struct that conforms to the StyleClass protocol
 

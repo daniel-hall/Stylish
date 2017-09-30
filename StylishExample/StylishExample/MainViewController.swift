@@ -28,6 +28,7 @@
 
 
 import UIKit
+import Stylish
 
 class MainViewController : UIViewController {
     
@@ -35,11 +36,11 @@ class MainViewController : UIViewController {
     @IBAction func changeStylesheet(_ sender: UIButton) {
         switch sender.currentTitle! {
         case "Graphite" :
-            Stylish.GlobalStylesheet = Graphite.self
+            Stylish.globalStylesheet = Graphite.self
         case "Aqua" :
-            Stylish.GlobalStylesheet = Aqua.self
+            Stylish.globalStylesheet = Aqua.self
         case "JSON" :
-            Stylish.GlobalStylesheet = StylishExampleJSONStylesheet.self
+            Stylish.globalStylesheet = JSONStylesheet.self
         default :
             return
         }

@@ -15,7 +15,14 @@ For the first time, this provides a single solution for creating and applying st
 
 ## Installation
 
-- Download the file `Stylish.swift` from the Source folder in this repo and add it to your project.
+Since Swift has not yet reached ABI or module format stability, Apple does not support or advise distributing Swift libraries compiled outside of your project.  Instead, the recommended approach is: 
+
+1. Include the Stylish repo (this repo) as a git submodule in your project (or just check out the version of the entire Stylish repo you want to use and add it to your project as a subdirectory)
+2. Drag Stylish.xcodeproj into your own Xcode project or workspace (see the StylishExample project in this repo as a reference)
+3. In your own app target(s) on the "General" tab, scroll down to "Embedded Binaries", click the plus button and choose Stylish.framework. Again, you can refer to the StylishExample project to see what this looks like.
+
+These steps will ensure that the Stylish framework is compiled as part of your own app's build phases as needed and that the Stylish.framework will be using the same version of Swift and the Swift compiler as the rest of your project.
+
 - (**_Optional but recommended_**) add a key called “Stylesheet” to your app’s info.plist. The value of this key will tell Stylish which Stylesheet class to load by default, both during design and at runtime.
 - In order to use a JSON stylesheet, add a file called stylesheet.json to your app bundle, and specify “JSONStylesheet” as the value for the “Stylesheet” key you added in info.plist. See information below for adding style classes to your stylesheet.json so they can be used in your app.
 
@@ -25,7 +32,7 @@ To see Stylish in action, download the the folder “StylishExample” from this
 
 Now, go the the info.plist for the StylishExample app and change the “Stylesheet” key’s value from “Graphite” to “Aqua”. Then return to Main.storyboard and watch as the appearance of the scene completely changes without writing any code or even compiled the app.
 
-Go back to the info.plist and change the value for the key “Stylesheet” to now be “StylishExampleJSONStylesheet”.  Go back to Main.storyboard and once again, the whole scene will transform to reflect the new Stylesheet loaded from JSON. 
+Go back to the info.plist and change the value for the key “Stylesheet” to now be “JSONStylesheet”.  Go back to Main.storyboard and once again, the whole scene will transform to reflect the new Stylesheet loaded from JSON. 
 
 At this point, you can open stylesheet.json in Xcode and start changing some of the color, font, or other values in the stylesheet, then return to Main.storyboard to watch the changes you made appear live in Interface Builder.
 
