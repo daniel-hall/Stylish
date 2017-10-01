@@ -40,7 +40,7 @@ class Aqua : Stylesheet {
 // 3. Inside the init() for your Stylesheet, initialize the styleClasses array with all the StyleClass instances that should be part of this Stylesheet. StyleClasses specific to this Stylesheet can be declared as nested types as you see further down.  Style Classes can also be reused between multiple Stylesheets, for example, the 'RoundedStyle' StyleClass below, which is declared in SharedStyleClasses.swift because it is identical across all Stylesheets.
     
     required init() {
-        styleClasses = [("Rounded", RoundedStyle()), ("HighlightedText", HighlightedTextStyle()),("Primary Background Color", PrimaryBackgroundColor()), ("Secondary Background Color", SecondaryBackgroundColor()), ("Header Text", HeaderText()), ("Body Text", BodyText()), ("Progress Bar", ProgressBar()), ("Default Button", DefaultButton()), ("Stylesheet Title", StylesheetTitle()), ("Theme Image", ThemeImage()), ("Theme Description", ThemeDescription())]
+        styleClasses = [("Primary Background Color", PrimaryBackgroundColor()), ("Secondary Background Color", SecondaryBackgroundColor()), ("Header Text", HeaderText()), ("Body Text", BodyText()), ("Progress Bar", ProgressBar()), ("Default Button", DefaultButton()), ("Stylesheet Title", StylesheetTitle()), ("Theme Image", ThemeImage()), ("Theme Description", ThemeDescription())]
     }
     
 // 4. Here are the specific, nested StyleClass types defined for this Stylesheet. They can be made private, or left internal as below, to allow other Stylesheets to resuse them with their full type identifiers, e.g. 'Aqua.PrimaryBackgroundColor'

@@ -28,8 +28,13 @@ public struct Stylish {
         }
     }
     
-    /// Style classes that should be added to ALL stylesheets. This is useful for common styles that should always remain the same and be available, regardless of which stylesheet is currently applied in the app
-    public static var sharedStyleClasses: [(identifier: String, styleClass: StyleClass)] = []
+    internal static var sharedStyleClasses: [(identifier: String, styleClass: StyleClass)] = []
+    
+    /// A method that allows client apps to register style classes that should be added to ALL stylesheets. This is useful for common styles that should always remain the same and be available, regardless of which stylesheet is currently applied in the app
+    public static func registerSharedStyleClasses(_ styleClasses:[(identifier: String, styleClass: StyleClass)]) {
+        let nonDuplicates = styleClasses.filter{ styleClass in !sharedStyleClasses.contains{ $0.identifier == styleClass.identifier }}
+        sharedStyleClasses += nonDuplicates
+    }
     
     /// Refreshes the styles of all views in the app, in the event of a stylesheet =change or update, etc.
     public static func refreshAllStyles() {
