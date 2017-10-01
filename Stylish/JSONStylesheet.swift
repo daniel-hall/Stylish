@@ -14,15 +14,24 @@ import Foundation
 
 public extension Stylish {
     
-    /// An override point that allows an app using Stylish to specify its own JSONStyleProperty definitions to use when parsing JSON.  A JSONStyleProperty simply defines a way to identify an parse different native Swift values from JSON values, for example, parsing UIEdgeInsets from a JSON dictionary.
-    public static var customJSONStyleProperties: [JSONStyleProperty] = []
+    private static var customJSONStyleProperties: [JSONStyleProperty] = []
     
+    /// A method that allows an app using Stylish to register its own JSONStyleProperty definitions to use when parsing JSON.  A JSONStyleProperty simply defines a way to identify an parse different native Swift values from JSON values, for example, parsing UIEdgeInsets from a JSON dictionary.
+    public static func registerCustomJSONStyleProperties(_ jsonStyleProperties: [JSONStyleProperty]) {
+        let nonDuplicates = jsonStyleProperties.filter{ jsonStyleProperty in customJSONStyleProperties.first{ $0.propertyTypeNames == jsonStyleProperty.propertyTypeNames } == nil }
+            customJSONStyleProperties += nonDuplicates
+    }
     
     /// All defined JSONStyleProperty instances being used by Stylish, which included all the built-in properties plus any specified in customJSONStyleProperties.
     public static var jsonStyleProperties: [JSONStyleProperty] { return customJSONStyleProperties + builtInJSONStyleProperties }
     
-    /// An override point that allows an app using Stylish to specify dynamic style property sets (groups of properties for styling custom components) that can be defined in and parsed from JSON.
-    public static var customDynamicPropertySets: [StylePropertySet.Type] = []
+    private static var customDynamicPropertySets: [StylePropertySet.Type] = []
+    
+    /// A method that allows an app using Stylish to register specific dynamic style property sets (groups of properties for styling custom components) that can be defined in and parsed from JSON.
+    public static func registerCustomDynamicPropertySets(_ dynamicPropertySets: [StylePropertySet.Type]) {
+        let nonDuplicates = dynamicPropertySets.filter{ dynamicPropertySetType in !customDynamicPropertySets.contains{ $0 == dynamicPropertySetType } }
+        customDynamicPropertySets += nonDuplicates
+    }
     
     /// All defined dynamic style property sets being used by Stylish, which included all the built-in property sets plus any specified in customDynamicPropertySets.
     public static var dynamicPropertySets:[StylePropertySet.Type] {
