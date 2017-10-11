@@ -14,11 +14,14 @@ import UIKit
 public struct Stylish {
     
     /// The app bundle that Stylish uses to prefix style classes when dynamically instantiating them, to load stylesheet json from, etc. By default, Stylish will look for the first bundle it finds that has a png resource that with the string "AppIcon" in its name (a good guess for what the main bundle will ultimately be for the app).  If this guess is wrong, you can set this global static var directly from your app delegate for runtime resolution, and from an extension on UIView that overrides prepareForInterfaceBuilder for design-time resolution (and to see live storyboard previews work).
-    public static var appBundle: Bundle = Bundle.allBundles.first(where: {
-        guard let resourceURL = $0.resourceURL else { return false }
-        let urls = try? FileManager.default.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys:[], options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles)
-        return urls?.contains{ $0.absoluteString.hasSuffix(".png") == true && $0.absoluteString.range(of:"AppIcon") != nil } == true
-    }) ?? Bundle.main
+    public static var appBundle: Bundle {
+        let bundle = Bundle.allBundles.first(where: {
+            guard let resourceURL = $0.resourceURL else { return false }
+            let urls = try? FileManager.default.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys:[], options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles)
+            return urls?.contains{ $0.absoluteString.hasSuffix(".png") == true && $0.absoluteString.range(of:"AppIcon") != nil } == true
+        }) ?? Bundle.main
+        return bundle
+    }
     
     
     /// The default global stylehseet that will be used when no specific stylsheet is specificed on a Styleable UIView.  If this is nil, Stylish will try to load the stylesheet specified in the Info.plist if one has been specified
@@ -148,7 +151,9 @@ public extension Styleable where Self:UIView {
     }
     
     public func parseAndApply(styles:String, usingStylesheet stylesheetName:String) {
+        UIView().prepareForInterfaceBuilder() // A dumb hack to force any Stylish style registration code to run before IBDesignable renders
         let components = styles.replacingOccurrences(of: ", ", with: ",").replacingOccurrences(of: " ,", with: ",").components(separatedBy:",")
+        let normalizedStylesheetName = stylesheetName.lowercased().replacingOccurrences(of: "", with: "")
         if stylesheetName.lowercased() == "jsonstylesheet" {
             let stylesheetType = JSONStylesheet.self
             let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
@@ -166,7 +171,7 @@ public extension Styleable where Self:UIView {
                 }
             }
         }
-        else if let stylesheetType = Stylish.globalStylesheet {
+        else if let stylesheetType = Stylish.globalStylesheet, normalizedStylesheetName.isEmpty {
             let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
             for string in components where string != "" {
                 if let style = stylesheet[string] {
@@ -174,7 +179,7 @@ public extension Styleable where Self:UIView {
                 }
             }
         }
-        else if let info = Stylish.appBundle.infoDictionary, let stylesheetName = info["Stylesheet"] as? String, stylesheetName.lowercased() == "jsonstylesheet" {
+        else if let info = Stylish.appBundle.infoDictionary, let stylesheetName = info["Stylesheet"] as? String, stylesheetName.lowercased() == "jsonstylesheet", normalizedStylesheetName.isEmpty {
             let stylesheetType = JSONStylesheet.self
             let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
             for string in components where string != "" {
@@ -184,7 +189,7 @@ public extension Styleable where Self:UIView {
             }
         }
         else {
-            if let info = Stylish.appBundle.infoDictionary, let moduleName = Stylish.appBundle.infoDictionary?[String(kCFBundleNameKey)] as? String, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+            if let info = Stylish.appBundle.infoDictionary, let moduleName = Stylish.appBundle.infoDictionary?[String(kCFBundleNameKey)] as? String, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type, normalizedStylesheetName.isEmpty {
                 let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
                 for string in components where string != "" {
                     if let style = stylesheet[string] {
@@ -209,6 +214,7 @@ public extension Styleable where Self:UIView {
     
     public func showErrorIfInvalid(styles:String, usingStylesheet stylesheetName:String) {
         let components = styles.replacingOccurrences(of:", ", with: ",").replacingOccurrences(of:" ,", with: ",").components(separatedBy:",")
+        let normalizedStylesheetName = stylesheetName.lowercased().replacingOccurrences(of: "", with: "")
         
         var invalidStyle = false
         for subview in subviews {
@@ -233,7 +239,7 @@ public extension Styleable where Self:UIView {
                 }
             }
         }
-        else if let stylesheetType = Stylish.globalStylesheet {
+        else if let stylesheetType = Stylish.globalStylesheet, normalizedStylesheetName.isEmpty {
             let stylesheet = stylesheetType.init()
             for string in components where string != "" {
                 if stylesheet[string] == nil {
@@ -241,7 +247,7 @@ public extension Styleable where Self:UIView {
                 }
             }
         }
-        else if let info = Stylish.appBundle.infoDictionary, let stylesheetName = info["Stylesheet"] as? String, stylesheetName.lowercased() == "jsonstylesheet" {
+        else if let info = Stylish.appBundle.infoDictionary, let stylesheetName = info["Stylesheet"] as? String, stylesheetName.lowercased() == "jsonstylesheet", normalizedStylesheetName.isEmpty {
             let stylesheetType = JSONStylesheet.self
             let stylesheet = useCachedJSON(forStylesheetType: stylesheetType) ? JSONStylesheet.cachedStylesheet! : stylesheetType.init()
             for string in components where string != "" {
@@ -251,7 +257,7 @@ public extension Styleable where Self:UIView {
             }
         }
         else {
-            if let info = Stylish.appBundle.infoDictionary, let moduleName = Stylish.appBundle.infoDictionary?[String(kCFBundleNameKey)] as? String, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type {
+            if let info = Stylish.appBundle.infoDictionary, let moduleName = Stylish.appBundle.infoDictionary?[String(kCFBundleNameKey)] as? String, let stylesheetName = info["Stylesheet"] as? String, let stylesheetType = NSClassFromString("\(moduleName).\(stylesheetName)") as? Stylesheet.Type, normalizedStylesheetName.isEmpty {
                 let stylesheet = stylesheetType.init()
                 for string in components where string != "" {
                     if stylesheet[string] == nil {
@@ -259,7 +265,7 @@ public extension Styleable where Self:UIView {
                     }
                 }
             }
-            else {
+            else if !normalizedStylesheetName.isEmpty {
                 invalidStyle = true
             }
         }
