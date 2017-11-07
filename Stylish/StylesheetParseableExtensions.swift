@@ -328,62 +328,67 @@ extension UIReturnKeyType: StylesheetParseable {
 
 extension UITextContentType: StylesheetParseable {
     public static func parse(from stylesheetValue: Any) -> UITextContentType? {
-        switch stylesheetValue as? String {
-        case .some("name"):
-            return .name
-        case .some("namePrefix"):
-            return .namePrefix
-        case .some("givenName"):
-            return .givenName
-        case .some("middleName"):
-            return .middleName
-        case .some("familyName"):
-            return .familyName
-        case .some("nameSuffix"):
-            return .nameSuffix
-        case .some("nickname"):
-            return .nickname
-        case .some("jobTitle"):
-            return .jobTitle
-        case .some("organizationName"):
-            return .organizationName
-        case .some("location"):
-            return .location
-        case .some("fullStreetAddress"):
-            return .fullStreetAddress
-        case .some("streetAddressLine1"):
-            return .streetAddressLine1
-        case .some("streetAddressLine2"):
-            return .streetAddressLine2
-        case .some("addressCity"):
-            return .addressCity
-        case .some("addressState"):
-            return .addressState
-        case .some("addressCityAndState"):
-            return .addressCityAndState
-        case .some("sublocality"):
-            return .sublocality
-        case .some("countryName"):
-            return .countryName
-        case .some("postalCode"):
-            return .postalCode
-        case .some("telephoneNumber"):
-            return .telephoneNumber
-        case .some("emailAddress"):
-            return .emailAddress
-        case .some("URL"):
-            return .URL
-        case .some("creditCardNumber"):
-            return .creditCardNumber
-        case .some("username"):
-            if #available(iOS 11.0, *) {
-            return .username
-            } else { return nil }
-        case .some("password"):
-            if #available(iOS 11.0, *) {
-            return .password
-            } else { return nil }
-        default:
+        if #available(iOS 10.0, *) {
+            switch stylesheetValue as? String {
+            case .some("name"):
+                return .name
+            case .some("namePrefix"):
+                return .namePrefix
+            case .some("givenName"):
+                return .givenName
+            case .some("middleName"):
+                return .middleName
+            case .some("familyName"):
+                return .familyName
+            case .some("nameSuffix"):
+                return .nameSuffix
+            case .some("nickname"):
+                return .nickname
+            case .some("jobTitle"):
+                return .jobTitle
+            case .some("organizationName"):
+                return .organizationName
+            case .some("location"):
+                return .location
+            case .some("fullStreetAddress"):
+                return .fullStreetAddress
+            case .some("streetAddressLine1"):
+                return .streetAddressLine1
+            case .some("streetAddressLine2"):
+                return .streetAddressLine2
+            case .some("addressCity"):
+                return .addressCity
+            case .some("addressState"):
+                return .addressState
+            case .some("addressCityAndState"):
+                return .addressCityAndState
+            case .some("sublocality"):
+                return .sublocality
+            case .some("countryName"):
+                return .countryName
+            case .some("postalCode"):
+                return .postalCode
+            case .some("telephoneNumber"):
+                return .telephoneNumber
+            case .some("emailAddress"):
+                return .emailAddress
+            case .some("URL"):
+                return .URL
+            case .some("creditCardNumber"):
+                return .creditCardNumber
+            case .some("username"):
+                if #available(iOS 11.0, *) {
+                    return .username
+                } else { return nil }
+            case .some("password"):
+                if #available(iOS 11.0, *) {
+                    return .password
+                } else { return nil }
+            default:
+                return nil
+            }
+        }
+        else {
             return nil
         }
     }

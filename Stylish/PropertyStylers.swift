@@ -30,7 +30,7 @@ import UIKit
 // An empty protocol to conform UILabel, UITextField and UITextView to, so they can be styled with the same Property Styler
 public protocol TextControl: class {
     var textAlignment: NSTextAlignment { get set }
-    var adjustsFontForContentSizeCategory: Bool { get set }
+    @available(iOS 10.0, *) var adjustsFontForContentSizeCategory: Bool { get set }
 }
 
 public protocol TextInputControl: class, TextControl {
@@ -47,7 +47,7 @@ public protocol TextInputControl: class, TextControl {
     var keyboardType: UIKeyboardType { get set }
     var returnKeyType: UIReturnKeyType { get set }
     var isSecureTextEntry: Bool { get set }
-    var textContentType: UITextContentType! { get set }
+    @available(iOS 10.0, *) var textContentType: UITextContentType! { get set }
 }
 
 extension UILabel: TextControl {}
@@ -224,6 +224,7 @@ public extension Stylish.PropertyStyler {
                 }        }
         }
         
+        @available(iOS 10.0, *) 
         public struct AdjustsFontForContentSizeCategory: PropertyStyler {
             public static var propertyKey: String { return "adjustsFontForContentSizeCategory" }
             public static func apply(value: Bool?, to target: TextControl) {
@@ -450,6 +451,7 @@ public extension Stylish.PropertyStyler {
             }
         }
         
+        @available(iOS 10.0, *)
         public struct TextContentType: PropertyStyler {
             public static var propertyKey: String { return "textContentType" }
             public static func apply(value: UITextContentType?, to target: TextInputControl) {
