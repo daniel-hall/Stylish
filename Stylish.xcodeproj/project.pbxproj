@@ -7,31 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CEC4B38F1FB180AE00A97AB5 /* StyleableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B3891FB180AE00A97AB5 /* StyleableTypes.swift */; };
+		CEC4B3901FB180AE00A97AB5 /* JSONStylesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38A1FB180AE00A97AB5 /* JSONStylesheet.swift */; };
+		CEC4B3911FB180AE00A97AB5 /* PropertyStylers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38B1FB180AE00A97AB5 /* PropertyStylers.swift */; };
+		CEC4B3921FB180AE00A97AB5 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEC4B38C1FB180AE00A97AB5 /* Media.xcassets */; };
+		CEC4B3931FB180AE00A97AB5 /* Stylish.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38D1FB180AE00A97AB5 /* Stylish.swift */; };
+		CEC4B3941FB180AE00A97AB5 /* StylesheetParseableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38E1FB180AE00A97AB5 /* StylesheetParseableExtensions.swift */; };
 		D7C473021F3E4F8A00B5880A /* Stylish.h in Headers */ = {isa = PBXBuildFile; fileRef = D7C473001F3E4F8A00B5880A /* Stylish.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D7C473091F3E4FB300B5880A /* StyleClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C473081F3E4FB300B5880A /* StyleClass.swift */; };
-		D7C4730B1F3E4FBF00B5880A /* Stylesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4730A1F3E4FBF00B5880A /* Stylesheet.swift */; };
-		D7C4730D1F3E4FCE00B5880A /* Stylish.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4730C1F3E4FCE00B5880A /* Stylish.swift */; };
-		D7C4730F1F3E4FDE00B5880A /* JSONStylesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4730E1F3E4FDE00B5880A /* JSONStylesheet.swift */; };
-		D7C473111F3E4FF700B5880A /* StylePropertySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C473101F3E4FF700B5880A /* StylePropertySet.swift */; };
-		D7C473131F3E547200B5880A /* StyleableUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C473121F3E547200B5880A /* StyleableUIView.swift */; };
-		D7C473151F3E547F00B5880A /* StyleableUILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C473141F3E547F00B5880A /* StyleableUILabel.swift */; };
-		D7C473171F3E549500B5880A /* StyleableUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C473161F3E549500B5880A /* StyleableUIButton.swift */; };
-		D7C473191F3E54A400B5880A /* StyleableUIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C473181F3E54A400B5880A /* StyleableUIImageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CEC4B3891FB180AE00A97AB5 /* StyleableTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleableTypes.swift; sourceTree = "<group>"; };
+		CEC4B38A1FB180AE00A97AB5 /* JSONStylesheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONStylesheet.swift; sourceTree = "<group>"; };
+		CEC4B38B1FB180AE00A97AB5 /* PropertyStylers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertyStylers.swift; sourceTree = "<group>"; };
+		CEC4B38C1FB180AE00A97AB5 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		CEC4B38D1FB180AE00A97AB5 /* Stylish.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylish.swift; sourceTree = "<group>"; };
+		CEC4B38E1FB180AE00A97AB5 /* StylesheetParseableExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StylesheetParseableExtensions.swift; sourceTree = "<group>"; };
 		D7C472FD1F3E4F8A00B5880A /* Stylish.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Stylish.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7C473001F3E4F8A00B5880A /* Stylish.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stylish.h; sourceTree = "<group>"; };
 		D7C473011F3E4F8A00B5880A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D7C473081F3E4FB300B5880A /* StyleClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleClass.swift; sourceTree = "<group>"; };
-		D7C4730A1F3E4FBF00B5880A /* Stylesheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylesheet.swift; sourceTree = "<group>"; };
-		D7C4730C1F3E4FCE00B5880A /* Stylish.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylish.swift; sourceTree = "<group>"; };
-		D7C4730E1F3E4FDE00B5880A /* JSONStylesheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONStylesheet.swift; sourceTree = "<group>"; };
-		D7C473101F3E4FF700B5880A /* StylePropertySet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StylePropertySet.swift; sourceTree = "<group>"; };
-		D7C473121F3E547200B5880A /* StyleableUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleableUIView.swift; sourceTree = "<group>"; };
-		D7C473141F3E547F00B5880A /* StyleableUILabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleableUILabel.swift; sourceTree = "<group>"; };
-		D7C473161F3E549500B5880A /* StyleableUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleableUIButton.swift; sourceTree = "<group>"; };
-		D7C473181F3E54A400B5880A /* StyleableUIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleableUIImageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,25 +60,14 @@
 			children = (
 				D7C473001F3E4F8A00B5880A /* Stylish.h */,
 				D7C473011F3E4F8A00B5880A /* Info.plist */,
-				D7C473081F3E4FB300B5880A /* StyleClass.swift */,
-				D7C4730A1F3E4FBF00B5880A /* Stylesheet.swift */,
-				D7C4730C1F3E4FCE00B5880A /* Stylish.swift */,
-				D7C4730E1F3E4FDE00B5880A /* JSONStylesheet.swift */,
-				D7C473101F3E4FF700B5880A /* StylePropertySet.swift */,
-				D7C4731A1F3E54AC00B5880A /* StyleableComponents */,
+				CEC4B38D1FB180AE00A97AB5 /* Stylish.swift */,
+				CEC4B3891FB180AE00A97AB5 /* StyleableTypes.swift */,
+				CEC4B38A1FB180AE00A97AB5 /* JSONStylesheet.swift */,
+				CEC4B38B1FB180AE00A97AB5 /* PropertyStylers.swift */,
+				CEC4B38E1FB180AE00A97AB5 /* StylesheetParseableExtensions.swift */,
+				CEC4B38C1FB180AE00A97AB5 /* Media.xcassets */,
 			);
 			path = Stylish;
-			sourceTree = "<group>";
-		};
-		D7C4731A1F3E54AC00B5880A /* StyleableComponents */ = {
-			isa = PBXGroup;
-			children = (
-				D7C473121F3E547200B5880A /* StyleableUIView.swift */,
-				D7C473141F3E547F00B5880A /* StyleableUILabel.swift */,
-				D7C473161F3E549500B5880A /* StyleableUIButton.swift */,
-				D7C473181F3E54A400B5880A /* StyleableUIImageView.swift */,
-			);
-			name = StyleableComponents;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -129,7 +112,7 @@
 				TargetAttributes = {
 					D7C472FC1F3E4F8A00B5880A = {
 						CreatedOnToolsVersion = 8.2.1;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -156,6 +139,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEC4B3921FB180AE00A97AB5 /* Media.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,15 +150,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7C473091F3E4FB300B5880A /* StyleClass.swift in Sources */,
-				D7C473171F3E549500B5880A /* StyleableUIButton.swift in Sources */,
-				D7C473151F3E547F00B5880A /* StyleableUILabel.swift in Sources */,
-				D7C4730D1F3E4FCE00B5880A /* Stylish.swift in Sources */,
-				D7C473111F3E4FF700B5880A /* StylePropertySet.swift in Sources */,
-				D7C473191F3E54A400B5880A /* StyleableUIImageView.swift in Sources */,
-				D7C4730B1F3E4FBF00B5880A /* Stylesheet.swift in Sources */,
-				D7C473131F3E547200B5880A /* StyleableUIView.swift in Sources */,
-				D7C4730F1F3E4FDE00B5880A /* JSONStylesheet.swift in Sources */,
+				CEC4B3941FB180AE00A97AB5 /* StylesheetParseableExtensions.swift in Sources */,
+				CEC4B3931FB180AE00A97AB5 /* Stylish.swift in Sources */,
+				CEC4B38F1FB180AE00A97AB5 /* StyleableTypes.swift in Sources */,
+				CEC4B3901FB180AE00A97AB5 /* JSONStylesheet.swift in Sources */,
+				CEC4B3911FB180AE00A97AB5 /* PropertyStylers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,12 +208,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -281,10 +262,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -304,14 +286,14 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Stylish/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_NO_PIE = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.Stylish;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -327,13 +309,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Stylish/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_NO_PIE = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.danielhall.Stylish;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

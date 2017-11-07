@@ -35,82 +35,46 @@
 import Stylish
 import UIKit
 
-
-// 1. Define a Property Set that conforms to StylePropertySet in order to make the styleable properties of your custom view available to style classes.
-
-// DynamicStylePropertySet is a protocol that inherits from StylePropertySet and exposes an additional mutating method that allows JSON-based or other dynamically parsed stylesheets to set the style properties based on string keys.
-
-struct ProgressBarPropertySet : DynamicStylePropertySet {
-    var progressColor:UIColor?
-    var trackColor:UIColor?
-    var cornerRadiusPercentage:CGFloat?
-    
-    // DynamicStylePropertySet conformanace, allows properties to be set using their string names as keys
-    mutating func setStyleProperty<T>(named name: String, toValue value: T) {
-        switch name {
-        case _ where name.isVariant(of: "Progress Color"):
-            progressColor = value as? UIColor
-        case _ where name.isVariant(of: "Track Color"):
-            trackColor = value as? UIColor
-        case _ where name.isVariant(of: "Corner Radius Percentage"):
-            cornerRadiusPercentage = value as? CGFloat
-        default :
-            return
-        }
-    }
-}
-
-// 2. Extend StyleClass to include your custom view's property set as a gettable / settable property. The 'retrieve' and 'register' methods fetch and add the property set to a collection on the style class
-
-extension StyleClass {
-    var ProgressBar:ProgressBarPropertySet { get { return self.retrieve(propertySet: ProgressBarPropertySet.self) } set { self.register(propertySet: newValue) } }
-}
-
-
-// 3. Mark your custom view class as @IBDesignable and declare conformance to the Styleable protocol
+// 1. Create a custom view class marked as @IBDesignable and declare conformance to the Styleable protocol
 
 @IBDesignable class ProgressBar:UIView, Styleable {
     
-    // 4. The styleable protocol requires you to provide an array of atyle application closures (StyleApplicators) that know how to apply the properties from a style to your view.  Make sure to include in this array, the style applicators for any superclasses, which should usually be applied first.  That is why this variable returns the array of StyleableUIView.StyleApplicators + the applicator for this custom class
-    class var StyleApplicators: [StyleApplicator] {
-        return StyleableUIView.StyleApplicators + [{
-            (style:StyleClass, target:Any) in
-            if let progressBar = target as? ProgressBar {
-                progressBar.trackView.layer.cornerRadius = progressBar.layer.cornerRadius
-                
-                // In general, you probably only want to use the property from the style if is actually defined / non-nil. You don't want to overwrite all your view properties with nil just because they weren't defined in the style and appear there as nil.  Here is where the custom operator =? comes into play. It works by only setting the property on the left to the value on the right if that value is non-nil. If the value on the right is nil, nothing is done.
-                
-                progressBar.progressColor =? style.ProgressBar.progressColor
-                progressBar.trackColor =? style.ProgressBar.trackColor
-                progressBar.progressCornerRadiusPercentage =? style.ProgressBar.cornerRadiusPercentage
-            }
-            }]
+    // 2. Create custom PropertyStylers that define a property key that can be read out of json, and a way to set the styleable properties of the ProgressBar component. These can be private to the type if you are only using JSON stylesheets and no code-created stylesheets
+    internal struct ProgressColor: PropertyStyler {
+        static var propertyKey: String { return "progressColor" }
+        static func apply(value: UIColor?, to target: ProgressBar) {
+            target.progressColor = value ?? .gray
+        }
     }
+    
+    internal struct ProgressTrackColor: PropertyStyler {
+        static var propertyKey: String { return "progressTrackColor" }
+        static func apply(value: UIColor?, to target: ProgressBar) {
+            target.trackColor = value ?? .white
+        }
+    }
+    
+    internal struct ProgressCornerRadiusRatio: PropertyStyler {
+        static var propertyKey: String { return "progressCornerRadiusRatio" }
+        static func apply(value: CGFloat?, to target: ProgressBar) {
+            target.progressCornerRadiusPercentage = value ?? 0
+        }
+    }
+    
+    // 3. Expose all the PropertyStylers as an array that can be passed into JSONStylesheet during initialization so they can participate in the parsing process
+    static var propertyStylers: [AnyPropertyStylerType.Type] { return [ProgressColor.self, ProgressTrackColor.self, ProgressCornerRadiusRatio.self]  }
     
     fileprivate let trackView = UIView()
     fileprivate let progressView = UIView()
 
     
-// 5. Add @IBInspectable properties for 'styles' and 'stylesheet' to make these available for setting in storyboards. They should call the extension method 'parseAndApplyStyles' whenever either value is changed, as shown below.
+    // 4. The Styleable protocol only requires a styles property, create one and mark it as @IBInspectable to make it available for setting in storyboards. It should call Stylish.applyStyleNames(:to:) whenever value is changed, as shown below.
     
     @IBInspectable var styles:String = "" {
         didSet {
-            parseAndApplyStyles()
+            updateProgress()
+            Stylish.applyStyleNames(styles, to: self)
         }
-    }
-    
-    @IBInspectable var stylesheet:String = "" {
-        didSet {
-            parseAndApplyStyles()
-        }
-    }
-    
-// 6. In order to get the special tinting of views when an invalid style is specified, override 'prepareForInterfaceBuilder()' and call 'showErrorIfInvalidStyles()'  That's it!  Your custom view is now a full participant in Stylish themeing. Next step to create some StyleClasses that set properties on your custom view inside a Stylesheet.
-    
-    override func prepareForInterfaceBuilder() {
-        super.prepareForInterfaceBuilder()
-        parseAndApplyStyles()
-        showErrorIfInvalidStyles()
     }
     
     var progressColor:UIColor = UIColor.gray {
@@ -128,6 +92,7 @@ extension StyleClass {
     var progressCornerRadiusPercentage:CGFloat = 0.0 {
         didSet {
             updateProgress()
+            trackView.layer.cornerRadius = layer.cornerRadius
             progressView.layer.cornerRadius = progressView.bounds.height * progressCornerRadiusPercentage
         }
     }

@@ -34,16 +34,16 @@ class MainViewController : UIViewController {
     
     // Set new global stylesheet
     @IBAction func changeStylesheet(_ sender: UIButton) {
-        switch sender.currentTitle! {
-        case "Graphite" :
-            Stylish.globalStylesheet = Graphite.self
-        case "Aqua" :
-            Stylish.globalStylesheet = Aqua.self
-        case "JSON" :
-            Stylish.globalStylesheet = JSONStylesheet.self
-        default :
-            return
-        }
+//        switch sender.currentTitle! {
+//        case "Graphite" :
+//            Stylish.globalStylesheet = Graphite.self
+//        case "Aqua" :
+//            Stylish.globalStylesheet = Aqua.self
+//        case "JSON" :
+//            Stylish.globalStylesheet = JSONStylesheet.self
+//        default :
+//            return
+//        }
     }
     
 }
