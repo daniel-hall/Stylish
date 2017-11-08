@@ -9,7 +9,7 @@ The real magic happens in storyboards, however, where you can assign one or more
 For the first time, this provides a single solution for creating and applying styles and themes that are rendered both in the running app _and_ in the storyboard. So what you see at design time will finally match what users will see in the app. 
 
 - Get the full benefits of a real styling system: update a style in one place, and every view using that style updates as well.  Only now, they update both at runtime _and_ in the storyboard.
-- Change the global stylesheet either in your info.plist, or in the code at runtime, and the app instantly updates to reflect the new theme.
+- Change the global stylesheet at any time, and the app instantly updates to reflect the new theme.
 - Stylish is completely customizable and extensible, but it comes with a full implementation of stylesheet parsing from JSON. Your app can even load updated stylesheets over the web and cache them as the new default theme, allowing you to tweak the the appearance or any other property of your objects after the app is deployed, or based on user, time of year, etc. 
 - Stylish makes it easy to rapidly test our and iterate on designs right from Xcode:  you can apply or remove multiple styles in real time, right from the storyboard and see immediately how they will look on device.  Or, update your JSON stylesheet in one window while your storyboard auto-updates with the changes in another window.
 
@@ -23,22 +23,21 @@ Since Swift has not yet reached ABI or module format stability, Apple does not s
 
 These steps will ensure that the Stylish framework is compiled as part of your own app's build phases as needed and that the Stylish.framework will be using the same version of Swift and the Swift compiler as the rest of your project.
 
-- (**_Optional but recommended_**) add a key called “Stylesheet” to your app’s info.plist. The value of this key will tell Stylish which Stylesheet class to load by default, both during design and at runtime.
-- In order to use a JSON stylesheet, add a file called stylesheet.json to your app bundle, and specify “JSONStylesheet” as the value for the “Stylesheet” key you added in info.plist. See information below for adding style classes to your stylesheet.json so they can be used in your app.
+4. IMPORTANT!  Because Stylish is a separate module from your app, some special considerations are needed to get IBDesignables and the live rendering of styles in Storyboards playing nicely.  Specifically, it requires two extensions that override prepareForInterfaceBuilder in two types. See MainViewController.swift in the StylishExample app for reference implementations of these extensions.
 
 ## Example Project
 
 To see Stylish in action, download the the folder “StylishExample” from this repo and open it in the latest version of Xcode. Open “Main.Storyboard” in Interface Builder and watch after a moment as the unstyled labels, buttons, and views are suddenly rendered fully styled right in Xcode. 
 
-Now, go the the info.plist for the StylishExample app and change the “Stylesheet” key’s value from “Graphite” to “Aqua”. Then return to Main.storyboard and watch as the appearance of the scene completely changes without writing any code or even compiled the app.
+Now, go to MainViewController.swift and in the UIView extension that overrides `prepareForInterfaceBuilder()`, change the line `Stylish.stylesheet = Graphite()` to `Stylish.stylesheet = Aqua()`. Then return to Main.storyboard and watch as the appearance of the scene completely changes without writing any code or even compiling the app.
 
-Go back to the info.plist and change the value for the key “Stylesheet” to now be “JSONStylesheet”.  Go back to Main.storyboard and once again, the whole scene will transform to reflect the new Stylesheet loaded from JSON. 
+Go back to MainViewController.swift and change the same line from  `Stylish.stylesheet = Aqua()`  to `Stylish.stylesheet = JSON()`. Now look again at Main.storyboard and once again, the whole scene will transform to reflect the new Stylesheet loaded from JSON. 
 
 At this point, you can open stylesheet.json in Xcode and start changing some of the color, font, or other values in the stylesheet, then return to Main.storyboard to watch the changes you made appear live in Interface Builder.
 
-Or, you can create a new storyboard from scratch, add views, labels, buttons, and images and then add the already-defined styles from the sample project to those views using the inspector and watch them immediately take effect. To set styles in the storyboard, select the view you want to style, and go to the attributes inspector tab in the right panel of Xcode.  This is the tab where you normally set things like color, alpha, font, etc. At the top you will see two new fields you can fill out:  “styles” and “stylesheet”.  
+Or, you can create a new storyboard from scratch, add views, labels, buttons, and images and then add the already-defined styles from the sample project to those views using the inspector and watch them immediately take effect. To set styles in the storyboard, select the view you want to style, and go to the attributes inspector tab in the right panel of Xcode.  This is the tab where you normally set things like color, alpha, font, etc. At the top you will see a new field you can fill out called “styles”.  
 
-These fields only appear for view classes that conform to the “Styleable” protocol and which are “@IBDesignable”.  Unfortunately, it’s not possible to add “@IBDesignable” via extension, so for plain UIKit components, you have to set their custom class to the Stylish version of them: `StyleableUIView`, `StyleableUILabel`, `StyelableUIButton`, and `StyleableUIImageView`.
+These fields only appear for view classes that conform to the “Styleable” protocol and which are “@IBDesignable”.  Unfortunately, it’s not possible to add “@IBDesignable” via extension, so for plain UIKit components, you have to set their custom class to the Stylish version of them: `StyleableUIView`, `StyleableUILabel`, `StyleableUITextField`, `StyleableUITextView`, `StyelableUIButton`, and `StyleableUIImageView`.
 
 - After you have placed some Styleable components in your blank storyboard, try adding some of these styles to buttons or plain views:  `PrimaryBackgroundColor`, `SecondaryBackgroundColor`, or `Rounded`
 
@@ -55,71 +54,82 @@ Lastly, you can try creating some of your own defined styles by opening “Aqua.
 
 ## Creating a Style
 
-A simple Style Class looks like this:
+A simple Style looks like this:
 
 ```
-struct RoundedStyle : StyleClass {
-    var stylePropertySets = StylePropertySetCollection()
-    
-    init() {
-        UIView.cornerRadius = 20.0
-    }
+struct RoundedGray : Style {
+    let propertyStylers = [
+        cornerRadius.set(value:  20.0),
+        backgroundColor.set(value: .gray)
+    ]
 } 
 ```
 
-It gets added to a Stylesheet along with a string identifier like this:
+It gets added to a Stylesheet along with a style name like this:
 
 ```
 class MyStylesheet : Stylesheet {
-    let styleClasses:[(identifier:String, styleClass:StyleClass)]()
-
-    required init() {
-         styleClasses = [(“Rounded", RoundedStyle())]()
+    let styles: [String: Style] = [
+        "RoundedGray": RoundedGray(),
+        "AnotherStyleName": AnotherStyle()
+    ]
     }
 ```
 
-Alternative, the same Stylesheet and Style can be created in JSON like this:
+Alternatively, the same Stylesheet and Style can be created in JSON like this:
 
 ```
-[  
-{  
-    "styleClass" : “Rounded”,  
-    "properties" :  [  
-         {  
-         "propertySetName" : "UIViewPropertySet",  
-         "propertyName" : “cornerRadius”,  
-         "propertyType" : “cgfloat”,  
-         "propertyValue" : 20.0  
-         }  
-     ]  
-}  
-]
+{
+  "styles": [
+    {
+      "styleName": "RoundedGray",
+      "styleProperties": {
+          "cornerRadius": 20.0,
+          "backgroundColor": "#CCCCCC"
+      }
+    }
 ```
 
-To now apply this style to a view in a Storyboard, make sure the view is set to a custom class that implements the Styelable protocol (e.g. StyleableUIView), select it on the canvas, go to the Attributes Inspector in the right-hand panel of Xcode and add the string `Rounded` to the field at the top of the panel labeled "styles" and the string `MyStylesheet` to the field labeled "Stylesheet".  When you press Return / Enter, the view will update immediately on the canvas.  
+To now apply this style to a view in a Storyboard, make sure the view is set to a custom class that implements the Styelable protocol (e.g. StyleableUIView), select it on the canvas, go to the Attributes Inspector in the right-hand panel of Xcode and add the string `RoundedGray` to the field at the top of the panel labeled "styles”, and make sure you set `Stylish.stylesheet = MyStylesheet()` in the `UIView` extension method that overrides `prepareForInterfaceBuilder()` as described earlier and shows in the example project.  When you press Return / Enter, the view will update immediately on the canvas.  
 
 ## Terminology
 
-**StyleClass**: A set of values that will be applied to a set of corresponding properties on a target view. Same concept as in CSS.  “StyleClass” and “Style” are often used interchangeably.
+**Style**: A collection of property stylers, or values to will be applied to specific properties of that target object. Same concept as in CSS.
 
-**Stylesheet**: A collection of named Styles (a.k.a. StyleClasses) that tie together into a theme.  For example, a Stylesheet called “Default” may define Styles called “Header”, “Body”, “Highlighted”, etc. And in this Stylesheet, the “Body” style may define a value of 16 pts for the fontSize property of any targeted view. There might be another Stylesheet called “Large Type” that also defines Styles / StyleClasses with the names “Header”, “Body”, and “Highlighted”.  But in the “Large Type” Stylesheet, the “Body” style has a value of 28 pts for the fontSize property. In the app, a label with the style “Body” will be set to a font size of 16 pts when the “Default” Stylesheet is active, and 28 pts when the “Large Type” Stylesheet is active.  So views are associated with fixed Style names, and Stylesheets define different sets of values for the same collection of named Styles.  
+**Stylesheet**: A collection of named Styles that tie together into a theme.  For example, a Stylesheet called “Default” may define Styles called “Header”, “Body”, “Highlighted”, etc. And in this Stylesheet, the “Body” style may define a value of 16 pts for the fontSize property of any targeted view. There might be another Stylesheet called “Large Type” that also defines Styles  with the names “Header”, “Body”, and “Highlighted”.  But in the “Large Type” Stylesheet, the “Body” style has a value of 28 pts for the fontSize property. In the app, a label with the style “Body” will be set to a font size of 16 pts when the “Default” Stylesheet is active, and 28 pts when the “Large Type” Stylesheet is active.  So views are associated with fixed Style names, and Stylesheets define different sets of values for the same collection of named Styles.
 
-**StylePropertySet**: A struct that groups together and defines what  properties of a particular type of view can have values defined for them.
-
-**Styleable**: The protocol that classes must conform to to participate in the Stylish process. Adopting this protocol automatically adds some method implementations to the class, as well as some requirement. 
+**Styleable**: The protocol that classes must conform to to participate in the Stylish process.  Stylish provides versions of common UIKit components that have already implemented Styleable as well as IBDesignable (see below). These are: StyleableUIView, StyleableUILabel, StyleableUITextField, StyleableUITextView, StyleableUIButton, and StyleableUIImageView
 
 **@IBDesignable**: An attribute that can be added to any UIView subclass which indicates to Interface Builder / Xcode that it should be rendered live on the storyboard canvas.
+
+## Extending Stylish
+
+Stylish has been designed to allow developers to extend it with additional Styleable components, including custom components.  The ProgressBar component in the StylishExample application included in this repo is an example of how to do so.  The process, in a nutshell, consists of:
+
+1. Creating new PropertyStyler types for each property you want to be able to style.  These types consist of a propertyKey that indicates how the property is identified in JSON stylesheets, and a static apply function that describes how to set a value of the right type on a target object of the right type.  
+
+2. Implementing the Styleable protocol on your custom type, which is usually just a matter of adding this property definition:  
+	  
+	 ```
+	`{ 
+	@IBInspectable public var styles: String = "" {
+	        didSet {
+	            Stylish.applyStyleNames(styles, to: self)
+	        }
+	    }
+	```
+
+3.  And that’s usually all it takes.  While Styleable doesn’t include prebuilt Styleable types for SpriteKit or SceneKit, it’s generalized enough to be easily extended to style those kinds of objects as well.
 
 ## Help
 
 If you have any questions or need help customizing or using Stylish in your project, please open an issue in this repo, or feel free to contact me via
 
-Twitter: @\_danielhall   
+Twitter: @\_danielhall  
 Email: daniel@danielhall.io
 
 
 Happy Styling!
-
 
 
 [image-1]:	Stylish.gif

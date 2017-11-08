@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D7492A8A1FB2E9E9001DA5E2 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7492A891FB2E9E9001DA5E2 /* JSON.swift */; };
 		D7C4732B1F3E579800B5880A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4732A1F3E579800B5880A /* AppDelegate.swift */; };
 		D7C4732D1F3E579800B5880A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4732C1F3E579800B5880A /* MainViewController.swift */; };
 		D7C473301F3E579800B5880A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C4732E1F3E579800B5880A /* Main.storyboard */; };
@@ -60,6 +61,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D7492A891FB2E9E9001DA5E2 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		D7C473271F3E579800B5880A /* StylishExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StylishExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7C4732A1F3E579800B5880A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7C4732C1F3E579800B5880A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 			children = (
 				D7C4734D1F3E592000B5880A /* Graphite.swift */,
 				D7C4734E1F3E592000B5880A /* Aqua.swift */,
+				D7492A891FB2E9E9001DA5E2 /* JSON.swift */,
 				D7C473501F3E592000B5880A /* SharedStyles.swift */,
 				D7C473511F3E592000B5880A /* stylesheet.json */,
 			);
@@ -240,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7C473531F3E592000B5880A /* Aqua.swift in Sources */,
+				D7492A8A1FB2E9E9001DA5E2 /* JSON.swift in Sources */,
 				D7C4732D1F3E579800B5880A /* MainViewController.swift in Sources */,
 				D7C473521F3E592000B5880A /* Graphite.swift in Sources */,
 				D7C4734C1F3E591300B5880A /* ProgressBar.swift in Sources */,

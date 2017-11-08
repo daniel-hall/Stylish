@@ -40,13 +40,7 @@ class MainViewController : UIViewController {
         case "Aqua" :
             Stylish.stylesheet = Aqua()
         case "JSON" :
-            // Locate the stylesheet JSON in the bundle
-            let url =  Bundle.main.url(forResource: "stylesheet", withExtension: "json")!
-            // Prepare shared styles that we want to add as additions to the parsed JSON Stylesheet styles
-            let sharedStyles: [String: Style] = ["Rounded": RoundedStyle(), "HighlightedText": HighlightedTextStyle()]
-            // Load the JSON Stylesheet. Note that we are passing in Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers because we want our own PropertyStylers for our custom ProgressBar component to be able to parse their values from the JSON as well.  By default, you don't need to pass any argument and only Stylish's built-in PropertyStylers will participate in the parsing. Lastly, we add the additional shared styles to those parsed from json
-            let stylesheet = (try! JSONStylesheet(file: url, usingPropertyStylerTypes: Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers)).addingAdditionalStyles(sharedStyles)
-            Stylish.stylesheet = stylesheet
+            Stylish.stylesheet = JSON()
         default :
             return
         }
