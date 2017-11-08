@@ -5,7 +5,7 @@
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -41,7 +41,7 @@
                                                             <userDefinedRuntimeAttribute type="string" keyPath="styles" value="HeaderText"/>
                                                         </userDefinedRuntimeAttributes>
                                                     </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="300" translatesAutoresizingMaskIntoConstraints="NO" id="Ak4-fc-P35" customClass="StyleableUILabel" customModule="Stylish">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="300" translatesAutoresizingMaskIntoConstraints="NO" id="Ak4-fc-P35" customClass="StyleableUILabel" customModule="Stylish">
                                                         <rect key="frame" x="0.0" y="44" width="300" height="134"/>
                                                         <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -64,7 +64,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Theme Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5yM-7P-GSw" customClass="StyleableUILabel" customModule="Stylish">
-                                        <rect key="frame" x="151" y="32.5" width="75" height="24"/>
+                                        <rect key="frame" x="150.5" y="32.5" width="75" height="24"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
@@ -78,7 +78,7 @@
                                             <constraint firstAttribute="width" secondItem="gbM-gT-5Ec" secondAttribute="height" multiplier="15:8" id="vAb-2A-dhO"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ThemeImage"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ThemeImage, Rounded"/>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2UE-ed-YRN" customClass="ProgressBar" customModule="StylishExample" customModuleProvider="target">
@@ -160,7 +160,7 @@
                         <constraints>
                             <constraint firstItem="67p-Cw-vHA" firstAttribute="leading" secondItem="FNh-EV-alu" secondAttribute="leading" id="Bdf-aM-WYL"/>
                             <constraint firstAttribute="trailing" secondItem="67p-Cw-vHA" secondAttribute="trailing" id="EHq-Cx-8cJ"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="67p-Cw-vHA" secondAttribute="bottom" id="a1w-8n-rYr"/>
+                            <constraint firstAttribute="bottom" secondItem="67p-Cw-vHA" secondAttribute="bottom" id="Heq-q1-8Zr"/>
                             <constraint firstItem="67p-Cw-vHA" firstAttribute="top" secondItem="FNh-EV-alu" secondAttribute="top" id="v3J-RO-T2x"/>
                         </constraints>
                     </view>

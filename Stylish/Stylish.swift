@@ -39,7 +39,7 @@ public protocol Style {
 }
 
 /// The protocol a type must conform to in order to be used as a Stylesheet. A Stylesheet is simply a dictionary of Styles, each associated with a name
-public protocol Stylesheet {
+public protocol Stylesheet: class {
     var styles: [String: Style] { get }
 }
 
@@ -147,8 +147,20 @@ public struct Stylish {
     /// Get or set the current global stylesheet for the application. Setting a new Stylesheet will cause the entire view hierarchy to reapply any styles using the new stylesheet
     public static var stylesheet: Stylesheet? = nil {
         didSet {
-            if type(of: stylesheet) != type(of: oldValue) {
+            #if TARGET_INTERFACE_BUILDER
+                return
+            #endif
+            switch (oldValue, stylesheet) {
+            case (.some(let old), .some(let new)):
+                if ObjectIdentifier(old) != ObjectIdentifier(new) {
+                    refreshAllStyles()
+                }
+            case (.none, .some):
                 refreshAllStyles()
+            case (.some, .none):
+                refreshAllStyles()
+            default:
+                break
             }
         }
     }
@@ -162,7 +174,7 @@ public struct Stylish {
     
     /// The set of built-in PropertyStyler types, such as UIView.BackgroundColor, UILabel.Text, etc. each of which knows how to apply a specific type of value to a specific property of a specific type (UIView, UILabel, etc.). Each one also specifies which property key it will handle inside a json stylesheet file, e.g. "backgroundColor"
     public static let builtInPropertyStylerTypes: [AnyPropertyStylerType.Type] = {
-        var types: [AnyPropertyStylerType.Type] = [UIView.BackgroundColor.self, UIView.ContentMode.self, UIView.CornerRadius.self, UIView.CornerRadiusRatio.self, UIView.IsUserInteractionEnabled.self, UIView.IsHidden.self, UIView.BorderColor.self, UIView.BorderWidth.self, UIView.Alpha.self, UIView.ClipsToBounds.self, UIView.MasksToBounds.self, UIView.TintColor.self, UIView.LayoutMargins.self, UIView.ShadowColor.self, UIView.ShadowOffset.self, UIView.ShadowOpacity.self, UIView.ShadowRadius.self, UILabel.IsEnabled.self, UILabel.AdjustsFontSizeToFitWidth.self, UILabel.TextAlignment.self, UILabel.Text.self, UILabel.TextColor.self, UILabel.Font.self, UILabel.IsHighlighted.self, UILabel.BaselineAdjustment.self, UILabel.AllowsDefaultTighteningForTruncation.self, UILabel.LineBreakMode.self, UILabel.NumberOfLines.self, UILabel.MinimumScaleFactor.self, UILabel.PreferredMaxLayoutWidth.self, UILabel.HighlightedTextColor.self, UITextField.AllowsEditingTextAttributes.self, UITextField.AutocapitalizationType.self, UITextField.AutocorrectionType.self, UITextField.EnablesReturnKeyAutomatically.self, UITextField.ClearsOnInsertion.self, UITextField.KeyboardAppearance.self, UITextField.SpellCheckingType.self, UITextField.KeyboardType.self, UITextField.ReturnKeyType.self, UITextField.IsSecureTextEntry.self, UITextField.Background.self, UITextField.DisabledBackground.self, UITextField.BorderStyle.self, UITextField.ClearButtonMode.self, UITextField.LeftViewMode.self, UITextField.RightViewMode.self, UITextField.MinimumFontSize.self, UITextField.Placeholder.self, UITextField.ClearsOnBeginEditing.self, UITextView.IsEditable.self, UITextView.IsSelectable.self, UITextView.DataDetectorTypes.self, UITextView.TextContainerInset.self, UIButton.AdjustsImageWhenDisabled.self, UIButton.AdjustsImageWhenHighlighted.self, UIButton.ShowsTouchWhenHighlighted.self, UIButton.ContentEdgeInsets.self, UIButton.ButtonFont.self, UIButton.TitleEdgeInsets.self, UIButton.ImageEdgeInsets.self, UIButton.TitleForNormalState.self, UIButton.TitleForHighlightedState.self, UIButton.TitleForDisabledState.self, UIButton.TitleColorForNormalState.self, UIButton.TitleColorForHighlightedState.self, UIButton.TitleColorForDisabledState.self, UIButton.ImageForNormalState.self, UIButton.ImageForHighlightedState.self, UIButton.ImageForDisabledState.self, UIButton.BackgroundImageForNormalState.self, UIButton.BackgroundImageForHighlightedState.self, UIButton.BackgroundImageForDisabledState.self, UIImageView.Image.self, UIImageView.ImageURL.self, UIImageView.HighlightedImage.self, UIImageView.AnimationDuration.self, UIImageView.AnimationRepeatCount.self, UIImageView.AnimationImages.self, UIImageView.HighlightedAnimationImages.self, UIImageView.IsAnimating.self]
+        var types: [AnyPropertyStylerType.Type] = [UIView.BackgroundColor.self, UIView.ContentMode.self, UIView.CornerRadius.self, UIView.CornerRadiusRatio.self, UIView.IsUserInteractionEnabled.self, UIView.IsHidden.self, UIView.BorderColor.self, UIView.BorderWidth.self, UIView.Alpha.self, UIView.ClipsToBounds.self, UIView.MasksToBounds.self, UIView.TintColor.self, UIView.LayoutMargins.self, UIView.ShadowColor.self, UIView.ShadowOffset.self, UIView.ShadowOpacity.self, UIView.ShadowRadius.self, UILabel.IsEnabled.self, UILabel.AdjustsFontSizeToFitWidth.self, UILabel.TextAlignment.self, UILabel.Text.self, UILabel.TextColor.self, UILabel.Font.self, UILabel.IsHighlighted.self, UILabel.BaselineAdjustment.self, UILabel.AllowsDefaultTighteningForTruncation.self, UILabel.LineBreakMode.self, UILabel.NumberOfLines.self, UILabel.MinimumScaleFactor.self, UILabel.PreferredMaxLayoutWidth.self, UILabel.HighlightedTextColor.self, UITextField.AllowsEditingTextAttributes.self, UITextField.AutocapitalizationType.self, UITextField.AutocorrectionType.self, UITextField.EnablesReturnKeyAutomatically.self, UITextField.ClearsOnInsertion.self, UITextField.KeyboardAppearance.self, UITextField.SpellCheckingType.self, UITextField.KeyboardType.self, UITextField.ReturnKeyType.self, UITextField.IsSecureTextEntry.self, UITextField.Background.self, UITextField.DisabledBackground.self, UITextField.BorderStyle.self, UITextField.ClearButtonMode.self, UITextField.LeftViewMode.self, UITextField.RightViewMode.self, UITextField.MinimumFontSize.self, UITextField.Placeholder.self, UITextField.ClearsOnBeginEditing.self, UITextView.IsEditable.self, UITextView.IsSelectable.self, UITextView.DataDetectorTypes.self, UITextView.TextContainerInset.self, UIButton.AdjustsImageWhenDisabled.self, UIButton.AdjustsImageWhenHighlighted.self, UIButton.ShowsTouchWhenHighlighted.self, UIButton.ContentEdgeInsets.self, UIButton.TitleEdgeInsets.self, UIButton.ImageEdgeInsets.self, UIButton.TitleForNormalState.self, UIButton.TitleForHighlightedState.self, UIButton.TitleForDisabledState.self, UIButton.TitleColorForNormalState.self, UIButton.TitleColorForHighlightedState.self, UIButton.TitleColorForDisabledState.self, UIButton.ImageForNormalState.self, UIButton.ImageForHighlightedState.self, UIButton.ImageForDisabledState.self, UIButton.BackgroundImageForNormalState.self, UIButton.BackgroundImageForHighlightedState.self, UIButton.BackgroundImageForDisabledState.self, UIImageView.Image.self, UIImageView.ImageURL.self, UIImageView.HighlightedImage.self, UIImageView.AnimationDuration.self, UIImageView.AnimationRepeatCount.self, UIImageView.AnimationImages.self, UIImageView.HighlightedAnimationImages.self, UIImageView.IsAnimating.self]
         if #available(iOS 10.0, *) {
             types = types + [UITextField.TextContentType.self, UILabel.AdjustsFontForContentSizeCategory.self]
         }

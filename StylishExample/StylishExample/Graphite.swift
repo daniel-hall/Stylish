@@ -31,11 +31,11 @@
 import Stylish
 import UIKit
 
-// 1. To define a Stylesheet, create a new class that conforms to the Stylesheet protocol
+// 1. To define a Stylesheet, create a new type that conforms to the Stylesheet protocol
 
 class Graphite : Stylesheet {
     
-// 2. The protocol requires that you create a styles dictionary that defines a mapping of style names to style types
+// 2. The protocol requires that you create a styles dictionary that defines a mapping of style names to style instances
     let styles: [String : Style] = [
         "PrimaryBackgroundColor": PrimaryBackgroundColor(),
         "SecondaryBackgroundColor": SecondaryBackgroundColor(),
@@ -45,10 +45,15 @@ class Graphite : Stylesheet {
         "DefaultProgressBar": DefaultProgressBar(),
         "DefaultButton": DefaultButton(),
         "StylesheetTitle": StylesheetTitle(),
-        "ThemeImage": ThemeImage()
+        "ThemeImage": ThemeImage(),
+        "Rounded": RoundedStyle(),   // This style is defined in a separate file (SharedStyles.swift) for easy reuse in multiple stylesheets
+        "HighlightedText": HighlightedTextStyle() // This style is defined in a separate file (SharedStyles.swift) for easy reuse in multiple stylesheets
     ]
     
 // 3. Here are the specific, nested Style types defined for this Stylesheet. They can be made private, or left internal as below, to allow other Stylesheets to resuse them with their full type identifiers, e.g. 'Graphite.PrimaryBackgroundColor'
+    
+    
+    // 4. Each type that conforms to Style is required by the protocol to specify an array of [AnyPropertyStyler] that will run when the Style is applied. To create an instance of AnyPropertyStyler, call the default implemented "set" static method on one of your custom PropertyStylers, or one of Stylish's built-in PropertyStylers.
     struct PrimaryBackgroundColor : Style {
         var propertyStylers = [UIView.BackgroundColor.set(value: UIColor(white: 0.9, alpha: 1.0))]
     }
@@ -59,7 +64,7 @@ class Graphite : Stylesheet {
     
     struct HeaderText : Style {
         var propertyStylers = [
-            UILabel.Font.set(value:  .systemFont(ofSize: 20.0)),
+            UILabel.Font.set(value: .systemFont(ofSize: 20.0)),
             UILabel.TextColor.set(value: .darkGray),
             UILabel.TextAlignment.set(value: .left)
         ]

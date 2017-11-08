@@ -28,21 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {        
         Stylish.stylesheet = Graphite()
-
-        //Remove the following code if you want to dynamically download and cache a stylesheet from the web.
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        let documentsDirectory = paths[0]
-        let filename = documentsDirectory + "stylesheet.json"
-        let fileManager = FileManager.default
-        
-        do {
-            try fileManager.removeItem(atPath: filename)
-        }
-        catch { }
-        
         return true
     }
 }

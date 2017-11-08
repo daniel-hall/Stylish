@@ -481,10 +481,27 @@ extension UIFont.Weight: StylesheetParseable {
 
 extension UIFontTextStyle: StylesheetParseable {
     public static func parse(from stylesheetValue: Any) -> UIFontTextStyle? {
-        guard let value = stylesheetValue as? String else { return nil }
-        switch value {
-        case "title1", "title2", "title3", "headline", "subheadline", "body", "callout", "footnote", "caption1", "caption2":
-            return self.init(rawValue: value)
+        switch stylesheetValue as? String{
+        case .some("title1"):
+            return .title1
+        case .some("title2"):
+            return .title2
+        case .some("title3"):
+            return .title3
+        case .some("headline"):
+            return .headline
+        case .some("subheadline"):
+            return .subheadline
+        case .some("body"):
+            return .body
+        case .some("callout"):
+            return .title1
+        case .some("footnote"):
+            return .footnote
+        case .some("caption1"):
+            return .caption1
+        case .some("caption2"):
+            return .caption2
         default:
             return nil
         }
@@ -530,19 +547,19 @@ extension UIViewContentMode: StylesheetParseable {
 extension UIFont: StylesheetParseable {
     public static func parse(from stylesheetValue: Any) -> Self? {
         guard let json = stylesheetValue as? [String: Any] else { return nil }
-        if let fontName = json["fontName"] as? String, let fontSize = json["fontSize"] as? CGFloat {
+        if let fontName = json["name"] as? String, let fontSize = json["size"] as? CGFloat {
             return self.init(name: fontName, size: fontSize)
         }
-        else if let fontSize = json["fontSize"] as? CGFloat, let weight = UIFont.Weight.parse(from: json["fontWeight"] as Any) {
+        else if let fontSize = json["size"] as? CGFloat, let weight = UIFont.Weight.parse(from: json["weight"] as Any) {
             return self.init(descriptor: systemFont(ofSize: fontSize, weight: weight).fontDescriptor, size: fontSize)
         }
-        else if let fontSize = json["fontSize"] as? CGFloat {
+        else if let fontSize = json["size"] as? CGFloat {
             return self.init(descriptor: systemFont(ofSize: fontSize).fontDescriptor, size: fontSize)
         }
-        else if let boldFontSize = json["boldFontSize"] as? CGFloat {
+        else if let boldFontSize = json["boldSize"] as? CGFloat {
             return self.init(descriptor: boldSystemFont(ofSize: boldFontSize).fontDescriptor, size: boldFontSize)
         }
-        else if let italicFontSize = json["italicFontSize"] as? CGFloat {
+        else if let italicFontSize = json["italicSize"] as? CGFloat {
             return self.init(descriptor: italicSystemFont(ofSize: italicFontSize).fontDescriptor, size: italicFontSize)
         }
         else if let textStyle = UIFontTextStyle.parse(from: json["textStyle"] as Any) {

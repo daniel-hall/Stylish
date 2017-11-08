@@ -1,7 +1,7 @@
-//
-//  MainViewController.swift
-//  StylishExample
-//
+////
+////  SharedStyles.swift
+////  StylishExample
+////
 // Copyright (c) 2016 Daniel Hall
 // Twitter: @_danielhall
 // GitHub: https://github.com/daniel-hall
@@ -27,25 +27,22 @@
 
 
 
-import UIKit
+
 import Stylish
 
-class MainViewController : UIViewController {
+// 1. To create a Style, define a type that conforms to the Style protocol
+
+struct RoundedStyle : Style {
     
-    // Set new global stylesheet
-    @IBAction func changeStylesheet(_ sender: UIButton) {
-        switch sender.currentTitle! {
-        case "Graphite" :
-            Stylish.stylesheet = Graphite()
-        case "Aqua" :
-            Stylish.stylesheet = Aqua()
-        case "JSON" :
-            let url =  Bundle(for: ProgressBar.self).url(forResource: "stylesheet", withExtension: "json")!
-            let sharedStyles: [String: Style] = ["Rounded": RoundedStyle(), "HighlightedText": HighlightedTextStyle()]
-            Stylish.stylesheet = (try! JSONStylesheet(file: url, usingPropertyStylerTypes: Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers)).addingAdditionalStyles(sharedStyles)
-        default :
-            return
-        }
-    }
-    
+    // 2. Each type that conforms to Style is required by the protocol to specify an array of [AnyPropertyStyler] that will run when the Style is applied. To create an instance of AnyPropertyStyler, call the default implemented "set" static method on one of your custom PropertyStylers, or one of Stylish's built-in PropertyStylers.
+    var propertyStylers = [UIView.CornerRadius.set(value: 30.0), UIView.MasksToBounds.set(value: true)]
 }
+
+
+struct HighlightedTextStyle : Style {
+    var propertyStylers = [
+        UILabel.HighlightedTextColor.set(value: UIColor(red: 0.25, green: 0.75, blue: 0.75, alpha: 0.25)),
+        UILabel.IsHighlighted.set(value: true)
+        ]
+}
+

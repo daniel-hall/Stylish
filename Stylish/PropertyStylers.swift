@@ -270,7 +270,7 @@ public extension Stylish.PropertyStyler {
         
         public struct Font: PropertyStyler {
             public static var propertyKey: String { return "font" }
-            public static func apply(value: UIFont?, to target: TextControl) {
+            public static func apply(value: UIFont?, to target: UIKit.UIView) {
                 switch target {
                 case let label as UIKit.UILabel:
                     label.font = value
@@ -278,6 +278,8 @@ public extension Stylish.PropertyStyler {
                     textField.font = value
                 case let textView as UIKit.UITextView:
                     textView.font = value
+                case let button as UIKit.UIButton:
+                    button.titleLabel?.font = value
                 default: break
                 }
             }
@@ -583,13 +585,6 @@ public extension Stylish.PropertyStyler {
             public static var propertyKey: String { return "contentEdgeInsets" }
             public static func apply(value: UIEdgeInsets?, to target: UIKit.UIButton) {
                 target.contentEdgeInsets = value ?? UIKit.UIButton().contentEdgeInsets
-            }
-        }
-        
-        public struct ButtonFont: PropertyStyler {
-            public static var propertyKey: String { return "buttonFont" }
-            public static func apply(value: UIFont?, to target: UIKit.UIButton) {
-                target.titleLabel?.font = value
             }
         }
         

@@ -26,8 +26,8 @@
 // SOFTWARE.
 
 /// A Stylish Stylesheet that can dynamically create its styles by parsing them from a json file.
-public struct JSONStylesheet: Stylesheet {
-    public let styles: [String : Style]
+public class JSONStylesheet: Stylesheet {
+    public private(set) var styles: [String : Style]
     
     /// Initializer for instantiating a stylesheet dynamically from json.
     ///
@@ -36,7 +36,7 @@ public struct JSONStylesheet: Stylesheet {
     ///   - propertyStylerTypes: An array of property styler types that will be used to parse all the properties that make up the styles in the stylesheet json.  By default, the standard set of built-in Stylish PropertyStylers will be used, but client apps can append additional custom PropertyStyler types to built-in types. E.g. StylishbuiltInPropertyStylerTypes + [CustomComponentPropertyOneStyler.self, CustomComponentPropertyTwoStyler.self]
     ///   - ignoringUnrecognizedStyleProperties: Normally, if the JSONStylesheet parsing encounters an unknown property name / property type which it doesn't know how to parse, it will throw an error and fail the entire intiialization.  When this parameter is set to true, failed properties will be ignored and the JSONStylesheet will include only the styles and properties it was able to parse, and will not throw errors for unparsed properties.
     /// - Throws: An NSError with a description of what went wrong
-    public init(file: URL, usingPropertyStylerTypes propertyStylerTypes: [AnyPropertyStylerType.Type] = Stylish.builtInPropertyStylerTypes, ignoringUnrecognizedStyleProperties: Bool = false) throws {
+    public convenience init(file: URL, usingPropertyStylerTypes propertyStylerTypes: [AnyPropertyStylerType.Type] = Stylish.builtInPropertyStylerTypes, ignoringUnrecognizedStyleProperties: Bool = false) throws {
         try self.init(data: Data(contentsOf: file), usingPropertyStylerTypes: propertyStylerTypes, ignoringUnrecognizedStyleProperties: ignoringUnrecognizedStyleProperties)
     }
     
@@ -70,5 +70,16 @@ public struct JSONStylesheet: Stylesheet {
             return (styleName, AnyStyle(propertyStylers: propertyStylers))
         }
         self.styles = Dictionary(keyValues, uniquingKeysWith:{ return $1 })
+    }
+    
+    /// If there are additional styles you would like to include or override in a JSONStylesheet instance after it has parsed its initial styles from the stylesheet json file, pass in a dictionary of them here.  Any style names that match existing styles in the JSONStylesheet will be overridden with your new values
+    public func addingAdditionalStyles(_ styles: [String: Style]) -> Stylesheet {
+        class AnyStylesheet: Stylesheet {
+            let styles: [String : Style]
+            init(styles: [String: Style]) {
+                self.styles = styles
+            }
+        }
+        return AnyStylesheet(styles: self.styles + styles)
     }
 }
