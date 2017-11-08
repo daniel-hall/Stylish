@@ -1,182 +1,76 @@
-[
- {
- "styleClass" : "Primary Background Color",
- "properties" : [
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "backgroundColor",
-                 "propertyType" : "color",
-                 "propertyValue" : "#F7CA18"
-                 }
-                ]
- },
- {
- "styleClass" : "Secondary Background Color",
- "properties" : [
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "backgroundColor",
-                 "propertyType" : "color",
-                 "propertyValue" : "#F5D76E"
-                 }
-                 ]
- },
- {
- "styleClass" : "Body Text",
- "properties" : [
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "font",
-                 "propertyType" : "preferredFont",
-                 "propertyValue" : {
-                    "textStyle" : "Body"
-                 }
-                 },
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "textColor",
-                 "propertyType" : "color",
-                 "propertyValue" : "#6C7A89"
-                 },
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "textAlignment",
-                 "propertyType" : "textAlignment",
-                 "propertyValue" : "Right"
-                 }
-                 ]
- },
- {
- "styleClass" : "Header Text",
- "properties" : [
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "font",
-                 "propertyType" : "font",
-                 "propertyValue" : {
-                 "name" : "Futura-CondensedExtraBold",
-                 "size" : 28.0
-                 }
-                 },
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "textColor",
-                 "propertyType" : "color",
-                 "propertyValue" : "#BFBFBF"
-                 },
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "textAlignment",
-                 "propertyType" : "textAlignment",
-                 "propertyValue" : "Right"
-                 }
-                 ]
- },
- {
- "styleClass" : "Progress Bar",
- "properties" : [
-                 {
-                 "propertySetName" : "ProgressBarPropertySet",
-                 "propertyName" : "progressColor",
-                 "propertyType" : "color",
-                 "propertyValue" : "#F27935"
-                 },
-                 {
-                 "propertySetName" : "ProgressBarPropertySet",
-                 "propertyName" : "trackColor",
-                 "propertyType" : "color",
-                 "propertyValue" : "#FDE3A7"
-                 },
-                 {
-                 "propertySetName" : "ProgressBarPropertySet",
-                 "propertyName" : "cornerRadiusPercentage",
-                 "propertyType" : "CGFloat",
-                 "propertyValue" : 0.35
-                 }
-                 ,
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "cornerRadiusPercentage",
-                 "propertyType" : "CGFloat",
-                 "propertyValue" : 0.35
-                 }
-                 ,
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "borderColor",
-                 "propertyType" : "CGColor",
-                 "propertyValue" : "#F9690E"
-                 }
-                 ,
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "borderWidth",
-                 "propertyType" : "CGFloat",
-                 "propertyValue" : 1.5
-                 }
-                 ]
- },
- {
- "styleClass" : "Stylesheet Title",
- "properties" : [
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "text",
-                 "propertyType" : "string",
-                 "propertyValue" : "JSON"
-                 }
-                 ]
- },
- {
- "styleClass" : "Theme Image",
- "properties" : [
-                 {
-                 "propertySetName" : "UIImageViewPropertySet",
-                 "propertyName" : "image",
-                 "propertyType" : "image",
-                 "propertyValue" : "gear"
-                 }
-                 ]
- },
- {
- "styleClass" : "Theme Description",
- "properties" : [
-                 {
-                 "propertySetName" : "UILabelPropertySet",
-                 "propertyName" : "text",
-                 "propertyType" : "string",
-                 "propertyValue" : "This entire Stylesheet is loaded from JSON. Anything styleable in code can also be styled dynamically from a file. This is styled as DynamicText - change your text size preference in Settings and return here to see what happens!"
-                 }
-                ]
- },
- {
- "styleClass" : "Default Button",
- "properties" : [
-                 {
-                 "propertySetName" : "UIButtonPropertySet",
-                 "propertyName" : "titleColorForNormalState",
-                 "propertyType" : "color",
-                 "propertyValue" : "#D35400"
-                 },
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "backgroundColor",
-                 "propertyType" : "color",
-                 "propertyValue" : "#FDE3A7"
-                 },
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "borderColor",
-                 "propertyType" : "CGColor",
-                 "propertyValue" : "#FDE3A7"
-                 },
-                 {
-                 "propertySetName" : "UIViewPropertySet",
-                 "propertyName" : "cornerRadius",
-                 "propertyType" : "CGFloat",
-                 "propertyValue" : 6.0
-                 }
-                 ]
- }
- ]
- 
+{
+  "styles": [
+    {
+      "styleName": "PrimaryBackgroundColor",
+      "styleProperties": {
+        "backgroundColor": "#F5D76E"
+      }
+    },
+    {
+      "styleName": "SecondaryBackgroundColor",
+      "styleProperties": {
+        "backgroundColor": "#F5D76E"
+      }
+    },
+    {
+      "styleName": "HeaderText",
+      "styleProperties": {
+        "font": {
+          "name": "Futura-CondensedExtraBold",
+          "size": 28.0
+        },
+        "textColor": "#BFBFBF",
+        "textAlignment": "right"
+      }
+    },
+    {
+      "styleName": "BodyText",
+      "styleProperties": {
+        "font": {
+          "textStyle": "body",
+        },
+        "adjustsFontForContentSizeCategory": true,
+        "textColor": "#6C7A89",
+        "textAlignment": "right"
+      }
+    },
+    {
+      "styleName": "DefaultProgressBar",
+      "styleProperties": {
+        "progressColor": "#F27935",
+        "progressTrackColor": "#FDE3A7",
+        "cornerRadiusRatio": 0.35,
+        "progressCornerRadiusRatio": 0.35,
+        "borderColor": "#F9690E",
+        "borderWidth": 1.5
+      }
+    },
+    {
+      "styleName": "StylesheetTitle",
+      "styleProperties": {
+        "text": "JSON"
+      }
+    },
+    {
+      "styleName": "ThemeDescription",
+      "styleProperties": {
+        "text": "This entire Stylesheet is loaded from JSON. Anything styleable in code can also be styled dynamically from a file. This is styled as DynamicText - change your text size preference in Settings and return here to see what happens!"
+      }
+    },
+    {
+      "styleName": "ThemeImage",
+      "styleProperties": {
+        "image": "gear"
+      }
+    },
+    {
+      "styleName": "DefaultButton",
+      "styleProperties": {
+        "titleColorForNormalState": "#D35400",
+        "backgroundColor": "#FDE3A7",
+        "borderColor": "#FDE3A7",
+        "cornerRadius": 6.0
+      }
+    }
+  ]
+}

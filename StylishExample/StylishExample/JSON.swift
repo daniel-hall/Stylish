@@ -1,5 +1,5 @@
 //
-//  SharedStyleClasses.swift
+//  JSON.swift
 //  StylishExample
 //
 // Copyright (c) 2016 Daniel Hall
@@ -29,28 +29,20 @@
 
 
 import Stylish
+import UIKit
 
-// 1. To create a StyleClass, define a struct that conforms to the StyleClass protocol
+// Our customized stylesheet that is loaded from JSON
 
-struct RoundedStyle : StyleClass {
-    
-// 2. The protocol requires you to create storage for StylePropertySets that this StyleClass will access
-
-    var stylePropertySets = StylePropertySetCollection()
-
-    
-// 3. Inside the init(), set whatever properties and values you want to be applied when this StyleClass is used. The format below specifies first the StylePropertySet (UIView), and then the specific property in that set. Properties are strongly typed, so you won't be able to use the wrong kind of value by accident. This 'RoundedStyle' StyleClass will set the cornerRadius to 30.0 on any UIView it is applied to. 
-    
+class JSON : Stylesheet {
+    let styles: [String : Style]
     init() {
-        UIView.cornerRadius = 30.0
-        UIView.masksToBounds = true
-    }
-}
-
-
-struct HighlightedTextStyle : StyleClass {
-    var stylePropertySets = StylePropertySetCollection()
-    init() {
-        UIView.backgroundColor = UIColor(red: 0.25, green: 0.75, blue: 0.75, alpha: 0.25)
+        // Locate the stylesheet JSON in the bundle
+        let url =  Bundle.main.url(forResource: "stylesheet", withExtension: "json")!
+        // Prepare shared styles that we want to add as additions to the parsed JSON Stylesheet styles
+        let sharedStyles: [String: Style] = ["Rounded": RoundedStyle(), "HighlightedText": HighlightedTextStyle()]
+        // Load the JSON Stylesheet. Note that we are passing in Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers because we want our own PropertyStylers for our custom ProgressBar component to be able to parse their values from the JSON as well.  By default, you don't need to pass any argument and only Stylish's built-in PropertyStylers will participate in the parsing.
+        let jsonStylesheet = try! JSONStylesheet(file: url, usingPropertyStylerTypes: Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers)
+        // Lastly make this stylesheet's styles a combination of those parsed by the Stylish JSONStylesheet, and our own shared styles
+        styles = jsonStylesheet.styles + sharedStyles
     }
 }

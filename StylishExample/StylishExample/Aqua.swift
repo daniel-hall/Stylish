@@ -31,99 +31,90 @@
 import Stylish
 import UIKit
 
-// 1. To define a Stylesheet, create a new class that conforms to the Stylesheet protocol
+
+// 1. To define a Stylesheet, create a new type that conforms to the Stylesheet protocol
+
 class Aqua : Stylesheet {
     
-// 2. The protocol requires that you create a styleClasses variable to store an array of StyleClass instances that are part of this Stylesheet
-    let styleClasses:[(identifier:String, styleClass:StyleClass)]
+    // 2. The protocol requires that you create a styles dictionary that defines a mapping of style names to style instances
+    let styles: [String : Style] = [
+        "PrimaryBackgroundColor": PrimaryBackgroundColor(),
+        "SecondaryBackgroundColor": SecondaryBackgroundColor(),
+        "HeaderText": HeaderText(),
+        "BodyText": BodyText(),
+        "ThemeDescription": ThemeDescription(),
+        "DefaultProgressBar": DefaultProgressBar(),
+        "DefaultButton": DefaultButton(),
+        "StylesheetTitle": StylesheetTitle(),
+        "ThemeImage": ThemeImage(),
+        "Rounded": RoundedStyle(),   // This style is defined in a separate file (SharedStyles.swift) for easy reuse in multiple stylesheets
+        "HighlightedText": HighlightedTextStyle() // This style is defined in a separate file (SharedStyles.swift) for easy reuse in multiple stylesheets
+    ]
     
-// 3. Inside the init() for your Stylesheet, initialize the styleClasses array with all the StyleClass instances that should be part of this Stylesheet. StyleClasses specific to this Stylesheet can be declared as nested types as you see further down.  Style Classes can also be reused between multiple Stylesheets, for example, the 'RoundedStyle' StyleClass below, which is declared in SharedStyleClasses.swift because it is identical across all Stylesheets.
-    
-    required init() {
-        styleClasses = [("Primary Background Color", PrimaryBackgroundColor()), ("Secondary Background Color", SecondaryBackgroundColor()), ("Header Text", HeaderText()), ("Body Text", BodyText()), ("Progress Bar", ProgressBar()), ("Default Button", DefaultButton()), ("Stylesheet Title", StylesheetTitle()), ("Theme Image", ThemeImage()), ("Theme Description", ThemeDescription())]
+    // 3. Here are the specific, nested Style types defined for this Stylesheet. They can be made private, or left internal as below, to allow other Stylesheets to resuse them with their full type identifiers, e.g. 'Aqua.PrimaryBackgroundColor'
+    struct PrimaryBackgroundColor : Style {
+        var propertyStylers = [backgroundColor.set(value: UIColor(red:0.18, green:0.51, blue:0.72, alpha:1.0))]
     }
     
-// 4. Here are the specific, nested StyleClass types defined for this Stylesheet. They can be made private, or left internal as below, to allow other Stylesheets to resuse them with their full type identifiers, e.g. 'Aqua.PrimaryBackgroundColor'
-    
-    struct PrimaryBackgroundColor : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            UIView.backgroundColor = UIColor(red:0.18, green:0.51, blue:0.72, alpha:1.0)
-        }
+    struct SecondaryBackgroundColor : Style {
+        var propertyStylers = [backgroundColor.set(value: UIColor(red:0.23, green:0.60, blue:0.85, alpha:1.0))]
     }
     
-    struct SecondaryBackgroundColor : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            UIView.backgroundColor = UIColor(red:0.23, green:0.60, blue:0.85, alpha:1.0)
-        }
+    struct HeaderText : Style {
+        var propertyStylers = [
+            font.set(value: UIFont(name: "Futura-Medium", size: 20.0)),
+            textColor.set(value: .white),
+            textAlignment.set(value: .center)
+        ]
     }
     
-    struct HeaderText : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            UILabel.font = UIFont(name: "Futura-Medium", size: 20.0)!
-            UILabel.textColor = UIColor.white
-            UILabel.textAlignment = .center
-        }
+    struct BodyText : Style {
+        var propertyStylers = [
+            font.set(value: UIFont(name: "Futura-Medium", size: 16.0)),
+            textColor.set(value: .white),
+            textAlignment.set(value: .justified)
+        ]
     }
     
-    struct BodyText : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            UILabel.font = UIFont(name: "Futura-Medium", size: 16.0)!
-            UILabel.textColor = UIColor.white
-            UILabel.textAlignment = .justified
-        }
+    struct ThemeDescription : Style {
+        var propertyStylers = [text.set(value: "This Aqua theme shows off some additional capabilities. There are rounded corners on elements, and the progress bar has a complex pattern color defined in the style. Even this text is part of a style, and not coded into a view controller or model.")]
     }
     
-    struct ThemeDescription : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            UILabel.text = "This Aqua theme shows off some additional capabilities. There are rounded corners on elements, and the progress bar has a complex pattern color defined in the style. Even this text is part of a style, and not coded into a view controller or model."
-        }
-    }
-    
-    struct ProgressBar : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
+    struct DefaultProgressBar : Style {
+        private static var patternColor: UIColor {
             let context = CIContext()
             let stripesFilter = CIFilter(name: "CIStripesGenerator", withInputParameters: ["inputColor0" : CIColor(color: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0)), "inputColor1" : CIColor(color: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)), "inputWidth" : 4])!
             let stripes = context.createCGImage(stripesFilter.outputImage!, from: CGRect(origin: CGPoint.zero, size: CGSize(width: 32.0, height: 32.0)))
             let rotateFilter = CIFilter(name: "CIStraightenFilter", withInputParameters: ["inputImage" : CIImage(cgImage: stripes!), "inputAngle" : 2.35])!
             let rotated = context.createCGImage(rotateFilter.outputImage!, from: rotateFilter.outputImage!.extent)
-            ProgressBar.progressColor = UIColor(patternImage: UIImage(cgImage: rotated!))
-            ProgressBar.trackColor = UIColor.white
-            ProgressBar.cornerRadiusPercentage = 0.55
-            UIView.cornerRadiusPercentage = 0.55
-            UIView.borderWidth = 2.0
-            UIView.borderColor = UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0).cgColor
+            return UIColor(patternImage: UIImage(cgImage: rotated!))
         }
+        var propertyStylers = [
+            progressColor.set(value: patternColor),
+            progressTrackColor.set(value: .white),
+            progressCornerRadiusRatio.set(value: 0.55),
+            cornerRadiusRatio.set(value: 0.55),
+            borderWidth.set(value: 2.0),
+            borderColor.set(value: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0))
+        ]
     }
     
-    struct DefaultButton : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            UIView.backgroundColor = UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0)
-            UIView.borderColor = UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0).cgColor
-            UIView.cornerRadiusPercentage = 0.5
-            UIButton.titleColorForNormalState = UIColor.white
-            UIButton.titleColorForHighlightedState = UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)
-        }
+    struct DefaultButton : Style {
+        var propertyStylers = [
+            titleColorForNormalState.set(value: .white),
+            titleColorForHighlightedState.set(value: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)),
+            cornerRadiusRatio.set(value: 0.5),
+            borderColor.set(value: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)),
+            backgroundColor.set(value: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0))
+        ]
     }
     
-    struct StylesheetTitle : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            UILabel.text = "Aqua"
-        }
+    struct StylesheetTitle : Style {
+        var propertyStylers = [text.set(value: "Aqua")]
     }
     
-    struct ThemeImage : StyleClass {
-        var stylePropertySets = StylePropertySetCollection()
-        init() {
-            let bundle = Bundle(for: Aqua.self)
-            UIImageView.image = UIImage(named: "water", in: bundle, compatibleWith: UIScreen.main.traitCollection)
-        }
+    struct ThemeImage : Style {
+        var propertyStylers = [image.set(value: UIImage(named: "water", in:  Bundle(for: ProgressBar.self), compatibleWith: nil))]
     }
 }
+

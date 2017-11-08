@@ -36,14 +36,32 @@ class MainViewController : UIViewController {
     @IBAction func changeStylesheet(_ sender: UIButton) {
         switch sender.currentTitle! {
         case "Graphite" :
-            Stylish.globalStylesheet = Graphite.self
+            Stylish.stylesheet = Graphite()
         case "Aqua" :
-            Stylish.globalStylesheet = Aqua.self
+            Stylish.stylesheet = Aqua()
         case "JSON" :
-            Stylish.globalStylesheet = JSONStylesheet.self
+            Stylish.stylesheet = JSON()
         default :
             return
         }
     }
-    
+}
+
+/*
+ #### IMPORTANT!! ####
+ The below two extensions must always be defined in the an app that is using Stylish if you want to have live style rendering in Interface Builder storyboards.
+ */
+
+extension UIView {
+    // This is the only entry point for setting global variables in Stylish for Interface Builder rendering (since App Delegate doesn't get run by IBDesignable. So we are setting up the global stylesheet that we want used for IBDesignable rendering here.
+    open override func prepareForInterfaceBuilder() {
+        Stylish.stylesheet = Graphite()
+    }
+}
+
+// In order to force IBDesignable to compile and use code from this hosting app (specifically, the prepareForInterfaceBuilder() override above where we set the global stylesheet for use during IBDesignable rendering), we need to either 1) Create an IBDesignable view inside the host app (like ProgressBar, in this case) and actually place an instance of it on the storyboard or 2) Override prepareForInterfaceBuilder in one Stylish's included styleable components here in the host app. Note that it must be one of the Stylish components actually in use on the storyboard, so it might not be StyleableUIView in your app, but might instead be StyleableUILabel, StyleableUIButton, etc.
+extension StyleableUIView {
+    open override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+    }
 }
