@@ -1,5 +1,5 @@
 //
-//  StyleableTypes.swift
+//  StyleableComponents.swift
 //  Stylish
 //
 // Copyright (c) 2017 Daniel Hall

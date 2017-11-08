@@ -53,31 +53,31 @@ class Aqua : Stylesheet {
     
     // 3. Here are the specific, nested Style types defined for this Stylesheet. They can be made private, or left internal as below, to allow other Stylesheets to resuse them with their full type identifiers, e.g. 'Aqua.PrimaryBackgroundColor'
     struct PrimaryBackgroundColor : Style {
-        var propertyStylers = [UIView.BackgroundColor.set(value: UIColor(red:0.18, green:0.51, blue:0.72, alpha:1.0))]
+        var propertyStylers = [backgroundColor.set(value: UIColor(red:0.18, green:0.51, blue:0.72, alpha:1.0))]
     }
     
     struct SecondaryBackgroundColor : Style {
-        var propertyStylers = [UIView.BackgroundColor.set(value: UIColor(red:0.23, green:0.60, blue:0.85, alpha:1.0))]
+        var propertyStylers = [backgroundColor.set(value: UIColor(red:0.23, green:0.60, blue:0.85, alpha:1.0))]
     }
     
     struct HeaderText : Style {
         var propertyStylers = [
-            UILabel.Font.set(value: UIFont(name: "Futura-Medium", size: 20.0)),
-            UILabel.TextColor.set(value: .white),
-            UILabel.TextAlignment.set(value: .center)
+            font.set(value: UIFont(name: "Futura-Medium", size: 20.0)),
+            textColor.set(value: .white),
+            textAlignment.set(value: .center)
         ]
     }
     
     struct BodyText : Style {
         var propertyStylers = [
-            UILabel.Font.set(value: UIFont(name: "Futura-Medium", size: 16.0)),
-            UILabel.TextColor.set(value: .white),
-            UILabel.TextAlignment.set(value: .justified)
+            font.set(value: UIFont(name: "Futura-Medium", size: 16.0)),
+            textColor.set(value: .white),
+            textAlignment.set(value: .justified)
         ]
     }
     
     struct ThemeDescription : Style {
-        var propertyStylers = [UILabel.Text.set(value: "This Aqua theme shows off some additional capabilities. There are rounded corners on elements, and the progress bar has a complex pattern color defined in the style. Even this text is part of a style, and not coded into a view controller or model.")]
+        var propertyStylers = [text.set(value: "This Aqua theme shows off some additional capabilities. There are rounded corners on elements, and the progress bar has a complex pattern color defined in the style. Even this text is part of a style, and not coded into a view controller or model.")]
     }
     
     struct DefaultProgressBar : Style {
@@ -90,31 +90,31 @@ class Aqua : Stylesheet {
             return UIColor(patternImage: UIImage(cgImage: rotated!))
         }
         var propertyStylers = [
-            ProgressBar.ProgressColor.set(value: patternColor),
-            ProgressBar.ProgressTrackColor.set(value: .white),
-            ProgressBar.ProgressCornerRadiusRatio.set(value: 0.55),
-            UIView.CornerRadiusRatio.set(value: 0.55),
-            UIView.BorderWidth.set(value: 2.0),
-            UIView.BorderColor.set(value: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0))
+            progressColor.set(value: patternColor),
+            progressTrackColor.set(value: .white),
+            progressCornerRadiusRatio.set(value: 0.55),
+            cornerRadiusRatio.set(value: 0.55),
+            borderWidth.set(value: 2.0),
+            borderColor.set(value: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0))
         ]
     }
     
     struct DefaultButton : Style {
         var propertyStylers = [
-            UIButton.TitleColorForNormalState.set(value: .white),
-            UIButton.TitleColorForHighlightedState.set(value: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)),
-            UIView.CornerRadiusRatio.set(value: 0.5),
-            UIView.BorderColor.set(value: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)),
-            UIView.BackgroundColor.set(value: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0))
+            titleColorForNormalState.set(value: .white),
+            titleColorForHighlightedState.set(value: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)),
+            cornerRadiusRatio.set(value: 0.5),
+            borderColor.set(value: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)),
+            backgroundColor.set(value: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0))
         ]
     }
     
     struct StylesheetTitle : Style {
-        var propertyStylers = [UILabel.Text.set(value: "Aqua")]
+        var propertyStylers = [text.set(value: "Aqua")]
     }
     
     struct ThemeImage : Style {
-        var propertyStylers = [UIImageView.Image.set(value: UIImage(named: "water", in:  Bundle(for: ProgressBar.self), compatibleWith: nil))]
+        var propertyStylers = [image.set(value: UIImage(named: "water", in:  Bundle(for: ProgressBar.self), compatibleWith: nil))]
     }
 }
 

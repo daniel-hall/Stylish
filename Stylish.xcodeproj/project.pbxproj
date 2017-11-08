@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CEC4B38F1FB180AE00A97AB5 /* StyleableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B3891FB180AE00A97AB5 /* StyleableTypes.swift */; };
+		CEC4B38F1FB180AE00A97AB5 /* StyleableComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B3891FB180AE00A97AB5 /* StyleableComponents.swift */; };
 		CEC4B3901FB180AE00A97AB5 /* JSONStylesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38A1FB180AE00A97AB5 /* JSONStylesheet.swift */; };
 		CEC4B3911FB180AE00A97AB5 /* PropertyStylers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38B1FB180AE00A97AB5 /* PropertyStylers.swift */; };
 		CEC4B3921FB180AE00A97AB5 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEC4B38C1FB180AE00A97AB5 /* Media.xcassets */; };
@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		CEC4B3891FB180AE00A97AB5 /* StyleableTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleableTypes.swift; sourceTree = "<group>"; };
+		CEC4B3891FB180AE00A97AB5 /* StyleableComponents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleableComponents.swift; sourceTree = "<group>"; };
 		CEC4B38A1FB180AE00A97AB5 /* JSONStylesheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONStylesheet.swift; sourceTree = "<group>"; };
 		CEC4B38B1FB180AE00A97AB5 /* PropertyStylers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertyStylers.swift; sourceTree = "<group>"; };
 		CEC4B38C1FB180AE00A97AB5 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 				D7C473001F3E4F8A00B5880A /* Stylish.h */,
 				D7C473011F3E4F8A00B5880A /* Info.plist */,
 				CEC4B38D1FB180AE00A97AB5 /* Stylish.swift */,
-				CEC4B3891FB180AE00A97AB5 /* StyleableTypes.swift */,
+				CEC4B3891FB180AE00A97AB5 /* StyleableComponents.swift */,
 				CEC4B38A1FB180AE00A97AB5 /* JSONStylesheet.swift */,
 				CEC4B38B1FB180AE00A97AB5 /* PropertyStylers.swift */,
 				CEC4B38E1FB180AE00A97AB5 /* StylesheetParseableExtensions.swift */,
@@ -152,7 +152,7 @@
 			files = (
 				CEC4B3941FB180AE00A97AB5 /* StylesheetParseableExtensions.swift in Sources */,
 				CEC4B3931FB180AE00A97AB5 /* Stylish.swift in Sources */,
-				CEC4B38F1FB180AE00A97AB5 /* StyleableTypes.swift in Sources */,
+				CEC4B38F1FB180AE00A97AB5 /* StyleableComponents.swift in Sources */,
 				CEC4B3901FB180AE00A97AB5 /* JSONStylesheet.swift in Sources */,
 				CEC4B3911FB180AE00A97AB5 /* PropertyStylers.swift in Sources */,
 			);

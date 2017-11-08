@@ -40,21 +40,21 @@ import UIKit
 @IBDesignable class ProgressBar:UIView, Styleable {
     
     // 2. Create custom PropertyStylers that define a property key that can be read out of json, and a way to set the styleable properties of the ProgressBar component. These can be private to the type if you are only using JSON stylesheets and no code-created stylesheets
-    internal struct ProgressColor: PropertyStyler {
+    struct ProgressColor: PropertyStyler {
         static var propertyKey: String { return "progressColor" }
         static func apply(value: UIColor?, to target: ProgressBar) {
             target.progressColor = value ?? .gray
         }
     }
     
-    internal struct ProgressTrackColor: PropertyStyler {
+    struct ProgressTrackColor: PropertyStyler {
         static var propertyKey: String { return "progressTrackColor" }
         static func apply(value: UIColor?, to target: ProgressBar) {
             target.trackColor = value ?? .white
         }
     }
     
-    internal struct ProgressCornerRadiusRatio: PropertyStyler {
+    struct ProgressCornerRadiusRatio: PropertyStyler {
         static var propertyKey: String { return "progressCornerRadiusRatio" }
         static func apply(value: CGFloat?, to target: ProgressBar) {
             target.progressCornerRadiusPercentage = value ?? 0
@@ -136,4 +136,16 @@ import UIKit
         progressView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: trackView.bounds.width * progress, height: trackView.bounds.height))
     }
 }
+
+// 5. Optionally, add a convenience typealias to the Style protocol, so any style can reference simply: "progressColor.set(value:)" instead of "ProgressBar.ProgressColor.set(value:)"
+
+extension Style {
+    /// Sets a color value for the filled-in part of a ProgressBar instance
+    typealias progressColor = ProgressBar.ProgressColor
+    /// Sets a color value for the background track part of a ProgressBar instance
+    typealias progressTrackColor = ProgressBar.ProgressTrackColor
+    /// Sets a ratio of corner radius to height for the filled in progress part of a ProgressBar instance
+    typealias progressCornerRadiusRatio = ProgressBar.ProgressCornerRadiusRatio
+}
+
 

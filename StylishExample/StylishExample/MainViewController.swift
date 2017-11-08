@@ -40,12 +40,34 @@ class MainViewController : UIViewController {
         case "Aqua" :
             Stylish.stylesheet = Aqua()
         case "JSON" :
-            let url =  Bundle(for: ProgressBar.self).url(forResource: "stylesheet", withExtension: "json")!
+            // Locate the stylesheet JSON in the bundle
+            let url =  Bundle.main.url(forResource: "stylesheet", withExtension: "json")!
+            // Prepare shared styles that we want to add as additions to the parsed JSON Stylesheet styles
             let sharedStyles: [String: Style] = ["Rounded": RoundedStyle(), "HighlightedText": HighlightedTextStyle()]
-            Stylish.stylesheet = (try! JSONStylesheet(file: url, usingPropertyStylerTypes: Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers)).addingAdditionalStyles(sharedStyles)
+            // Load the JSON Stylesheet. Note that we are passing in Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers because we want our own PropertyStylers for our custom ProgressBar component to be able to parse their values from the JSON as well.  By default, you don't need to pass any argument and only Stylish's built-in PropertyStylers will participate in the parsing. Lastly, we add the additional shared styles to those parsed from json
+            let stylesheet = (try! JSONStylesheet(file: url, usingPropertyStylerTypes: Stylish.builtInPropertyStylerTypes + ProgressBar.propertyStylers)).addingAdditionalStyles(sharedStyles)
+            Stylish.stylesheet = stylesheet
         default :
             return
         }
     }
-    
+}
+
+/*
+ #### IMPORTANT!! ####
+ The below two extensions must always be defined in the an app that is using Stylish if you want to have live style rendering in Interface Builder storyboards.
+ */
+
+extension UIView {
+    // This is the only entry point for setting global variables in Stylish for Interface Builder rendering (since App Delegate doesn't get run by IBDesignable. So we are setting up the global stylesheet that we want used for IBDesignable rendering here.
+    open override func prepareForInterfaceBuilder() {
+        Stylish.stylesheet = Graphite()
+    }
+}
+
+// In order to force IBDesignable to compile and use code from this hosting app (specifically, the prepareForInterfaceBuilder() override above where we set the global stylesheet for use during IBDesignable rendering), we need to either 1) Create an IBDesignable view inside the host app (like ProgressBar, in this case) and actually place an instance of it on the storyboard or 2) Override prepareForInterfaceBuilder in one Stylish's included styleable components here in the host app. Note that it must be one of the Stylish components actually in use on the storyboard, so it might not be StyleableUIView in your app, but might instead be StyleableUILabel, StyleableUIButton, etc.
+extension StyleableUIView {
+    open override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+    }
 }

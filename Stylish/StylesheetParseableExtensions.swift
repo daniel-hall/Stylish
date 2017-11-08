@@ -25,9 +25,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
 
-// Convenience intializers for parsing values out of stylesheets -
+
+// Add StylesheetParseable conformance to all the types used in the built-in PropertyStylers. This conformance converts the expected json value in the stylesheet (could be a String, a Bool, a Dictionary multiple key-values) into the corresponding Swift type
 
 extension CGFloat: StylesheetParseable {
     public static func parse(from stylesheetValue: Any) -> CGFloat? {
@@ -112,11 +112,11 @@ extension UIDataDetectorTypes: StylesheetParseable {
                     } else { return $0 }
                 case "flightNumber":
                     if #available(iOS 10.0, *) {
-                    return $0.union(.flightNumber)
+                        return $0.union(.flightNumber)
                     } else { return $0 }
                 case "lookupSuggestion":
                     if #available(iOS 10.0, *) {
-                    return $0.union(.lookupSuggestion)
+                        return $0.union(.lookupSuggestion)
                     } else { return $0 }
                 default:
                     return $0
@@ -270,7 +270,7 @@ extension UIKeyboardType: StylesheetParseable {
             return .webSearch
         case .some("asciiCapableNumberPad"):
             if #available(iOS 10.0, *) {
-            return .asciiCapableNumberPad
+                return .asciiCapableNumberPad
             } else { return nil }
         default:
             return nil

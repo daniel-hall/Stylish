@@ -25,7 +25,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// A Stylish Stylesheet that can dynamically create its styles by parsing them from a json file.
+
+
+/// A Stylish Stylesheet that can dynamically populate its member styles and style names by parsing them from a json file.
 public class JSONStylesheet: Stylesheet {
     public private(set) var styles: [String : Style]
     
@@ -70,16 +72,5 @@ public class JSONStylesheet: Stylesheet {
             return (styleName, AnyStyle(propertyStylers: propertyStylers))
         }
         self.styles = Dictionary(keyValues, uniquingKeysWith:{ return $1 })
-    }
-    
-    /// If there are additional styles you would like to include or override in a JSONStylesheet instance after it has parsed its initial styles from the stylesheet json file, pass in a dictionary of them here.  Any style names that match existing styles in the JSONStylesheet will be overridden with your new values
-    public func addingAdditionalStyles(_ styles: [String: Style]) -> Stylesheet {
-        class AnyStylesheet: Stylesheet {
-            let styles: [String : Style]
-            init(styles: [String: Style]) {
-                self.styles = styles
-            }
-        }
-        return AnyStylesheet(styles: self.styles + styles)
     }
 }

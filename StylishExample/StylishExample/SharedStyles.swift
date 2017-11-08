@@ -35,14 +35,14 @@ import Stylish
 struct RoundedStyle : Style {
     
     // 2. Each type that conforms to Style is required by the protocol to specify an array of [AnyPropertyStyler] that will run when the Style is applied. To create an instance of AnyPropertyStyler, call the default implemented "set" static method on one of your custom PropertyStylers, or one of Stylish's built-in PropertyStylers.
-    var propertyStylers = [UIView.CornerRadius.set(value: 30.0), UIView.MasksToBounds.set(value: true)]
+    var propertyStylers = [cornerRadius.set(value: 30.0), masksToBounds.set(value: true)]
 }
 
 
 struct HighlightedTextStyle : Style {
     var propertyStylers = [
-        UILabel.HighlightedTextColor.set(value: UIColor(red: 0.25, green: 0.75, blue: 0.75, alpha: 0.25)),
-        UILabel.IsHighlighted.set(value: true)
+        highlightedTextColor.set(value: UIColor(red: 0.25, green: 0.75, blue: 0.75, alpha: 0.25)),
+        isHighlighted.set(value: true)
         ]
 }
 

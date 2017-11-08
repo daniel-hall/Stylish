@@ -29,6 +29,7 @@
         "font": {
           "textStyle": "body",
         },
+        "adjustsFontForContentSizeCategory": true,
         "textColor": "#6C7A89",
         "textAlignment": "right"
       }

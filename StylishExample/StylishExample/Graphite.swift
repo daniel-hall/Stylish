@@ -55,61 +55,61 @@ class Graphite : Stylesheet {
     
     // 4. Each type that conforms to Style is required by the protocol to specify an array of [AnyPropertyStyler] that will run when the Style is applied. To create an instance of AnyPropertyStyler, call the default implemented "set" static method on one of your custom PropertyStylers, or one of Stylish's built-in PropertyStylers.
     struct PrimaryBackgroundColor : Style {
-        var propertyStylers = [UIView.BackgroundColor.set(value: UIColor(white: 0.9, alpha: 1.0))]
+        var propertyStylers = [backgroundColor.set(value: UIColor(white: 0.9, alpha: 1.0))]
     }
     
     struct SecondaryBackgroundColor : Style {
-        var propertyStylers = [UIView.BackgroundColor.set(value: UIColor(white: 0.75, alpha: 1.0))]
+        var propertyStylers = [backgroundColor.set(value: UIColor(white: 0.75, alpha: 1.0))]
     }
     
     struct HeaderText : Style {
         var propertyStylers = [
-            UILabel.Font.set(value: .systemFont(ofSize: 20.0)),
-            UILabel.TextColor.set(value: .darkGray),
-            UILabel.TextAlignment.set(value: .left)
+            font.set(value: .systemFont(ofSize: 20.0)),
+            textColor.set(value: .darkGray),
+            textAlignment.set(value: .left)
         ]
     }
     
     struct BodyText : Style {
         var propertyStylers = [
-            UILabel.Font.set(value:  .systemFont(ofSize: 16.0)),
-            UILabel.TextColor.set(value: .gray),
-            UILabel.TextAlignment.set(value: .left)
+            font.set(value:  .systemFont(ofSize: 16.0)),
+            textColor.set(value: .gray),
+            textAlignment.set(value: .left)
         ]
     }
     
     struct ThemeDescription : Style {
-        var propertyStylers = [UILabel.Text.set(value: "Everything on this screen is configured entirely through styles. The styles specify images, fonts, text, button styles, and more. The styles are previewed and updated live inside the storyboard, so this screen looks the same at design time and runtime.")]
+        var propertyStylers = [text.set(value: "Everything on this screen is configured entirely through styles. The styles specify images, fonts, text, button styles, and more. The styles are previewed and updated live inside the storyboard, so this screen looks the same at design time and runtime.")]
     }
     
     struct DefaultProgressBar : Style {
         var propertyStylers = [
-            ProgressBar.ProgressColor.set(value: .gray),
-            ProgressBar.ProgressTrackColor.set(value: UIColor(white: 0.9, alpha: 1.0)),
-            ProgressBar.ProgressCornerRadiusRatio.set(value: 0.16),
-            UIView.CornerRadiusRatio.set(value: 0.16),
-            UIView.BorderWidth.set(value: 1.0),
-            UIView.BorderColor.set(value: .gray)
+            progressColor.set(value: .gray),
+            progressTrackColor.set(value: UIColor(white: 0.9, alpha: 1.0)),
+            progressCornerRadiusRatio.set(value: 0.16),
+            cornerRadiusRatio.set(value: 0.16),
+            borderWidth.set(value: 1.0),
+            borderColor.set(value: .gray)
             ]
     }
     
     struct DefaultButton : Style {
         var propertyStylers = [
-            UIButton.TitleColorForNormalState.set(value: UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0)),
-            UIButton.TitleColorForHighlightedState.set(value: UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0)),
-            UIButton.TitleColorForDisabledState.set(value: UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0)),
-            UIView.CornerRadiusRatio.set(value: 0.16),
-            UIView.BorderWidth.set(value: 1.0),
-            UIView.BorderColor.set(value: UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0)),
-            UIView.BackgroundColor.set(value: UIColor(white: 0.82, alpha: 1.0))
+            titleColorForNormalState.set(value: UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0)),
+            titleColorForHighlightedState.set(value: UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0)),
+            titleColorForDisabledState.set(value: UIColor(red:0.18, green:0.24, blue:0.31, alpha:1.0)),
+            cornerRadiusRatio.set(value: 0.16),
+            borderWidth.set(value: 1.0),
+            borderColor.set(value: UIColor(red:0.21, green:0.29, blue:0.36, alpha:1.0)),
+            backgroundColor.set(value: UIColor(white: 0.82, alpha: 1.0))
         ]
     }
     
     struct StylesheetTitle : Style {
-        var propertyStylers = [UILabel.Text.set(value: "Graphite")]
+        var propertyStylers = [text.set(value: "Graphite")]
     }
     
     struct ThemeImage : Style {
-        var propertyStylers = [UIImageView.Image.set(value: UIImage(named: "stone", in:  Bundle(for: ProgressBar.self), compatibleWith: nil))]
+        var propertyStylers = [image.set(value: UIImage(named: "stone", in:  Bundle(for: ProgressBar.self), compatibleWith: nil))]
     }
 }

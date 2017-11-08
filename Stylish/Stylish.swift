@@ -28,7 +28,7 @@
 
 import UIKit
 
-/// A protocol that view types conform to in order to participate in the Stylish styling process
+/// A protocol that view types conform to in order to participate in the Stylish styling process. Requires a "styles" String property which can hold a comma-separated list of style names. Usually implemented as an IBInspectable property
 public protocol Styleable: class {
     var styles: String { get set }
 }
@@ -46,6 +46,10 @@ public protocol Stylesheet: class {
 extension Stylesheet {
     subscript(_ styleName: String) -> Style? {
         return styles[styleName]
+    }
+    /// If there are additional styles you would like to include or override in an existing Stylesheet instance, pass in a dictionary of them here.  Any style names that match existing styles in the stylesheet instance will be overridden with these new values
+    public func addingAdditionalStyles(_ styles: [String: Style]) -> Stylesheet {
+        return AnyStylesheet(styles: self.styles + styles)
     }
 }
 
@@ -102,6 +106,11 @@ public func +(left: Style, right: Style) ->  Style {
     return AnyStyle(propertyStylers: left.propertyStylers + right.propertyStylers)
 }
 
+/// Convenience operator to combine two Styles. The resulting style will have all the PropertyStylers from the right Style appended to all the PropertyStylers from the left Style.  When the resulting Style is applied, it will apply every property styler in order from first to last.
+public func +(left: Stylesheet, right: Stylesheet) ->  Stylesheet {
+    return left.addingAdditionalStyles(right.styles)
+}
+
 
 // MARK: - Internal Type Erasers -
 
@@ -138,11 +147,16 @@ internal struct AnyStyle: Style {
     let propertyStylers: [AnyPropertyStyler]
 }
 
+/// A generic Stylesheet type, used as a result when combining two Stylesheet instances with different concrete types
+internal class AnyStylesheet: Stylesheet {
+    let styles: [String : Style]
+    init(styles: [String: Style]) {
+        self.styles = styles
+    }
+}
 
 /// Global type which exposes the core Stylish functionality methods
 public struct Stylish {
-    
-    
     
     /// Get or set the current global stylesheet for the application. Setting a new Stylesheet will cause the entire view hierarchy to reapply any styles using the new stylesheet
     public static var stylesheet: Stylesheet? = nil {
@@ -165,21 +179,14 @@ public struct Stylish {
         }
     }
     
-    private typealias UIView = Stylish.PropertyStyler.UIView
-    private typealias UILabel = Stylish.PropertyStyler.UILabel
-    private typealias UITextField = Stylish.PropertyStyler.UITextField
-    private typealias UITextView = Stylish.PropertyStyler.UITextView
-    private typealias UIButton = Stylish.PropertyStyler.UIButton
-    private typealias UIImageView = Stylish.PropertyStyler.UIImageView
-    
     /// The set of built-in PropertyStyler types, such as UIView.BackgroundColor, UILabel.Text, etc. each of which knows how to apply a specific type of value to a specific property of a specific type (UIView, UILabel, etc.). Each one also specifies which property key it will handle inside a json stylesheet file, e.g. "backgroundColor"
     public static let builtInPropertyStylerTypes: [AnyPropertyStylerType.Type] = {
-        var types: [AnyPropertyStylerType.Type] = [UIView.BackgroundColor.self, UIView.ContentMode.self, UIView.CornerRadius.self, UIView.CornerRadiusRatio.self, UIView.IsUserInteractionEnabled.self, UIView.IsHidden.self, UIView.BorderColor.self, UIView.BorderWidth.self, UIView.Alpha.self, UIView.ClipsToBounds.self, UIView.MasksToBounds.self, UIView.TintColor.self, UIView.LayoutMargins.self, UIView.ShadowColor.self, UIView.ShadowOffset.self, UIView.ShadowOpacity.self, UIView.ShadowRadius.self, UILabel.IsEnabled.self, UILabel.AdjustsFontSizeToFitWidth.self, UILabel.TextAlignment.self, UILabel.Text.self, UILabel.TextColor.self, UILabel.Font.self, UILabel.IsHighlighted.self, UILabel.BaselineAdjustment.self, UILabel.AllowsDefaultTighteningForTruncation.self, UILabel.LineBreakMode.self, UILabel.NumberOfLines.self, UILabel.MinimumScaleFactor.self, UILabel.PreferredMaxLayoutWidth.self, UILabel.HighlightedTextColor.self, UITextField.AllowsEditingTextAttributes.self, UITextField.AutocapitalizationType.self, UITextField.AutocorrectionType.self, UITextField.EnablesReturnKeyAutomatically.self, UITextField.ClearsOnInsertion.self, UITextField.KeyboardAppearance.self, UITextField.SpellCheckingType.self, UITextField.KeyboardType.self, UITextField.ReturnKeyType.self, UITextField.IsSecureTextEntry.self, UITextField.Background.self, UITextField.DisabledBackground.self, UITextField.BorderStyle.self, UITextField.ClearButtonMode.self, UITextField.LeftViewMode.self, UITextField.RightViewMode.self, UITextField.MinimumFontSize.self, UITextField.Placeholder.self, UITextField.ClearsOnBeginEditing.self, UITextView.IsEditable.self, UITextView.IsSelectable.self, UITextView.DataDetectorTypes.self, UITextView.TextContainerInset.self, UIButton.AdjustsImageWhenDisabled.self, UIButton.AdjustsImageWhenHighlighted.self, UIButton.ShowsTouchWhenHighlighted.self, UIButton.ContentEdgeInsets.self, UIButton.TitleEdgeInsets.self, UIButton.ImageEdgeInsets.self, UIButton.TitleForNormalState.self, UIButton.TitleForHighlightedState.self, UIButton.TitleForDisabledState.self, UIButton.TitleColorForNormalState.self, UIButton.TitleColorForHighlightedState.self, UIButton.TitleColorForDisabledState.self, UIButton.ImageForNormalState.self, UIButton.ImageForHighlightedState.self, UIButton.ImageForDisabledState.self, UIButton.BackgroundImageForNormalState.self, UIButton.BackgroundImageForHighlightedState.self, UIButton.BackgroundImageForDisabledState.self, UIImageView.Image.self, UIImageView.ImageURL.self, UIImageView.HighlightedImage.self, UIImageView.AnimationDuration.self, UIImageView.AnimationRepeatCount.self, UIImageView.AnimationImages.self, UIImageView.HighlightedAnimationImages.self, UIImageView.IsAnimating.self]
+        var types: [AnyPropertyStylerType.Type] = [Style.backgroundColor.self, Style.contentMode.self, Style.cornerRadius.self, Style.cornerRadiusRatio.self, Style.isUserInteractionEnabled.self, Style.isHidden.self, Style.borderColor.self, Style.borderWidth.self, Style.alpha.self, Style.clipsToBounds.self, Style.masksToBounds.self, Style.tintColor.self, Style.layoutMargins.self, Style.shadowColor.self, Style.shadowOffset.self, Style.shadowOpacity.self, Style.shadowRadius.self, Style.isEnabled.self, Style.adjustsFontSizeToFitWidth.self, Style.textAlignment.self, Style.text.self, Style.textColor.self,Style.font.self,Style.isHighlighted.self, Style.baselineAdjustment.self, Style.allowsDefaultTighteningForTruncation.self, Style.lineBreakMode.self, Style.numberOfLines.self, Style.minimumScaleFactor.self, Style.preferredMaxLayoutWidth.self, Style.highlightedTextColor.self, Style.allowsEditingTextAttributes.self, Style.autocapitalizationType.self, Style.autocorrectionType.self, Style.enablesReturnKeyAutomatically.self, Style.clearsOnInsertion.self, Style.keyboardAppearance.self, Style.spellCheckingType.self, Style.keyboardType.self, Style.returnKeyType.self, Style.isSecureTextEntry.self, Style.background.self, Style.disabledBackground.self, Style.borderStyle.self, Style.clearButtonMode.self, Style.leftViewMode.self, Style.rightViewMode.self, Style.minimumFontSize.self, Style.placeholder.self, Style.clearsOnBeginEditing.self, Style.isEditable.self, Style.isSelectable.self, Style.dataDetectorTypes.self, Style.textContainerInset.self, Style.adjustsImageWhenDisabled.self, Style.adjustsImageWhenHighlighted.self, Style.showsTouchWhenHighlighted.self, Style.contentEdgeInsets.self, Style.titleEdgeInsets.self, Style.imageEdgeInsets.self, Style.titleForNormalState.self, Style.titleForHighlightedState.self, Style.titleForDisabledState.self, Style.titleColorForNormalState.self, Style.titleColorForHighlightedState.self, Style.titleColorForDisabledState.self, Style.imageForNormalState.self, Style.imageForHighlightedState.self, Style.imageForDisabledState.self, Style.backgroundImageForNormalState.self, Style.backgroundImageForHighlightedState.self, Style.backgroundImageForDisabledState.self, Style.image.self, Style.imageURL.self, Style.highlightedImage.self, Style.animationDuration.self, Style.animationRepeatCount.self, Style.animationImages.self, Style.highlightedAnimationImages.self, Style.isAnimating.self]
         if #available(iOS 10.0, *) {
-            types = types + [UITextField.TextContentType.self, UILabel.AdjustsFontForContentSizeCategory.self]
+            types = types + [Style.textContentType.self, Style.adjustsFontForContentSizeCategory.self]
         }
         if #available(iOS 11.0, *) {
-            types = types + [UITextField.SmartDashesType.self, UITextField.SmartInsertDeleteType.self, UITextField.SmartQuotesType.self, UIImageView.AdjustsImageSizeForAccessibilityContentSizeCategory.self]
+            types = types + [Style.smartDashesType.self, Style.smartInsertDeleteType.self, Style.smartQuotesType.self, Style.adjustsImageSizeForAccessibilityContentSizeCategory.self]
         }
         return types
     }()
@@ -187,7 +194,7 @@ public struct Stylish {
     /// Accepts a comma-separated list of style names and attempts to retrieve them from the current global stylesheet, and having done so will apply them to the target Styleable instance.
     public static func applyStyleNames(_ styles: String, to target: Styleable) {
         #if TARGET_INTERFACE_BUILDER
-            UIKit.UIView().prepareForInterfaceBuilder()
+            UIView().prepareForInterfaceBuilder()
         #endif
         var hasInvalidStyleName = false
         var combinedStyle = styles.components(separatedBy: ",").reduce(AnyStyle(propertyStylers: []) as Style) {
@@ -203,6 +210,7 @@ public struct Stylish {
         #endif
         applyStyle(combinedStyle, to: target)
     }
+    
     /// Applies a single Style instance to the target Stylable object
     public static func applyStyle(_ style: Style, to target: Styleable) {
         style.propertyStylers.forEach { $0.apply(to: target) }
@@ -216,7 +224,7 @@ public struct Stylish {
     }
     
     /// Refreshes / reapplies the styling for a single view
-    public static func refreshStyles(for view:UIKit.UIView) {
+    public static func refreshStyles(for view: UIView) {
         for subview in view.subviews {
             refreshStyles(for: subview)
         }

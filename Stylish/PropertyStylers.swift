@@ -27,48 +27,190 @@
 
 import UIKit
 
-// An empty protocol to conform UILabel, UITextField and UITextView to, so they can be styled with the same Property Styler
-public protocol TextControl: class {
-    var textAlignment: NSTextAlignment { get set }
-    @available(iOS 10.0, *) var adjustsFontForContentSizeCategory: Bool { get set }
-}
-
-public protocol TextInputControl: class, TextControl {
-    var allowsEditingTextAttributes: Bool { get set }
-    var autocapitalizationType: UITextAutocapitalizationType { get set }
-    var autocorrectionType: UITextAutocorrectionType { get set }
-    var enablesReturnKeyAutomatically: Bool { get set }
-    var clearsOnInsertion: Bool { get set }
-    var keyboardAppearance: UIKeyboardAppearance { get set }
-    var spellCheckingType: UITextSpellCheckingType { get set }
-    @available(iOS 11.0, *) var smartDashesType: UITextSmartDashesType { get set }
-    @available(iOS 11.0, *) var smartInsertDeleteType: UITextSmartInsertDeleteType { get set }
-    @available(iOS 11.0, *) var smartQuotesType: UITextSmartQuotesType { get set }
-    var keyboardType: UIKeyboardType { get set }
-    var returnKeyType: UIReturnKeyType { get set }
-    var isSecureTextEntry: Bool { get set }
-    @available(iOS 10.0, *) var textContentType: UITextContentType! { get set }
-}
-
-extension UILabel: TextControl {}
-extension UITextField: TextInputControl {}
-extension UITextView: TextInputControl {}
 
 public extension Style {
-    typealias UIView = Stylish.PropertyStyler.UIView
-    typealias UILabel = Stylish.PropertyStyler.UILabel
-    typealias UITextField = Stylish.PropertyStyler.UITextField
-    typealias UITextView = Stylish.PropertyStyler.UITextView
-    typealias UIButton = Stylish.PropertyStyler.UIButton
-    typealias UIImageView = Stylish.PropertyStyler.UIImageView
+    /// Sets property value on UIViews and subclasses
+    typealias backgroundColor = Stylish.PropertyStylers.UIView.BackgroundColor
+    /// Sets property value on UIViews and subclasses
+    typealias contentMode  = Stylish.PropertyStylers.UIView.ContentMode
+    /// Sets property value on UIViews and subclasses
+    typealias cornerRadius = Stylish.PropertyStylers.UIView.CornerRadius
+    /// Sets property value on UIViews and subclasses
+    typealias cornerRadiusRatio = Stylish.PropertyStylers.UIView.CornerRadiusRatio
+    /// Sets property value on UIViews and subclasses
+    typealias isUserInteractionEnabled = Stylish.PropertyStylers.UIView.IsUserInteractionEnabled
+    /// Sets property value on UIViews and subclasses
+    typealias isHidden = Stylish.PropertyStylers.UIView.IsHidden
+    /// Sets property value on UIViews and subclasses
+    typealias borderColor = Stylish.PropertyStylers.UIView.BorderColor
+    /// Sets property value on UIViews and subclasses
+    typealias borderWidth = Stylish.PropertyStylers.UIView.BorderWidth
+    /// Sets property value on UIViews and subclasses
+    typealias alpha = Stylish.PropertyStylers.UIView.Alpha
+    /// Sets property value on UIViews and subclasses
+    typealias clipsToBounds = Stylish.PropertyStylers.UIView.ClipsToBounds
+    /// Sets property value on UIViews and subclasses
+    typealias masksToBounds = Stylish.PropertyStylers.UIView.MasksToBounds
+    /// Sets property value on UIViews and subclasses
+    typealias tintColor = Stylish.PropertyStylers.UIView.TintColor
+    /// Sets property value on UIViews and subclasses
+    typealias layoutMargins = Stylish.PropertyStylers.UIView.LayoutMargins
+    /// Sets property value on UIViews and subclasses
+    typealias shadowColor = Stylish.PropertyStylers.UIView.ShadowColor
+    /// Sets property value on UIViews and subclasses
+    typealias shadowOffset = Stylish.PropertyStylers.UIView.ShadowOffset
+    /// Sets property value on UIViews and subclasses
+    typealias shadowRadius = Stylish.PropertyStylers.UIView.ShadowRadius
+    /// Sets property value on UIViews and subclasses
+    typealias shadowOpacity = Stylish.PropertyStylers.UIView.ShadowOpacity
+    /// Sets property value on UIControle and subclasses
+    typealias isEnabled = Stylish.PropertyStylers.UIControl.IsEnabled
+    /// Sets property value on UILabels, UITextFields, UITextViews, and their subclasses
+    typealias adjustsFontSizeToFitWidth = Stylish.PropertyStylers.StylishTextControl.AdjustsFontSizeToFitWidth
+    /// Sets property value on UILabels, UITextFields, UITextViews, and their subclasses
+    @available(iOS 10.0, *) typealias adjustsFontForContentSizeCategory = Stylish.PropertyStylers.StylishTextControl.AdjustsFontForContentSizeCategory
+    /// Sets property value on UILabels, UITextFields, UITextViews, and their subclasses
+    typealias textAlignment = Stylish.PropertyStylers.StylishTextControl.TextAlignment
+    /// Sets property value on UILabels, UITextFields, UITextViews, and their subclasses
+    typealias text = Stylish.PropertyStylers.StylishTextControl.Text
+    /// Sets property value on UILabels, UITextFields, UITextViews, and their subclasses
+    typealias textColor = Stylish.PropertyStylers.StylishTextControl.TextColor
+    /// Sets property value on UILabels, UITextFields, UITextViews, and their subclasses. Also sets titleLabel font on UIButtons and subclasses
+    typealias font = Stylish.PropertyStylers.StylishTextControl.Font
+    /// Sets property value on UILabels, UITextFields, UITextViews, and their subclasses
+    typealias isHighlighted = Stylish.PropertyStylers.StylishTextControl.IsHighlighted
+    /// Sets property value on UILabels and subclasses
+    typealias baselineAdjustment = Stylish.PropertyStylers.UILabel.BaselineAdjustment
+    /// Sets property value on UILabels and subclasses
+    typealias allowsDefaultTighteningForTruncation = Stylish.PropertyStylers.UILabel.AllowsDefaultTighteningForTruncation
+    /// Sets property value on UILabels and subclasses
+    typealias lineBreakMode = Stylish.PropertyStylers.UILabel.LineBreakMode
+    /// Sets property value on UILabels and subclasses
+    typealias numberOfLines = Stylish.PropertyStylers.UILabel.NumberOfLines
+    /// Sets property value on UILabels and subclasses
+    typealias minimumScaleFactor = Stylish.PropertyStylers.UILabel.MinimumScaleFactor
+    /// Sets property value on UILabels and subclasses
+    typealias preferredMaxLayoutWidth = Stylish.PropertyStylers.UILabel.PreferredMaxLayoutWidth
+    /// Sets property value on UILabels and subclasses
+    typealias highlightedTextColor = Stylish.PropertyStylers.UILabel.HighlightedTextColor
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias allowsEditingTextAttributes = Stylish.PropertyStylers.StylishTextInputControl.AllowsEditingTextAttributes
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias autocapitalizationType = Stylish.PropertyStylers.StylishTextInputControl.AutocapitalizationType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias autocorrectionType = Stylish.PropertyStylers.StylishTextInputControl.AutocorrectionType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias enablesReturnKeyAutomatically = Stylish.PropertyStylers.StylishTextInputControl.EnablesReturnKeyAutomatically
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias clearsOnInsertion = Stylish.PropertyStylers.StylishTextInputControl.ClearsOnInsertion
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias keyboardAppearance = Stylish.PropertyStylers.StylishTextInputControl.KeyboardAppearance
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias spellCheckingType = Stylish.PropertyStylers.StylishTextInputControl.SpellCheckingType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    @available(iOS 11.0, *) typealias smartDashesType = Stylish.PropertyStylers.StylishTextInputControl.SmartDashesType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    @available(iOS 11.0, *) typealias smartInsertDeleteType = Stylish.PropertyStylers.StylishTextInputControl.SmartInsertDeleteType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    @available(iOS 11.0, *) typealias smartQuotesType = Stylish.PropertyStylers.StylishTextInputControl.SmartQuotesType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias keyboardType = Stylish.PropertyStylers.StylishTextInputControl.KeyboardType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias returnKeyType = Stylish.PropertyStylers.StylishTextInputControl.ReturnKeyType
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    typealias isSecureTextEntry = Stylish.PropertyStylers.StylishTextInputControl.IsSecureTextEntry
+    /// Sets property value on UITextFields, UITextViews, and their subclasses
+    @available(iOS 10.0, *) typealias textContentType = Stylish.PropertyStylers.StylishTextInputControl.TextContentType
+    /// Sets property value on UITextFields and subclasses
+    typealias background = Stylish.PropertyStylers.UITextField.Background
+    /// Sets property value on UITextFields and subclasses
+    typealias disabledBackground = Stylish.PropertyStylers.UITextField.DisabledBackground
+    /// Sets property value on UITextFields and subclasses
+    typealias borderStyle = Stylish.PropertyStylers.UITextField.BorderStyle
+    /// Sets property value on UITextFields and subclasses
+    /// Sets property value on UITextFields and subclasses
+    typealias clearButtonMode = Stylish.PropertyStylers.UITextField.ClearButtonMode
+    /// Sets property value on UITextFields and subclasses
+    typealias leftViewMode = Stylish.PropertyStylers.UITextField.LeftViewMode
+    /// Sets property value on UITextFields and subclasses
+    typealias rightViewMode = Stylish.PropertyStylers.UITextField.RightViewMode
+    /// Sets property value on UITextFields and subclasses
+    typealias minimumFontSize = Stylish.PropertyStylers.UITextField.MinimumFontSize
+    /// Sets property value on UITextFields and subclasses
+    typealias placeholder = Stylish.PropertyStylers.UITextField.Placeholder
+    /// Sets property value on UITextFields and subclasses
+    typealias clearsOnBeginEditing = Stylish.PropertyStylers.UITextField.ClearsOnBeginEditing
+    /// Sets property value on UITextViews and subclasses
+    typealias isEditable = Stylish.PropertyStylers.UITextView.IsEditable
+    /// Sets property value on UITextViews and subclasses
+    typealias isSelectable = Stylish.PropertyStylers.UITextView.IsSelectable
+    /// Sets property value on UITextViews and subclasses
+    typealias dataDetectorTypes = Stylish.PropertyStylers.UITextView.DataDetectorTypes
+    /// Sets property value on UITextViews and subclasses
+    typealias textContainerInset = Stylish.PropertyStylers.UITextView.TextContainerInset
+    /// Sets property value on UIButtons and subclasses
+    typealias adjustsImageWhenDisabled = Stylish.PropertyStylers.UIButton.AdjustsImageWhenDisabled
+    /// Sets property value on UIButtons and subclasses
+    typealias adjustsImageWhenHighlighted = Stylish.PropertyStylers.UIButton.AdjustsImageWhenHighlighted
+    /// Sets property value on UIButtons and subclasses
+    typealias showsTouchWhenHighlighted = Stylish.PropertyStylers.UIButton.ShowsTouchWhenHighlighted
+    /// Sets property value on UIButtons and subclasses
+    typealias contentEdgeInsets = Stylish.PropertyStylers.UIButton.ContentEdgeInsets
+    /// Sets property value on UIButtons and subclasses
+    /// Sets property value on UIButtons and subclasses
+    typealias titleEdgeInsets = Stylish.PropertyStylers.UIButton.TitleEdgeInsets
+    /// Sets property value on UIButtons and subclasses
+    typealias imageEdgeInsets = Stylish.PropertyStylers.UIButton.ImageEdgeInsets
+    /// Sets property value on UIButtons and subclasses
+    typealias titleForNormalState = Stylish.PropertyStylers.UIButton.TitleForNormalState
+    /// Sets property value on UIButtons and subclasses
+    typealias titleForHighlightedState = Stylish.PropertyStylers.UIButton.TitleForHighlightedState
+    /// Sets property value on UIButtons and subclasses
+    typealias titleForDisabledState = Stylish.PropertyStylers.UIButton.TitleForDisabledState
+    /// Sets property value on UIButtons and subclasses
+    typealias titleColorForNormalState = Stylish.PropertyStylers.UIButton.TitleColorForNormalState
+    /// Sets property value on UIButtons and subclasses
+    typealias titleColorForHighlightedState = Stylish.PropertyStylers.UIButton.TitleColorForHighlightedState
+    /// Sets property value on UIButtons and subclasses
+    typealias titleColorForDisabledState = Stylish.PropertyStylers.UIButton.TitleColorForDisabledState
+    /// Sets property value on UIButtons and subclasses
+    typealias imageForNormalState = Stylish.PropertyStylers.UIButton.ImageForNormalState
+    /// Sets property value on UIButtons and subclasses
+    typealias imageForHighlightedState = Stylish.PropertyStylers.UIButton.ImageForHighlightedState
+    /// Sets property value on UIButtons and subclasses
+    typealias imageForDisabledState = Stylish.PropertyStylers.UIButton.ImageForDisabledState
+    /// Sets property value on UIButtons and subclasses
+    typealias backgroundImageForNormalState = Stylish.PropertyStylers.UIButton.BackgroundImageForNormalState
+    /// Sets property value on UIButtons and subclasses
+    typealias backgroundImageForHighlightedState = Stylish.PropertyStylers.UIButton.BackgroundImageForHighlightedState
+    /// Sets property value on UIButtons and subclasses
+    typealias backgroundImageForDisabledState = Stylish.PropertyStylers.UIButton.BackgroundImageForDisabledState
+    /// Sets property value on UIImageViews and subclasses
+    typealias image = Stylish.PropertyStylers.UIImageView.Image
+    /// Specifies a URL to asynchronously download an image from, and then set as the UIImageView's image property
+    typealias imageURL = Stylish.PropertyStylers.UIImageView.ImageURL
+    /// Sets property value on UIImageViews and subclasses
+    typealias highlightedImage = Stylish.PropertyStylers.UIImageView.HighlightedImage
+    /// Sets property value on UIImageViews and subclasses
+    @available(iOS 11.0, *) typealias adjustsImageSizeForAccessibilityContentSizeCategory = Stylish.PropertyStylers.UIImageView.AdjustsImageSizeForAccessibilityContentSizeCategory
+    /// Sets property value on UIImageViews and subclasses
+    typealias animationDuration = Stylish.PropertyStylers.UIImageView.AnimationDuration
+    /// Sets property value on UIImageViews and subclasses
+    typealias animationRepeatCount = Stylish.PropertyStylers.UIImageView.AnimationRepeatCount
+    /// Sets property value on UIImageViews and subclasses
+    typealias animationImages = Stylish.PropertyStylers.UIImageView.AnimationImages
+    /// Sets property value on UIImageViews and subclasses
+    typealias highlightedAnimationImages = Stylish.PropertyStylers.UIImageView.HighlightedAnimationImages
+    /// When true, calls startAnimating() on target UIImageView, calls stopAnimating() when false
+    typealias isAnimating = Stylish.PropertyStylers.UIImageView.IsAnimating
 }
 
 
 public extension Stylish {
-    public enum PropertyStyler {}
+    public enum PropertyStylers {}
 }
 
-public extension Stylish.PropertyStyler {
+public extension Stylish.PropertyStylers {
     
     public class UIView {
         
@@ -463,6 +605,7 @@ public extension Stylish.PropertyStyler {
     }
     
     public class UITextField: StylishTextInputControl {
+        
         public struct Background: PropertyStyler {
             public static var propertyKey: String { return "background" }
             public static func apply(value: UIImage?, to target: UIKit.UITextField) {
@@ -692,6 +835,7 @@ public extension Stylish.PropertyStyler {
     }
     
     public class UIImageView: UIView {
+        
         public struct Image: PropertyStyler {
             public static var propertyKey: String { return "image" }
             public static func apply(value: UIImage?, to target: UIKit.UIImageView) {
@@ -799,3 +943,34 @@ public struct UIViewStripedSubviewStyler: PropertyStyler {
         }
     }
 }
+
+/// MARK: - Convenience Protocols
+
+/// A protocol to conform UILabel, UITextField and UITextView to, so they can be styled with the same Property Stylers
+public protocol TextControl: class {
+    var textAlignment: NSTextAlignment { get set }
+    @available(iOS 10.0, *) var adjustsFontForContentSizeCategory: Bool { get set }
+}
+
+/// A protocol to conform UITextField and UITextView to, so they can be styled with the same Property Stylers
+public protocol TextInputControl: class, TextControl {
+    var allowsEditingTextAttributes: Bool { get set }
+    var autocapitalizationType: UITextAutocapitalizationType { get set }
+    var autocorrectionType: UITextAutocorrectionType { get set }
+    var enablesReturnKeyAutomatically: Bool { get set }
+    var clearsOnInsertion: Bool { get set }
+    var keyboardAppearance: UIKeyboardAppearance { get set }
+    var spellCheckingType: UITextSpellCheckingType { get set }
+    @available(iOS 11.0, *) var smartDashesType: UITextSmartDashesType { get set }
+    @available(iOS 11.0, *) var smartInsertDeleteType: UITextSmartInsertDeleteType { get set }
+    @available(iOS 11.0, *) var smartQuotesType: UITextSmartQuotesType { get set }
+    var keyboardType: UIKeyboardType { get set }
+    var returnKeyType: UIReturnKeyType { get set }
+    var isSecureTextEntry: Bool { get set }
+    @available(iOS 10.0, *) var textContentType: UITextContentType! { get set }
+}
+
+extension UILabel: TextControl {}
+extension UITextField: TextInputControl {}
+extension UITextView: TextInputControl {}
+
