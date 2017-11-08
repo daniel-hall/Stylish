@@ -30,7 +30,7 @@
                                         <rect key="frame" x="22.5" y="257.5" width="330" height="265.5"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="98x-3f-7ch">
-                                                <rect key="frame" x="15" y="44" width="300" height="178"/>
+                                                <rect key="frame" x="15" y="44.5" width="300" height="178"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some Header Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gea-rM-9JR" customClass="StyleableUILabel" customModule="Stylish">
                                                         <rect key="frame" x="0.0" y="0.0" width="300" height="24"/>
@@ -64,7 +64,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Theme Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5yM-7P-GSw" customClass="StyleableUILabel" customModule="Stylish">
-                                        <rect key="frame" x="150" y="32.5" width="75" height="24"/>
+                                        <rect key="frame" x="151" y="32.5" width="75" height="24"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
@@ -78,7 +78,7 @@
                                             <constraint firstAttribute="width" secondItem="gbM-gT-5Ec" secondAttribute="height" multiplier="15:8" id="vAb-2A-dhO"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ThemeImage"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ThemeImage, Rounded"/>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2UE-ed-YRN" customClass="ProgressBar" customModule="StylishExample" customModuleProvider="target">
@@ -88,7 +88,7 @@
                                             <constraint firstAttribute="height" constant="15" id="d8j-b7-vwr"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="ProgressBar"/>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="styles" value="DefaultProgressBar"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="progress">
                                                 <real key="value" value="0.65000000000000002"/>
                                             </userDefinedRuntimeAttribute>
@@ -160,7 +160,7 @@
                         <constraints>
                             <constraint firstItem="67p-Cw-vHA" firstAttribute="leading" secondItem="FNh-EV-alu" secondAttribute="leading" id="Bdf-aM-WYL"/>
                             <constraint firstAttribute="trailing" secondItem="67p-Cw-vHA" secondAttribute="trailing" id="EHq-Cx-8cJ"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="67p-Cw-vHA" secondAttribute="bottom" id="a1w-8n-rYr"/>
+                            <constraint firstAttribute="bottom" secondItem="67p-Cw-vHA" secondAttribute="bottom" id="Heq-q1-8Zr"/>
                             <constraint firstItem="67p-Cw-vHA" firstAttribute="top" secondItem="FNh-EV-alu" secondAttribute="top" id="v3J-RO-T2x"/>
                         </constraints>
                     </view>
