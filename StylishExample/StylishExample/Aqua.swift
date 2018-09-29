@@ -83,9 +83,9 @@ class Aqua : Stylesheet {
     struct DefaultProgressBar : Style {
         private static var patternColor: UIColor {
             let context = CIContext()
-            let stripesFilter = CIFilter(name: "CIStripesGenerator", withInputParameters: ["inputColor0" : CIColor(color: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0)), "inputColor1" : CIColor(color: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)), "inputWidth" : 4])!
+            let stripesFilter = CIFilter(name: "CIStripesGenerator", parameters: ["inputColor0" : CIColor(color: UIColor(red:0.25, green:0.80, blue:0.99, alpha:1.0)), "inputColor1" : CIColor(color: UIColor(red:0.60, green:0.89, blue:0.99, alpha:1.0)), "inputWidth" : 4])!
             let stripes = context.createCGImage(stripesFilter.outputImage!, from: CGRect(origin: CGPoint.zero, size: CGSize(width: 32.0, height: 32.0)))
-            let rotateFilter = CIFilter(name: "CIStraightenFilter", withInputParameters: ["inputImage" : CIImage(cgImage: stripes!), "inputAngle" : 2.35])!
+            let rotateFilter = CIFilter(name: "CIStraightenFilter", parameters: ["inputImage" : CIImage(cgImage: stripes!), "inputAngle" : 2.35])!
             let rotated = context.createCGImage(rotateFilter.outputImage!, from: rotateFilter.outputImage!.extent)
             return UIColor(patternImage: UIImage(cgImage: rotated!))
         }

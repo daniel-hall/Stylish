@@ -394,8 +394,8 @@ extension UITextContentType: StylesheetParseable {
     }
 }
 
-extension UITextFieldViewMode: StylesheetParseable {
-    public static func parse(from stylesheetValue: Any) -> UITextFieldViewMode? {
+extension UITextField.ViewMode: StylesheetParseable {
+    public static func parse(from stylesheetValue: Any) -> UITextField.ViewMode? {
         switch stylesheetValue as? String {
         case .some("never"):
             return .never
@@ -426,8 +426,8 @@ extension UIBaselineAdjustment: StylesheetParseable {
     }
 }
 
-extension UITextBorderStyle: StylesheetParseable {
-    public static func parse(from stylesheetValue: Any) -> UITextBorderStyle? {
+extension UITextField.BorderStyle: StylesheetParseable {
+    public static func parse(from stylesheetValue: Any) -> UITextField.BorderStyle? {
         switch stylesheetValue as? String {
         case .some("none"):
             return .none
@@ -479,8 +479,8 @@ extension UIFont.Weight: StylesheetParseable {
     }
 }
 
-extension UIFontTextStyle: StylesheetParseable {
-    public static func parse(from stylesheetValue: Any) -> UIFontTextStyle? {
+extension UIFont.TextStyle: StylesheetParseable {
+    public static func parse(from stylesheetValue: Any) -> UIFont.TextStyle? {
         switch stylesheetValue as? String{
         case .some("title1"):
             return .title1
@@ -508,8 +508,8 @@ extension UIFontTextStyle: StylesheetParseable {
     }
 }
 
-extension UIViewContentMode: StylesheetParseable {
-    public static func parse(from stylesheetValue: Any) -> UIViewContentMode? {
+extension UIView.ContentMode: StylesheetParseable {
+    public static func parse(from stylesheetValue: Any) -> UIView.ContentMode? {
         guard let value = stylesheetValue as? String else { return nil }
         switch value {
         case "scaleToFill" :
@@ -562,7 +562,7 @@ extension UIFont: StylesheetParseable {
         else if let italicFontSize = json["italicSize"] as? CGFloat {
             return self.init(descriptor: italicSystemFont(ofSize: italicFontSize).fontDescriptor, size: italicFontSize)
         }
-        else if let textStyle = UIFontTextStyle.parse(from: json["textStyle"] as Any) {
+        else if let textStyle = UIFont.TextStyle.parse(from: json["textStyle"] as Any) {
             let font = preferredFont(forTextStyle: textStyle)
             return self.init(descriptor: font.fontDescriptor, size: font.pointSize)
         }
@@ -613,15 +613,15 @@ extension UIColor: StylesheetParseable {
             let start = hexString.index(hexString.startIndex, offsetBy:1)
             let hexColor = String(hexString[start...])
             
-            if hexColor.characters.count == 8 || hexColor.characters.count == 6 {
+            if hexColor.count == 8 || hexColor.count == 6 {
                 let scanner = Scanner(string: hexColor)
                 var hexNumber: UInt64 = 0
                 
                 if scanner.scanHexInt64(&hexNumber) {
-                    r = hexColor.characters.count == 8 ? CGFloat((hexNumber & 0xff000000) >> 24) / 255 : CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
-                    g = hexColor.characters.count == 8 ? CGFloat((hexNumber & 0x00ff0000) >> 16) / 255 : CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
-                    b = hexColor.characters.count == 8 ? CGFloat((hexNumber & 0x0000ff00) >> 8) / 255 : CGFloat(hexNumber & 0x000000ff) / 255
-                    a = hexColor.characters.count == 8 ? CGFloat(hexNumber & 0x000000ff) / 255 : 1.0
+                    r = hexColor.count == 8 ? CGFloat((hexNumber & 0xff000000) >> 24) / 255 : CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
+                    g = hexColor.count == 8 ? CGFloat((hexNumber & 0x00ff0000) >> 16) / 255 : CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
+                    b = hexColor.count == 8 ? CGFloat((hexNumber & 0x0000ff00) >> 8) / 255 : CGFloat(hexNumber & 0x000000ff) / 255
+                    a = hexColor.count == 8 ? CGFloat(hexNumber & 0x000000ff) / 255 : 1.0
                     
                     return self.init(red: r, green: g, blue: b, alpha: a)
                 }
