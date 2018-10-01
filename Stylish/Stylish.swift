@@ -31,6 +31,25 @@ import UIKit
 /// A protocol that view types conform to in order to participate in the Stylish styling process. Requires a "styles" String property which can hold a comma-separated list of style names. Usually implemented as an IBInspectable property
 public protocol Styleable: class {
     var styles: String { get set }
+    var stylesheet: String? { get set }
+}
+
+private var key = "StylesheetKey"
+
+fileprivate extension UIView {
+    var _stylesheet: String? {
+        get {
+            return (self as? Styleable)?.stylesheet ?? objc_getAssociatedObject(self, &key) as? String
+        }
+        set {
+            if (self as? Styleable)?.stylesheet == nil {
+                objc_setAssociatedObject(self, &key, newValue, .OBJC_ASSOCIATION_RETAIN)
+            }
+            if let stylesheet = _stylesheet, !stylesheet.isEmpty {
+                subviews.forEach { $0._stylesheet = stylesheet }
+            }
+        }
+    }
 }
 
 /// A protocol that a type conforms to in order to be considered a Style.  Essentially, a style is a collection of value changes that will be applied to specific properties, so a Style is composed of a set of these property specific stylers.
@@ -158,6 +177,12 @@ internal class AnyStylesheet: Stylesheet {
 /// Global type which exposes the core Stylish functionality methods
 public struct Stylish {
     
+    private static var registeredStylesheets = [String: Stylesheet]()
+    
+    public static func register(stylesheet: Stylesheet, named name: String) {
+        registeredStylesheets[name] = stylesheet
+    }
+    
     /// Get or set the current global stylesheet for the application. Setting a new Stylesheet will cause the entire view hierarchy to reapply any styles using the new stylesheet
     public static var stylesheet: Stylesheet? = nil {
         didSet {
@@ -192,14 +217,17 @@ public struct Stylish {
     }()
     
     /// Accepts a comma-separated list of style names and attempts to retrieve them from the current global stylesheet, and having done so will apply them to the target Styleable instance.
-    public static func applyStyleNames(_ styles: String, to target: Styleable) {
+    public static func applyStyleNames(_ styles: String, to target: Styleable, using stylesheet: String? = nil) {
         #if TARGET_INTERFACE_BUILDER
             UIView().prepareForInterfaceBuilder()
         #endif
+        if stylesheet != nil, stylesheet?.isEmpty == false { (target as? UIView)?._stylesheet = stylesheet }
+        let resolvedName = (target as? UIView)?._stylesheet ?? target.stylesheet ?? ""
+        let resolvedStylesheet = !resolvedName.isEmpty ? registeredStylesheets[resolvedName] : Stylish.stylesheet
         var hasInvalidStyleName = false
         var combinedStyle = styles.components(separatedBy: ",").reduce(AnyStyle(propertyStylers: []) as Style) {
             let name = $1.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard let style = stylesheet?[name] else {
+            guard let style = resolvedStylesheet?[name] else {
                 hasInvalidStyleName = true
                 return $0
             }
@@ -229,7 +257,7 @@ public struct Stylish {
             refreshStyles(for: subview)
         }
         if let styleable = view as? Styleable {
-            applyStyleNames(styleable.styles, to: styleable)
+            applyStyleNames(styleable.styles, to: styleable, using: view._stylesheet)
         }
     }
 }

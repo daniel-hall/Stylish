@@ -30,7 +30,12 @@ import UIKit
 @IBDesignable open class StyleableUIView: UIView, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
@@ -41,12 +46,22 @@ import UIKit
             Stylish.applyStyleNames(styles, to: self)
         }
     }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
 }
 
 @IBDesignable open class StyleableUITextField: UITextField, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
             Stylish.applyStyleNames(styles, to: self)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
@@ -57,6 +72,11 @@ import UIKit
             Stylish.applyStyleNames(styles, to: self)
         }
     }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
 }
 
 @IBDesignable open class StyleableUIButton: UIButton, Styleable {
@@ -65,12 +85,22 @@ import UIKit
             Stylish.applyStyleNames(styles, to: self)
         }
     }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
 }
 
 @IBDesignable open class StyleableUIImageView: UIImageView, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
             Stylish.applyStyleNames(styles, to: self)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }

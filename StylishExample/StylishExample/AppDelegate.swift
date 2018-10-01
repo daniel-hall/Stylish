@@ -15,7 +15,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {        
-        Stylish.stylesheet = Aqua()
+        Stylish.stylesheet = Graphite()
+        Stylish.register(stylesheet: Graphite(), named: "Graphite")
+        Stylish.register(stylesheet: Aqua(), named: "Aqua")
         return true
     }
 }

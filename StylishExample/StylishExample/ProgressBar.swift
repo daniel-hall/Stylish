@@ -73,7 +73,13 @@ import UIKit
     @IBInspectable var styles:String = "" {
         didSet {
             updateProgress()
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            updateProgress()
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
     
