@@ -56,9 +56,6 @@ extension UIView {
     // This is the only entry point for setting global variables in Stylish for Interface Builder rendering (since App Delegate doesn't get run by IBDesignable. So we are setting up the global stylesheet that we want used for IBDesignable rendering here.
     open override func prepareForInterfaceBuilder() {
         Stylish.stylesheet = Graphite()
-        Stylish.register(stylesheet: Graphite(), named: "Graphite")
-        Stylish.register(stylesheet: Aqua(), named: "Aqua")
- //       Stylish.register(stylesheet: JSON(), named: "JSON")
     }
 }
 
