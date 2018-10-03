@@ -28,9 +28,10 @@
 
 import UIKit
 
-/// A protocol that view types conform to in order to participate in the Stylish styling process. Requires a "styles" String property which can hold a comma-separated list of style names. Usually implemented as an IBInspectable property
+/// A protocol that view types conform to in order to participate in the Stylish styling process. Requires a "styles" String property which can hold a comma-separated list of style names and "stylesheet" property which can hold an optional override stylesheet other than the global one, which will then be used by this Styleable instance and inherited by its children.  Usually both required vars are implemented as IBInspectable properties
 public protocol Styleable: class {
     var styles: String { get set }
+    var stylesheet: String? { get set }
 }
 
 /// A protocol that a type conforms to in order to be considered a Style.  Essentially, a style is a collection of value changes that will be applied to specific properties, so a Style is composed of a set of these property specific stylers.
@@ -158,12 +159,16 @@ internal class AnyStylesheet: Stylesheet {
 /// Global type which exposes the core Stylish functionality methods
 public struct Stylish {
     
+    private static var registeredStylesheets = [String: Stylesheet]()
+    
+    public static func register(stylesheet: Stylesheet, named name: String) {
+        registeredStylesheets[name] = stylesheet
+    }
+    
     /// Get or set the current global stylesheet for the application. Setting a new Stylesheet will cause the entire view hierarchy to reapply any styles using the new stylesheet
     public static var stylesheet: Stylesheet? = nil {
         didSet {
-            #if TARGET_INTERFACE_BUILDER
-                return
-            #endif
+            #if !TARGET_INTERFACE_BUILDER
             switch (oldValue, stylesheet) {
             case (.some(let old), .some(let new)):
                 if ObjectIdentifier(old) != ObjectIdentifier(new) {
@@ -176,6 +181,7 @@ public struct Stylish {
             default:
                 break
             }
+            #endif
         }
     }
     
@@ -192,23 +198,41 @@ public struct Stylish {
     }()
     
     /// Accepts a comma-separated list of style names and attempts to retrieve them from the current global stylesheet, and having done so will apply them to the target Styleable instance.
-    public static func applyStyleNames(_ styles: String, to target: Styleable) {
+    public static func applyStyleNames(_ styles: String, to target: Styleable, using stylesheet: String?) {
         #if TARGET_INTERFACE_BUILDER
-            UIView().prepareForInterfaceBuilder()
+        UIView().prepareForInterfaceBuilder()
         #endif
+        let targetView = target as? UIView
+        let previousStylesheet = targetView?.inheritedStylesheet
+        
+        // If we have a non-nil stylesheet name to use for styling, or if the stylesheet name is nil and it was previously non-nil, set the inherited stylesheet property on the target view (and trigger a cascade of inheritance down its subviews)
+        if stylesheet != nil || previousStylesheet != nil { targetView?.inheritedStylesheet = stylesheet }
+        
+        // Resolve the correct stylesheet as follows: if there is an inherited stylesheet name, retrieve the registered stylesheet with that name (it may return nil). If there is no specified or inherited stylsheet name, use the default global stylesheet
+        let resolvedStylesheet = targetView?.inheritedStylesheet != nil ? registeredStylesheets[targetView!.inheritedStylesheet!] : Stylish.stylesheet
+        
         var hasInvalidStyleName = false
         var combinedStyle = styles.components(separatedBy: ",").reduce(AnyStyle(propertyStylers: []) as Style) {
             let name = $1.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard let style = stylesheet?[name] else {
+            guard let style = resolvedStylesheet?[name] else {
                 hasInvalidStyleName = true
                 return $0
             }
             return $0 + style
         }
         #if TARGET_INTERFACE_BUILDER
-            if hasInvalidStyleName { combinedStyle = combinedStyle + ErrorStyle() }
+        if hasInvalidStyleName { combinedStyle = combinedStyle + ErrorStyle() }
         #endif
+        
         applyStyle(combinedStyle, to: target)
+        
+        // Don't attempt the view hierarchy refresh if rendering in Interface Builder as an IBDesignable, since IB doesn't maintain the same kind of view hierarchy
+        #if !TARGET_INTERFACE_BUILDER
+        // If the stylesheet for the target we are styling was changed from what it was previously, refresh the style applications for the entire view hierarchy under the target, since some of the subviews will likely have inherited the new stylesheet
+        if previousStylesheet != targetView?.inheritedStylesheet {
+            targetView?.subviews.forEach { Stylish.refreshStyles(for: $0) }
+        }
+        #endif
     }
     
     /// Applies a single Style instance to the target Stylable object
@@ -225,11 +249,60 @@ public struct Stylish {
     
     /// Refreshes / reapplies the styling for a single view
     public static func refreshStyles(for view: UIView) {
+        if let styleable = view as? Styleable {
+            applyStyleNames(styleable.styles, to: styleable, using: view.inheritedStylesheet)
+        }
         for subview in view.subviews {
             refreshStyles(for: subview)
         }
-        if let styleable = view as? Styleable {
-            applyStyleNames(styleable.styles, to: styleable)
+    }
+}
+
+/// A private framework extension that manages the cascading of stylsheets through a hierarchy of UIViews
+fileprivate extension UIView {
+    struct StylishAssociatedObjectKeys {
+        static var inheritedStylesheet = "Stylish.inheritedStylesheet"
+    }
+    var inheritedStylesheet: String? {
+        get {
+            return objc_getAssociatedObject(self, &StylishAssociatedObjectKeys.inheritedStylesheet) as? String
+        }
+        set {
+            let previousStylesheet = inheritedStylesheet
+            switch self {
+            case let styleable as Styleable:
+                switch styleable.stylesheet {
+                // If we have an explicitly defined stylesheet name of our own, ignore the inherited value that has been passed in and save our own explicit stylsheet as our inherited stylesheet name
+                case .some:
+                    objc_setAssociatedObject(self, &StylishAssociatedObjectKeys.inheritedStylesheet, styleable.stylesheet, .OBJC_ASSOCIATION_RETAIN)
+                    
+                // If we don't have a stylesheet specifically defined and the inherited stylesheet value matches our superview, the save it as our own inherited stylesheet name
+                case .none where newValue == superview?.inheritedStylesheet:
+                    objc_setAssociatedObject(self, &StylishAssociatedObjectKeys.inheritedStylesheet, newValue, .OBJC_ASSOCIATION_RETAIN)
+                    
+                // In other cases we ignore the passed-in value (specifically, in cases where we don't have our own value, but the value passed in doesn't match our superview's stylesheet)
+                default:
+                    break
+                }
+            // If we don't conform to Styleable anyway, there's not much to worry about since we don't define a stylesheet for ourselves. Just set what is passed in as the inherited stylesheet name.
+            default:
+                objc_setAssociatedObject(self, &StylishAssociatedObjectKeys.inheritedStylesheet, newValue, .OBJC_ASSOCIATION_RETAIN)
+            }
+            // Now decide whether to cascade our inherited stylsheet to our own children
+            switch inheritedStylesheet {
+            // In the case where our inherited stylesheet is nil, but it previously had a value we need to cascade the change to nil down to our subviews
+            case .none where previousStylesheet != nil:
+                fallthrough
+            // In the case where we the inherited stylesheet is nil, but we aren't styleable and don't need to factor in a possible explicit stylesheet, just go ahead and pass the nil through as the inheritedStylesheet to our subviews
+            case .none where !(self is Styleable):
+                fallthrough
+            // If the inheritedStylesheet isn't nil, cascade it down to our subviews
+            case .some:
+                subviews.forEach { $0.inheritedStylesheet = inheritedStylesheet }
+            // For other scenarios (when inheritedStylesheet is nil, but we ARE Styleable and don't have a previous value), do nothing
+            default:
+                break
+            }
         }
     }
 }

@@ -30,7 +30,12 @@ import UIKit
 @IBDesignable open class StyleableUIView: UIView, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
@@ -38,7 +43,12 @@ import UIKit
 @IBDesignable open class StyleableUILabel: UILabel, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
@@ -46,7 +56,12 @@ import UIKit
 @IBDesignable open class StyleableUITextField: UITextField, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
@@ -54,7 +69,12 @@ import UIKit
 @IBDesignable open class StyleableUITextView: UITextView, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
@@ -62,7 +82,12 @@ import UIKit
 @IBDesignable open class StyleableUIButton: UIButton, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
@@ -70,7 +95,12 @@ import UIKit
 @IBDesignable open class StyleableUIImageView: UIImageView, Styleable {
     @IBInspectable public var styles: String = "" {
         didSet {
-            Stylish.applyStyleNames(styles, to: self)
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
+        }
+    }
+    @IBInspectable public var stylesheet: String? = nil {
+        didSet {
+            Stylish.applyStyleNames(styles, to: self, using: stylesheet)
         }
     }
 }
