@@ -47,6 +47,16 @@ extension String: StylesheetParseable {
     }
 }
 
+public struct StringArray: StylesheetParseable {
+    public static func parse(from stylesheetValue: Any) -> StringArray? {
+        return StringArray(strings: (stylesheetValue as? [String]) ?? [])
+    }
+    public let strings: [String]
+    public init(strings: [String]) {
+        self.strings = strings
+    }
+}
+
 extension Double: StylesheetParseable {
     public static func parse(from stylesheetValue: Any) -> Double? {
         return stylesheetValue as? Double

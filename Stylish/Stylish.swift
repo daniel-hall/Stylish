@@ -39,12 +39,15 @@ public protocol Style {
     var propertyStylers: [AnyPropertyStyler] { get }
 }
 
-/// The protocol a type must conform to in order to be used as a Stylesheet. A Stylesheet is simply a dictionary of Styles, each associated with a name
+/// The protocol a type must conform to in order to be used as a Stylesheet. A Stylesheet is simply a dictionary of Styles, each associated with a name. A Stylesheet must also return the bundle it is associated with, in order for Styles / Property Stylers to know what bundle to retrieve images, colors, or other assets from
 public protocol Stylesheet: class {
     var styles: [String: Style] { get }
+    var bundle: Bundle { get }
 }
 
 extension Stylesheet {
+    /// The default implementation returns the Bundle that the Stylesheet class itself is a member of
+    public var bundle: Bundle { return Bundle(for: type(of: self)) }
     subscript(_ styleName: String) -> Style? {
         return styles[styleName]
     }
@@ -59,12 +62,25 @@ public protocol PropertyStyler: AnyPropertyStylerType {
     associatedtype PropertyType: StylesheetParseable
     associatedtype TargetType
     static var propertyKey: String { get }
-    static func apply(value: PropertyType?, to target: TargetType)
+    static func apply(value: PropertyType?, to target: TargetType, using bundle: Bundle)
 }
 
 public extension PropertyStyler {
     public static func set(value: PropertyType?) -> AnyPropertyStyler {
-        return AnyPropertyStyler{ if let target = $0 as? TargetType { Self.apply(value: value, to: target) } }
+        return AnyPropertyStyler {
+            if let target = $0 as? TargetType {
+                Self.apply(value: value, to: target, using: $1)
+            }
+        }
+    }
+    
+    public static func set(value: @escaping (Bundle, UITraitCollection?) -> PropertyType?) -> AnyPropertyStyler {
+        return AnyPropertyStyler {
+            if let target = $0 as? TargetType {
+                let value = value($1, (target as? UITraitEnvironment)?.traitCollection)
+                Self.apply(value: value, to: target, using: $1)
+            }
+        }
     }
 }
 
@@ -81,12 +97,12 @@ public extension PropertyStyler  {
 
 /// Type-erased property styler, needed to hold arrays of them
 public struct AnyPropertyStyler {
-    private let propertyValueApplicator: (Styleable) -> ()
-    internal init(propertyValueApplicator: @escaping (Styleable) -> ()) {
+    private let propertyValueApplicator: (Styleable, Bundle) -> ()
+    internal init(propertyValueApplicator: @escaping (Styleable, Bundle) -> ()) {
         self.propertyValueApplicator = propertyValueApplicator
     }
-    internal func apply(to target: Styleable) {
-        propertyValueApplicator(target)
+    internal func apply(to target: Styleable, using bundle: Bundle) {
+        propertyValueApplicator(target, bundle)
     }
 }
 
@@ -119,21 +135,21 @@ public func +(left: Stylesheet, right: Stylesheet) ->  Stylesheet {
 /// A way to hold a reference to a Property Styler type itself, in a type-erased manner (for holding in arrays), and then creating a type-erased instance of the Property Styler Type as an AnyPropertyStyler on demand from either json data or an initial value.
 internal struct AnyPropertyStylerTypeWrapper {
     private let jsonInitializer:(String, Any) -> AnyPropertyStyler?
-    private let applicator: (Any?, Styleable) -> ()
+    private let applicator: (Any?, Styleable, Bundle) -> ()
     internal let propertyKey: String
     internal init<T: PropertyStyler>(_ propertyStylerType: T.Type) {
         self.propertyKey = propertyStylerType.propertyKey
-        let applicator: (Any?, Styleable) -> () = {
-            value, target in
+        let applicator: (Any?, Styleable, Bundle) -> () = {
+            value, target, bundle in
             if let value = value as? T.PropertyType?, let target = target as? T.TargetType {
-                T.apply(value: value, to: target)
+                T.apply(value: value, to: target, using: bundle)
             }
         }
         self.jsonInitializer = {
             propertyName, propertyValue in
             guard propertyName == T.propertyKey else { return nil }
-            if propertyValue is NSNull { return AnyPropertyStyler { applicator(nil, $0) } }
-            if let parsedValue = T.PropertyType.parse(from: propertyValue) { return AnyPropertyStyler { applicator(parsedValue, $0) } }
+            if propertyValue is NSNull { return AnyPropertyStyler { applicator(nil, $0, $1) } }
+            if let parsedValue = T.PropertyType.parse(from: propertyValue) { return AnyPropertyStyler { applicator(parsedValue, $0, $1) } }
             return nil
         }
         self.applicator = applicator
@@ -224,7 +240,7 @@ public struct Stylish {
         if hasInvalidStyleName { combinedStyle = combinedStyle + ErrorStyle() }
         #endif
         
-        applyStyle(combinedStyle, to: target)
+        applyStyle(combinedStyle, to: target, using: resolvedStylesheet)
         
         // Don't attempt the view hierarchy refresh if rendering in Interface Builder as an IBDesignable, since IB doesn't maintain the same kind of view hierarchy
         #if !TARGET_INTERFACE_BUILDER
@@ -236,8 +252,8 @@ public struct Stylish {
     }
     
     /// Applies a single Style instance to the target Stylable object
-    public static func applyStyle(_ style: Style, to target: Styleable) {
-        style.propertyStylers.forEach { $0.apply(to: target) }
+    public static func applyStyle(_ style: Style, to target: Styleable, using stylesheet: Stylesheet?) {
+        style.propertyStylers.forEach { $0.apply(to: target, using: stylesheet?.bundle ?? Bundle.main) }
     }
     
     /// Refreshes the styles of all views in the app, in the event of a stylesheet change or update, etc.
