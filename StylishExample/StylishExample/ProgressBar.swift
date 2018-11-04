@@ -42,21 +42,21 @@ import UIKit
     // 2. Create custom PropertyStylers that define a property key that can be read out of json, and a way to set the styleable properties of the ProgressBar component. These can be private to the type if you are only using JSON stylesheets and no code-created stylesheets
     struct ProgressColor: PropertyStyler {
         static var propertyKey: String { return "progressColor" }
-        static func apply(value: UIColor?, to target: ProgressBar) {
+        static func apply(value: UIColor?, to target: ProgressBar, using bundle: Bundle) {
             target.progressColor = value ?? .gray
         }
     }
     
     struct ProgressTrackColor: PropertyStyler {
         static var propertyKey: String { return "progressTrackColor" }
-        static func apply(value: UIColor?, to target: ProgressBar) {
+        static func apply(value: UIColor?, to target: ProgressBar, using bundle: Bundle) {
             target.trackColor = value ?? .white
         }
     }
     
     struct ProgressCornerRadiusRatio: PropertyStyler {
         static var propertyKey: String { return "progressCornerRadiusRatio" }
-        static func apply(value: CGFloat?, to target: ProgressBar) {
+        static func apply(value: CGFloat?, to target: ProgressBar, using bundle: Bundle) {
             target.progressCornerRadiusPercentage = value ?? 0
         }
     }
@@ -98,8 +98,8 @@ import UIKit
     var progressCornerRadiusPercentage:CGFloat = 0.0 {
         didSet {
             updateProgress()
-            trackView.layer.cornerRadius = layer.cornerRadius
             progressView.layer.cornerRadius = progressView.bounds.height * progressCornerRadiusPercentage
+            trackView.layer.cornerRadius = progressView.layer.cornerRadius
         }
     }
     
