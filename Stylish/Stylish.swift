@@ -66,7 +66,7 @@ public protocol PropertyStyler: AnyPropertyStylerType {
 }
 
 public extension PropertyStyler {
-    public static func set(value: PropertyType?) -> AnyPropertyStyler {
+    static func set(value: PropertyType?) -> AnyPropertyStyler {
         return AnyPropertyStyler {
             if let target = $0 as? TargetType {
                 Self.apply(value: value, to: target, using: $1)
@@ -74,7 +74,7 @@ public extension PropertyStyler {
         }
     }
     
-    public static func set(value: @escaping (Bundle, UITraitCollection?) -> PropertyType?) -> AnyPropertyStyler {
+    static func set(value: @escaping (Bundle, UITraitCollection?) -> PropertyType?) -> AnyPropertyStyler {
         return AnyPropertyStyler {
             if let target = $0 as? TargetType {
                 let value = value($1, (target as? UITraitEnvironment)?.traitCollection)
@@ -90,7 +90,7 @@ public protocol AnyPropertyStylerType {
 }
 
 public extension PropertyStyler  {
-    public static var wrapped: Any {
+    static var wrapped: Any {
         return AnyPropertyStylerTypeWrapper(Self.self)
     }
 }

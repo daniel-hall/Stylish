@@ -231,12 +231,12 @@ public extension Style {
 
 
 public extension Stylish {
-    public enum PropertyStylers {}
+    enum PropertyStylers {}
 }
 
 public extension Stylish.PropertyStylers {
     
-    public class UIView {
+    class UIView {
         
         public struct BackgroundColor: PropertyStyler {
             public static var propertyKey: String { return "backgroundColor" }
@@ -366,7 +366,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class UIControl: UIView {
+    class UIControl: UIView {
         
         public struct IsEnabled: PropertyStyler {
             public static var propertyKey: String { return "isEnabled" }
@@ -376,7 +376,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class StylishTextControl: UIControl {
+    class StylishTextControl: UIControl {
         
         public struct AdjustsFontSizeToFitWidth: PropertyStyler {
             public static var propertyKey: String { return "adjustsFontSizeToFitWidth" }
@@ -465,7 +465,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class UILabel: StylishTextControl {
+    class UILabel: StylishTextControl {
         
         public struct BaselineAdjustment: PropertyStyler {
             public static var propertyKey: String { return "baselineAdjustment" }
@@ -517,7 +517,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class StylishTextInputControl: StylishTextControl {
+    class StylishTextInputControl: StylishTextControl {
         
         public struct AllowsEditingTextAttributes: PropertyStyler {
             public static var propertyKey: String { return "allowsEditingTextAttributes" }
@@ -628,7 +628,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class UITextField: StylishTextInputControl {
+    class UITextField: StylishTextInputControl {
         
         public struct Background: PropertyStyler {
             public static var propertyKey: String { return "background" }
@@ -712,7 +712,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class UITextView: StylishTextInputControl {
+    class UITextView: StylishTextInputControl {
         
         public struct IsEditable: PropertyStyler {
             public static var propertyKey: String { return "isEditable" }
@@ -743,7 +743,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class UIButton: UIControl {
+    class UIButton: UIControl {
         
         public struct AdjustsImageWhenDisabled: PropertyStyler {
             public static var propertyKey: String { return "adjustsImageWhenDisabled" }
@@ -926,7 +926,7 @@ public extension Stylish.PropertyStylers {
         }
     }
     
-    public class UIImageView: UIView {
+    class UIImageView: UIView {
         
         public struct Image: PropertyStyler {
             public static var propertyKey: String { return "image" }
