@@ -14,6 +14,7 @@
 		CEC4B3931FB180AE00A97AB5 /* Stylish.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38D1FB180AE00A97AB5 /* Stylish.swift */; };
 		CEC4B3941FB180AE00A97AB5 /* StylesheetParseableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC4B38E1FB180AE00A97AB5 /* StylesheetParseableExtensions.swift */; };
 		D7C473021F3E4F8A00B5880A /* Stylish.h in Headers */ = {isa = PBXBuildFile; fileRef = D7C473001F3E4F8A00B5880A /* Stylish.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD8888BA227CAABD00749F18 /* StyleableComponents.swift in Headers */ = {isa = PBXBuildFile; fileRef = CEC4B3891FB180AE00A97AB5 /* StyleableComponents.swift */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7C473021F3E4F8A00B5880A /* Stylish.h in Headers */,
+				FD8888BA227CAABD00749F18 /* StyleableComponents.swift in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
