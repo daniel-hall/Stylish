@@ -51,17 +51,32 @@ public class JSONStylesheet: Stylesheet {
     /// - Throws: An NSError with a description of what went wrong
     public init(data: Data, usingPropertyStylerTypes propertyStylerTypes: [AnyPropertyStylerType.Type] = Stylish.builtInPropertyStylerTypes, ignoringUnrecognizedStyleProperties: Bool = false) throws {
         let propertyStylerTypes = Dictionary(propertyStylerTypes.map{(($0.wrapped as! AnyPropertyStylerTypeWrapper).propertyKey, $0.wrapped as! AnyPropertyStylerTypeWrapper)}, uniquingKeysWith: { $1 })
-        guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any], let styles = json["styles"] as? [[String: Any]] else {
+        guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+            let styles = json["styles"] as? [[String: Any]] else {
             throw NSError(domain: "Stylish", code: 100, userInfo: [NSLocalizedDescriptionKey: "Stylesheet JSON was not in the correct format. Please ensure the stylesheet JSON is a top-level dictionary that includes a \"styles\" key with a corresponding value that is an array of style dictionary objects. Each style dictionary object should minimally have a \"styleName\" key with a string value, and \"styleProperties\" key with dictionary value containing property name keys and corresponding values to set"])
         }
         let keyValues: [(String, Style)] = try styles.compactMap {
             jsonStyle in
-            guard let styleName = jsonStyle["styleName"] as? String, let properties = jsonStyle["styleProperties"] as? [String: Any] else {
+            guard let styleName = jsonStyle["styleName"] as? String,
+                let properties = jsonStyle["styleProperties"] as? [String: Any] else {
                 throw NSError(domain: "Stylish", code: 101, userInfo: [NSLocalizedDescriptionKey: "Stylesheet JSON was not in the correct format. Please ensure the stylesheet JSON is a top-level dictionary that includes a \"styles\" key with a corresponding value that is an array of style dictionary objects. Each style dictionary object should minimally have a \"styleName\" key with a string value, and \"styleProperties\" key with dictionary value containing property name keys and corresponding values to set"])
             }
             let propertyStylers: [AnyPropertyStyler] = try properties.compactMap {
                 key, value in
-                guard let styler = propertyStylerTypes[key]?.propertyStyler(jsonPropertyName: key, jsonPropertyValue: value) else {
+                
+                var processedValue = value
+                if let stringValue = value as? String, stringValue.first == "$" {
+                    guard let constants = json["constants"] as? [String: Any],
+                        let constantValue = constants[String(stringValue.dropFirst())] else {
+                        if ignoringUnrecognizedStyleProperties {
+                            return nil
+                        }
+                        throw NSError(domain: "Stylish", code: 104, userInfo: [NSLocalizedDescriptionKey: "None of the provided PropertyStylers could parse the json style property \"\(key)\" with the constant value: \(stringValue.dropFirst())"])
+                    }
+                    processedValue = constantValue
+                }
+                
+                guard let styler = propertyStylerTypes[key]?.propertyStyler(jsonPropertyName: key, jsonPropertyValue: processedValue) else {
                     if ignoringUnrecognizedStyleProperties {
                         return nil
                     }
