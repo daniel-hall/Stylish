@@ -1,4 +1,7 @@
 {
+  "constants": {
+    "DefaultButtonColor": "#FDE3A7"
+  },
   "styles": [
     {
       "styleName": "PrimaryBackgroundColor",
@@ -38,7 +41,7 @@
       "styleName": "DefaultProgressBar",
       "styleProperties": {
         "progressColor": "#F27935",
-        "progressTrackColor": "#FDE3A7",
+        "progressTrackColor": "$DefaultButtonColor",
         "cornerRadiusRatio": 0.35,
         "progressCornerRadiusRatio": 0.35,
         "borderColor": "#F9690E",
@@ -67,8 +70,8 @@
       "styleName": "DefaultButton",
       "styleProperties": {
         "titleColorForNormalState": "#D35400",
-        "backgroundColor": "#FDE3A7",
-        "borderColor": "#FDE3A7",
+        "backgroundColor": "$DefaultButtonColor",
+        "borderColor": "$DefaultButtonColor",
         "cornerRadius": 6.0
       }
     }
