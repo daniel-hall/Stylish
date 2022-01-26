@@ -25,7 +25,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
+import UIKit
 
 /// A Stylish Stylesheet that can dynamically populate its member styles and style names by parsing them from a json file.
 public class JSONStylesheet: Stylesheet {
