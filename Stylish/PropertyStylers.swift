@@ -1075,7 +1075,7 @@ public struct UIViewStripedSubviewStyler: PropertyStyler {
 /// MARK: - Convenience Protocols
 
 /// A protocol to conform UILabel, UITextField and UITextView to, so they can be styled with the same Property Stylers
-public protocol TextControl: class {
+public protocol TextControl: AnyObject {
     var textAlignment: NSTextAlignment { get set }
     @available(iOS 10.0, *) var adjustsFontForContentSizeCategory: Bool { get set }
 }

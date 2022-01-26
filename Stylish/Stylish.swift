@@ -29,7 +29,7 @@
 import UIKit
 
 /// A protocol that view types conform to in order to participate in the Stylish styling process. Requires a "styles" String property which can hold a comma-separated list of style names and "stylesheet" property which can hold an optional override stylesheet other than the global one, which will then be used by this Styleable instance and inherited by its children.  Usually both required vars are implemented as IBInspectable properties
-public protocol Styleable: class {
+public protocol Styleable: AnyObject {
     var styles: String { get set }
     var stylesheet: String? { get set }
 }
@@ -40,7 +40,7 @@ public protocol Style {
 }
 
 /// The protocol a type must conform to in order to be used as a Stylesheet. A Stylesheet is simply a dictionary of Styles, each associated with a name. A Stylesheet must also return the bundle it is associated with, in order for Styles / Property Stylers to know what bundle to retrieve images, colors, or other assets from
-public protocol Stylesheet: class {
+public protocol Stylesheet: AnyObject {
     var styles: [String: Style] { get }
     var bundle: Bundle { get }
 }
