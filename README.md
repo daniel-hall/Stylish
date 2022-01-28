@@ -15,15 +15,34 @@ For the first time, this provides a single solution for creating and applying st
 
 ## Installation
 
-Since Swift has not yet reached ABI or module format stability, Apple does not support or advise distributing Swift libraries compiled outside of your project.  Instead, the recommended approach is: 
+:warning:  Because Stylish is a separate module from your app, some special considerations are needed to get IBDesignables and the live rendering of styles in Storyboards playing nicely.  Specifically, it requires two extensions that override prepareForInterfaceBuilder in two types. See MainViewController.swift in the StylishExample app for reference implementations of these extensions.
 
+### Manually
 1. Include the Stylish repo (this repo) as a git submodule in your project (or just check out the version of the entire Stylish repo you want to use and add it to your project as a subdirectory)
 2. Drag Stylish.xcodeproj into your own Xcode project or workspace (see the StylishExample project in this repo as a reference)
 3. In your own app target(s) on the "General" tab, scroll down to "Embedded Binaries", click the plus button and choose Stylish.framework. Again, you can refer to the StylishExample project to see what this looks like.
 
 These steps will ensure that the Stylish framework is compiled as part of your own app's build phases as needed and that the Stylish.framework will be using the same version of Swift and the Swift compiler as the rest of your project.
 
-4. IMPORTANT!  Because Stylish is a separate module from your app, some special considerations are needed to get IBDesignables and the live rendering of styles in Storyboards playing nicely.  Specifically, it requires two extensions that override prepareForInterfaceBuilder in two types. See MainViewController.swift in the StylishExample app for reference implementations of these extensions.
+### Carthage
+
+[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
+
+```ogdl
+github "daniel-hall/Stylish" "master"
+```
+
+### Swift Package Manager
+
+The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. 
+
+Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/daniel-hall/Stylish.git", .branch("master"))
+]
+```
 
 ## Example Project
 

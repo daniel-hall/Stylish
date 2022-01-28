@@ -25,7 +25,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
+import UIKit
 
 // Add StylesheetParseable conformance to all the types used in the built-in PropertyStylers. This conformance converts the expected json value in the stylesheet (could be a String, a Bool, a Dictionary multiple key-values) into the corresponding Swift type
 
@@ -162,7 +162,7 @@ extension UITextAutocapitalizationType: StylesheetParseable {
     public static func parse(from stylesheetValue: Any) -> UITextAutocapitalizationType? {
         switch stylesheetValue as? String {
         case .some("none"):
-            return .none
+					return UITextAutocapitalizationType.none
         case .some("words"):
             return .words
         case .some("sentences"):
@@ -429,7 +429,7 @@ extension UIBaselineAdjustment: StylesheetParseable {
         case .some("alignCenters"):
             return .alignCenters
         case .some("none"):
-            return .none
+					return UIBaselineAdjustment.none
         default:
             return nil
         }
@@ -440,7 +440,7 @@ extension UITextField.BorderStyle: StylesheetParseable {
     public static func parse(from stylesheetValue: Any) -> UITextField.BorderStyle? {
         switch stylesheetValue as? String {
         case .some("none"):
-            return .none
+					return UITextField.BorderStyle.none
         case .some("line"):
             return .line
         case .some("bezel"):
